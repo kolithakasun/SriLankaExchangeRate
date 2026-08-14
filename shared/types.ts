@@ -119,3 +119,38 @@ export interface DayComparison {
   yesterdaySelling: number | null;
   sellingChange: number | null;
 }
+
+export interface ForecastDailyPoint {
+  date: string;
+  closeBuying: number | null;
+  closeSelling: number | null;
+  minSelling: number | null;
+  maxBuying: number | null;
+  samples: number;
+}
+
+export interface ForecastPoint {
+  date: string;
+  predictedBuying: number | null;
+  predictedSelling: number | null;
+}
+
+export interface ForecastAdvice {
+  action: "buy_forex" | "sell_forex";
+  recommendedDate: string | null;
+  confidence: "low" | "medium" | "high";
+  reason: string;
+}
+
+export interface ForecastResponse {
+  bank: string;
+  currency: string;
+  lookbackDays: number;
+  horizonDays: number;
+  historyDaysAvailable: number;
+  method: "trend_regression";
+  dataQuality: "insufficient" | "limited" | "good";
+  series: ForecastDailyPoint[];
+  forecast: ForecastPoint[];
+  advice: ForecastAdvice[];
+}

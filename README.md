@@ -12,6 +12,7 @@ Built for **Netlify** (static frontend + serverless functions) with **Supabase**
 - Bank comparison + best buying / best selling highlights
 - Intraday historical observations (not one row per day)
 - History table + simple chart
+- Forecast assistant: best day suggestion (buy/sell) + short-term trend projection
 - Source freshness / health indicators
 - Manual refresh (with cooldown) + scheduled collection every 30 minutes
 - Light / dark mode
@@ -245,9 +246,23 @@ Scheduled functions need a Netlify plan that supports them. If scheduling is una
 |--------|------|-------------|
 | `GET` | `/api/rates?currency=USD` | Latest rates + best rates |
 | `GET` | `/api/history?bank=SEYLAN&currency=USD&date=2026-08-14` | Intraday history |
+| `GET` | `/api/forecast?bank=SEYLAN&currency=USD&window=7&horizon=3` | Daily trend forecast + suggested best day |
 | `GET` | `/api/banks` | Bank config |
 | `GET` | `/api/currencies` | Currency config |
 | `POST` | `/api/refresh` | Fetch banks + store new observations |
+
+## Forecast model notes
+
+- Current method is a free local/statistical approach (`trend_regression`) using your stored historical rates.
+- With only one day of history, the API returns low-confidence guidance and asks for more data.
+- Accuracy improves once you collect ~7+ days of observations.
+
+## "AI" and cost (ChatGPT Go)
+
+- Your ChatGPT Go plan is for chat usage, not OpenAI API billing/keys.
+- So a server-side OpenAI call from Netlify is not free by default and is not covered by ChatGPT Go.
+- This project now includes a no-cost built-in forecasting assistant so you can start immediately.
+- If you later want LLM-written narrative explanations, you can add an optional API-based layer behind a feature flag.
 
 ---
 

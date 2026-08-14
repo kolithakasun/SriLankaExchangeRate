@@ -1,17 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { relativeTime, toColombo } from "@shared/utils/time";
 import { DEFAULT_CURRENCY } from "@shared/config/currencies";
 import { useRates } from "../hooks/useRates";
+import { useForecast } from "../hooks/useForecast";
 import { CurrencySelector } from "../components/CurrencySelector";
 import { BankRateCard } from "../components/BankRateCard";
 import { ComparisonTable } from "../components/ComparisonTable";
 import { BestRatesPanel } from "../components/BestRatesPanel";
+import { ForecastPanel } from "../components/ForecastPanel";
 import { HistorySection } from "../components/HistorySection";
 import { ThemeToggle } from "../components/ThemeToggle";
 
 export default function Dashboard() {
   const [currency, setCurrency] = useState(DEFAULT_CURRENCY);
+  const [forecastBank, setForecastBank] = useState<string | undefined>(undefined);
   const { data, loading, refreshing, error, refresh } = useRates(currency);
+  const {
+    data: forecast,
+    loading: forecastLoading,
+    error: forecastError,
+  } = useForecast(currency, forecastBank);
+
+  useEffect(() => {
+    if (!data?.banks.length || forecastBank) return;
+    const featured = data.banks.find((b) => b.featured)?.code;
+    setForecastBank(featured ?? data.banks[0]?.code);
+  }, [data?.banks, forecastBank]);
 
   const featured = data?.rates.filter((r) => r.featured) ?? [];
   const others = data?.rates.filter((r) => !r.featured) ?? [];
@@ -75,6 +89,37 @@ export default function Dashboard() {
               />
             </div>
           )}
+
+          <div className="mb-8">
+            <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <h2 className="text-2xl font-extrabold tracking-tight">Forecast</h2>
+                <p className="text-sm text-[var(--color-ink-muted)]">
+                  Suggested days to exchange based on historical trend
+                </p>
+              </div>
+              <label className="text-sm">
+                <span className="mb-1 block text-[var(--color-ink-muted)]">Bank for forecast</span>
+                <select
+                  className="rounded-lg border border-[var(--color-line)] bg-[var(--color-panel)] px-3 py-2"
+                  value={forecastBank ?? ""}
+                  onChange={(e) => setForecastBank(e.target.value || undefined)}
+                >
+                  {(data?.banks ?? []).map((b) => (
+                    <option key={b.code} value={b.code}>
+                      {b.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <ForecastPanel
+              currency={currency}
+              forecast={forecast}
+              loading={forecastLoading}
+              error={forecastError}
+            />
+          </div>
 
           <section className="mb-10">
             <div className="mb-4">

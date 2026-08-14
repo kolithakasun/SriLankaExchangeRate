@@ -1,6 +1,7 @@
 import type {
   BestRates,
   DayComparison,
+  ForecastResponse,
   HistoryPoint,
   LatestRateView,
 } from "@shared/types";
@@ -47,6 +48,13 @@ export interface RefreshResponse {
   error?: string;
 }
 
+export interface ForecastQuery {
+  bank?: string;
+  currency: string;
+  window?: number;
+  horizon?: number;
+}
+
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
     ...init,
@@ -84,6 +92,14 @@ export function refreshRates(token?: string): Promise<RefreshResponse> {
 
 export function fetchBanks() {
   return api<{ banks: RatesResponse["banks"] }>("/api/banks");
+}
+
+export function fetchForecast(query: ForecastQuery): Promise<ForecastResponse> {
+  const params = new URLSearchParams({ currency: query.currency });
+  if (query.bank) params.set("bank", query.bank);
+  if (query.window) params.set("window", String(query.window));
+  if (query.horizon) params.set("horizon", String(query.horizon));
+  return api(`/api/forecast?${params.toString()}`);
 }
 
 export function fetchCurrencies() {
