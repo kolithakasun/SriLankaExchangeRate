@@ -1,0 +1,39 @@
+{
+  "name": "sri-lanka-exchange-rates",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:live": "LIVE_PROVIDERS=1 vitest run tests/live-providers.test.ts",
+    "netlify:dev": "npx netlify-cli dev"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.8",
+    "cheerio": "^1.0.0",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.1",
+    "recharts": "^2.15.3"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^3.1.2",
+    "@tailwindcss/vite": "^4.1.7",
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.5",
+    "@types/react-dom": "^19.1.5",
+    "@vitejs/plugin-react": "^4.5.0",
+    "concurrently": "^9.1.2",
+    "tailwindcss": "^4.1.7",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.1.4"
+  }
+}

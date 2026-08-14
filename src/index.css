@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --color-ink: #10231c;
+  --color-ink-muted: #4d6359;
+  --color-surface: #f3f7f4;
+  --color-panel: #ffffff;
+  --color-line: #d5e2db;
+  --color-accent: #0f7a56;
+  --color-accent-soft: #e4f4ec;
+  --color-warn: #a15c12;
+  --color-warn-soft: #fff1de;
+  --color-danger: #9f2d2d;
+  --color-up: #0f7a56;
+  --color-down: #9f2d2d;
+}
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+  --color-ink: #e8f2ec;
+  --color-ink-muted: #9bb3a7;
+  --color-surface: #0c1612;
+  --color-panel: #132019;
+  --color-line: #24362d;
+  --color-accent: #3ecf91;
+  --color-accent-soft: #163528;
+  --color-warn: #f0b35a;
+  --color-warn-soft: #2d2416;
+  --color-danger: #f07171;
+  --color-up: #3ecf91;
+  --color-down: #f07171;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(15, 122, 86, 0.12), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(20, 80, 120, 0.08), transparent 55%),
+    var(--color-surface);
+}
+
+.dark body,
+.dark {
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(62, 207, 145, 0.08), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(40, 90, 140, 0.12), transparent 55%),
+    var(--color-surface);
+}
+
+.rate-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}

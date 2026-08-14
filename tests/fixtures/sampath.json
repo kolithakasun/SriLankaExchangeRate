@@ -1,0 +1,23 @@
+{
+  "success": true,
+  "data": [
+    {
+      "CurrCode": "USD",
+      "TTBUY": "329.5",
+      "TTSEL": "337.5",
+      "RateWEF": "Friday, August 14 2026, 08:10:32 AM"
+    },
+    {
+      "CurrCode": "EUR",
+      "TTBUY": "378.06",
+      "TTSEL": "391.38",
+      "RateWEF": "Friday, August 14 2026, 08:10:32 AM"
+    },
+    {
+      "CurrCode": "BAD",
+      "TTBUY": "-",
+      "TTSEL": "N/A",
+      "RateWEF": "Friday, August 14 2026, 08:10:32 AM"
+    }
+  ]
+}
