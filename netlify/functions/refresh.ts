@@ -10,7 +10,7 @@ const handler: Handler = wrap(async (event) => {
 
   const allowed = checkRefreshAllowed(event);
   if (!allowed.ok) {
-    return json(429, { error: allowed.reason });
+    return json(allowed.statusCode ?? 429, { error: allowed.reason });
   }
 
   console.log("Starting rate refresh…");

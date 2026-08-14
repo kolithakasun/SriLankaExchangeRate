@@ -2,6 +2,7 @@ import type { Handler } from "@netlify/functions";
 import { getLatestRates, usingSupabase } from "./lib/store.js";
 import { json, wrap } from "./lib/http.js";
 import { getEnabledBanks } from "../../shared/config/banks.js";
+import { DEFAULT_CURRENCY } from "../../shared/config/currencies.js";
 import type { BestRates, DayComparison, LatestRateView } from "../../shared/types.js";
 import { getHistory } from "./lib/store.js";
 import { colomboDateKey } from "../../shared/utils/time.js";
@@ -82,7 +83,7 @@ const handler: Handler = wrap(async (event) => {
 
   const params = event.queryStringParameters ?? {};
   const bank = params.bank?.toUpperCase();
-  const currency = params.currency?.toUpperCase() ?? "USD";
+  const currency = params.currency?.toUpperCase() ?? DEFAULT_CURRENCY;
 
   if (bank && !getEnabledBanks().some((b) => b.code === bank)) {
     return json(400, { error: "Unknown bank" });

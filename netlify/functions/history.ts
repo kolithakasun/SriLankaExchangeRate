@@ -2,7 +2,10 @@ import type { Handler } from "@netlify/functions";
 import { getAvailableHistoryDates, getHistory, usingSupabase } from "./lib/store.js";
 import { json, wrap } from "./lib/http.js";
 import { getEnabledBanks } from "../../shared/config/banks.js";
-import { supportedCurrencyCodes } from "../../shared/config/currencies.js";
+import {
+  DEFAULT_CURRENCY,
+  supportedCurrencyCodes,
+} from "../../shared/config/currencies.js";
 import { colomboDateKey } from "../../shared/utils/time.js";
 
 const handler: Handler = wrap(async (event) => {
@@ -12,7 +15,7 @@ const handler: Handler = wrap(async (event) => {
 
   const params = event.queryStringParameters ?? {};
   const bank = (params.bank ?? "SEYLAN").toUpperCase();
-  const currency = (params.currency ?? "USD").toUpperCase();
+  const currency = (params.currency ?? DEFAULT_CURRENCY).toUpperCase();
   const date = params.date ?? colomboDateKey();
 
   if (!getEnabledBanks().some((b) => b.code === bank)) {

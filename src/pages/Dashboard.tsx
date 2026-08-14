@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { relativeTime, toColombo } from "@shared/utils/time";
+import { DEFAULT_CURRENCY } from "@shared/config/currencies";
 import { useRates } from "../hooks/useRates";
 import { CurrencySelector } from "../components/CurrencySelector";
 import { BankRateCard } from "../components/BankRateCard";
@@ -9,7 +10,7 @@ import { HistorySection } from "../components/HistorySection";
 import { ThemeToggle } from "../components/ThemeToggle";
 
 export default function Dashboard() {
-  const [currency, setCurrency] = useState("USD");
+  const [currency, setCurrency] = useState(DEFAULT_CURRENCY);
   const { data, loading, refreshing, error, refresh } = useRates(currency);
 
   const featured = data?.rates.filter((r) => r.featured) ?? [];

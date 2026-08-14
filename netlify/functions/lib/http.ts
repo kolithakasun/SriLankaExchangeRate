@@ -37,13 +37,29 @@ export function getClientIp(event: HandlerEvent): string {
 export function checkRefreshAllowed(event: HandlerEvent): {
   ok: boolean;
   reason?: string;
+  statusCode?: number;
 } {
   const required = process.env.REFRESH_TOKEN;
-  if (required) {
-    const provided = event.headers["x-refresh-token"];
-    if (provided !== required) {
-      return { ok: false, reason: "Unauthorized refresh token" };
+  const mustHaveToken = process.env.REQUIRE_REFRESH_TOKEN === "true";
+  const provided =
+    event.headers["x-refresh-token"] || event.headers["X-Refresh-Token"];
+
+  // Token is optional unless REQUIRE_REFRESH_TOKEN=true.
+  // If a token header is sent, it must match when REFRESH_TOKEN is configured.
+  if (mustHaveToken) {
+    if (!required || provided !== required) {
+      return {
+        ok: false,
+        statusCode: 401,
+        reason: "Unauthorized refresh token",
+      };
     }
+  } else if (required && provided && provided !== required) {
+    return {
+      ok: false,
+      statusCode: 401,
+      reason: "Unauthorized refresh token",
+    };
   }
 
   const cooldown = Number(process.env.REFRESH_COOLDOWN_SECONDS ?? 60);
@@ -53,6 +69,7 @@ export function checkRefreshAllowed(event: HandlerEvent): {
   if (now - last < cooldown * 1000) {
     return {
       ok: false,
+      statusCode: 429,
       reason: `Please wait ${cooldown}s between refresh requests`,
     };
   }
