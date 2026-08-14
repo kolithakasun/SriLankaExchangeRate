@@ -12,6 +12,7 @@ Built for **Netlify** (static frontend + serverless functions) with **Supabase**
 - Bank comparison + best buying / best selling highlights
 - Intraday historical observations (not one row per day)
 - History table + simple chart
+- Forecast panel: trend detection + best/worst day-of-week, with an optional free AI-written summary (Gemini or Groq)
 - Source freshness / health indicators
 - Manual refresh (with cooldown) + scheduled collection every 30 minutes
 - Light / dark mode
@@ -124,6 +125,9 @@ VITE_SUPABASE_ANON_KEY=
 | `REQUIRE_REFRESH_TOKEN` | No (default `false`) | When `true`, `/api/refresh` needs header `x-refresh-token` |
 | `REFRESH_COOLDOWN_SECONDS` | No (default `60`) | Limits how often refresh can run |
 | `RATE_REFRESH_INTERVAL` | No (default `30`) | Hint for “stale” status in the UI |
+| `GEMINI_API_KEY` | No | Free key (no card) from [Google AI Studio](https://aistudio.google.com/apikey) — enables AI-written Forecast summaries |
+| `GROQ_API_KEY` | No | Free key (no card) from [Groq Console](https://console.groq.com/keys) — alternative AI-written Forecast summaries (Llama models). Used if `GEMINI_API_KEY` isn't set, or if `AI_PROVIDER=groq` |
+| `AI_PROVIDER` | No | Force `gemini` or `groq` when both keys are set (default: tries Gemini first). Without any key, the Forecast panel still works, using a template-generated summary instead |
 | `VITE_SUPABASE_*` | No | Not used by the current UI |
 
 Without Supabase credentials, the app falls back to a **local temp JSON store** (fine for quick UI work, not for production history).
@@ -245,11 +249,23 @@ Scheduled functions need a Netlify plan that supports them. If scheduling is una
 |--------|------|-------------|
 | `GET` | `/api/rates?currency=USD` | Latest rates + best rates |
 | `GET` | `/api/history?bank=SEYLAN&currency=USD&date=2026-08-14` | Intraday history |
+| `GET` | `/api/forecast?bank=SEYLAN&currency=USD&days=30` | Trend + best/worst day-of-week forecast, with AI summary |
 | `GET` | `/api/banks` | Bank config |
 | `GET` | `/api/currencies` | Currency config |
 | `POST` | `/api/refresh` | Fetch banks + store new observations |
 
 ---
+
+## Forecast methodology
+
+`/api/forecast` computes everything from your own collected `exchange_rates` history — no external market data, no paid API required:
+
+1. Intraday observations are grouped into daily averages per bank/currency.
+2. With **3+ days** of history: a simple linear trend (least-squares regression) gives a direction (up/down/flat) and a naive next-day projection.
+3. With **14+ days** of history: day-of-week averages become meaningful enough to surface a "historically best/worst day" signal.
+4. Below 3 days, the panel honestly reports "not enough history yet" rather than guessing.
+
+An optional `GEMINI_API_KEY` or `GROQ_API_KEY` (both free tier, no billing card — see [Environment variables](#2-environment-variables)) turns those numbers into a 2–3 sentence plain-English summary. If both are set, Gemini is tried first (override with `AI_PROVIDER=groq`); if a provider's request fails, it falls through to the next one, then to a template sentence built from the same numbers — the forecast itself never depends on the AI call succeeding, since numeric forecasting is done statistically and the AI is only used for narration. Use whichever free key you already have — anyone deploying this doesn't need Gemini specifically.
 
 ## Adding a bank
 

@@ -432,6 +432,59 @@ export async function getHistory(options: {
     }));
 }
 
+export async function getHistoryRange(options: {
+  bank: string;
+  currency: string;
+  days: number;
+}): Promise<HistoryPoint[]> {
+  const cutoff = new Date(Date.now() - options.days * 24 * 60 * 60 * 1000).toISOString();
+  const client = getServiceClient();
+
+  if (client) {
+    const { data, error } = await client
+      .from("exchange_rates")
+      .select("*")
+      .eq("bank_code", options.bank.toUpperCase())
+      .eq("currency_code", options.currency.toUpperCase())
+      .gte("retrieved_at", cutoff)
+      .order("retrieved_at", { ascending: true })
+      .limit(5000);
+
+    if (error) throw new Error(error.message);
+
+    return (data ?? []).map((row) => ({
+      id: row.id as string,
+      bankCode: row.bank_code as string,
+      currency: row.currency_code as string,
+      ttBuying: numberOrNull(row.tt_buying),
+      ttSelling: numberOrNull(row.tt_selling),
+      sourceTimestamp: row.source_timestamp as string | null,
+      retrievedAt: row.retrieved_at as string,
+      createdAt: row.created_at as string,
+    }));
+  }
+
+  const store = readLocal();
+  return store.rates
+    .filter(
+      (r) =>
+        r.bankCode === options.bank.toUpperCase() &&
+        r.currency === options.currency.toUpperCase() &&
+        r.retrievedAt >= cutoff,
+    )
+    .sort((a, b) => (a.retrievedAt > b.retrievedAt ? 1 : -1))
+    .map((r) => ({
+      id: r.id,
+      bankCode: r.bankCode,
+      currency: r.currency,
+      ttBuying: r.ttBuying,
+      ttSelling: r.ttSelling,
+      sourceTimestamp: r.sourceTimestamp ?? null,
+      retrievedAt: r.retrievedAt,
+      createdAt: r.createdAt,
+    }));
+}
+
 export async function getAvailableHistoryDates(options: {
   bank: string;
   currency: string;
