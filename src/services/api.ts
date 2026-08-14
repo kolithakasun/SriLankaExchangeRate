@@ -1,6 +1,7 @@
 import type {
   BestRates,
   DayComparison,
+  ForecastResult,
   HistoryPoint,
   LatestRateView,
 } from "@shared/types";
@@ -30,6 +31,18 @@ export interface HistoryResponse {
   storage: string;
   points: HistoryPoint[];
   availableDates: string[];
+}
+
+export interface ForecastResponse {
+  bank: string;
+  currency: string;
+  storage: string;
+  daysAnalyzed: number;
+  confidence: ForecastResult["confidence"];
+  forecast: ForecastResult;
+  narration: string;
+  narrationSource: "gemini" | "groq" | "template";
+  availableProviders: Array<"gemini" | "groq">;
 }
 
 export interface RefreshResponse {
@@ -73,6 +86,19 @@ export function fetchHistory(params: {
 }): Promise<HistoryResponse> {
   const q = new URLSearchParams(params);
   return api(`/api/history?${q.toString()}`);
+}
+
+export function fetchForecast(params: {
+  bank: string;
+  currency: string;
+  provider?: "auto" | "gemini" | "groq";
+}): Promise<ForecastResponse> {
+  const q = new URLSearchParams({
+    bank: params.bank,
+    currency: params.currency,
+    ...(params.provider ? { provider: params.provider } : {}),
+  });
+  return api(`/api/forecast?${q.toString()}`);
 }
 
 export function refreshRates(token?: string): Promise<RefreshResponse> {

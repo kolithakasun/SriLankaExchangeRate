@@ -119,3 +119,40 @@ export interface DayComparison {
   yesterdaySelling: number | null;
   sellingChange: number | null;
 }
+
+export interface DailyAggregate {
+  date: string;
+  avgBuying: number | null;
+  minBuying: number | null;
+  maxBuying: number | null;
+  avgSelling: number | null;
+  minSelling: number | null;
+  maxSelling: number | null;
+  samples: number;
+}
+
+export type ForecastConfidence = "low" | "medium" | "high";
+
+export interface DayOfWeekStat {
+  weekday: number;
+  avgBuying: number | null;
+  avgSelling: number | null;
+  samples: number;
+}
+
+export interface ForecastTrend {
+  direction: "up" | "down" | "flat";
+  pctChangePerDay: number;
+  projectedNextDayBuying: number | null;
+  projectedNextDaySelling: number | null;
+}
+
+export interface ForecastResult {
+  daysCovered: number;
+  confidence: ForecastConfidence;
+  trend: ForecastTrend | null;
+  bestDayOfWeek: DayOfWeekStat | null;
+  worstDayOfWeek: DayOfWeekStat | null;
+  suggestedAction: string;
+  daily: DailyAggregate[];
+}

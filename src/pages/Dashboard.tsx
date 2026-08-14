@@ -7,6 +7,7 @@ import { BankRateCard } from "../components/BankRateCard";
 import { ComparisonTable } from "../components/ComparisonTable";
 import { BestRatesPanel } from "../components/BestRatesPanel";
 import { HistorySection } from "../components/HistorySection";
+import { ForecastPanel } from "../components/ForecastPanel";
 import { ThemeToggle } from "../components/ThemeToggle";
 
 export default function Dashboard() {
@@ -110,6 +111,10 @@ export default function Dashboard() {
               ))}
             </div>
           </section>
+
+          <div className="mb-12">
+            <ForecastPanel defaultCurrency={currency} />
+          </div>
 
           <section className="mb-12">
             <div className="mb-4">
