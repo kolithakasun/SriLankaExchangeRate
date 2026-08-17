@@ -95,6 +95,30 @@ export interface HistoryPoint {
   createdAt?: string;
 }
 
+export type HistoryRange = "1d" | "1w" | "1m" | "3m" | "6m" | "1y" | "all";
+
+/**
+ * One row per bank/currency/Colombo day. Created on the first check of the day
+ * (even when rates match yesterday) and updated in place when rates move.
+ */
+export interface DailyRatePoint {
+  /** Colombo calendar date, "yyyy-MM-dd". */
+  date: string;
+  /** Latest values seen on that day. */
+  ttBuying: number | null;
+  ttSelling: number | null;
+  /** First values seen on that day. */
+  openTtBuying: number | null;
+  openTtSelling: number | null;
+  sourceTimestamp: string | null;
+  firstSeenAt: string | null;
+  lastCheckedAt: string | null;
+  lastChangedAt: string | null;
+  /** How many times the rate moved during the day. */
+  changeCount: number;
+  observations: number;
+}
+
 export interface BestRates {
   currency: string;
   bestBuying: {
@@ -118,6 +142,9 @@ export interface DayComparison {
   todaySelling: number | null;
   yesterdaySelling: number | null;
   sellingChange: number | null;
+  /** Dates actually compared; the previous day may be older than yesterday if a day was missed. */
+  todayDate?: string | null;
+  previousDate?: string | null;
 }
 
 export interface DailyAggregate {

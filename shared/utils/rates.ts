@@ -93,6 +93,28 @@ export function ratesEqual(
   return a.ttBuying === b.ttBuying && a.ttSelling === b.ttSelling;
 }
 
+export type ObservationReason = "first" | "new-day" | "changed" | "unchanged";
+
+/**
+ * Decides whether a scraped rate deserves a new stored observation.
+ *
+ * A new Colombo day always gets its own record, even when the values match the
+ * previous day, so the daily series never has gaps on days we did check.
+ */
+export function decideObservation(params: {
+  previous:
+    | { ttBuying: number | null; ttSelling: number | null; dateKey: string }
+    | null;
+  current: { ttBuying: number | null; ttSelling: number | null };
+  dateKey: string;
+}): { record: boolean; reason: ObservationReason } {
+  const { previous, current, dateKey } = params;
+  if (!previous) return { record: true, reason: "first" };
+  if (previous.dateKey !== dateKey) return { record: true, reason: "new-day" };
+  if (!ratesEqual(previous, current)) return { record: true, reason: "changed" };
+  return { record: false, reason: "unchanged" };
+}
+
 export function formatRate(
   value: number | null | undefined,
   currency?: string,

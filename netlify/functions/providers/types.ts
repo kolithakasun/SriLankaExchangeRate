@@ -1,4 +1,4 @@
-import type { ProviderResult } from "../../shared/types.js";
+import type { ProviderResult } from "../../../shared/types.js";
 
 export interface BankExchangeRateProvider {
   code: string;

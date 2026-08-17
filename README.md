@@ -10,8 +10,8 @@ Built for **Netlify** (static frontend + serverless functions) with **Supabase**
 - Currencies: USD, AUD, EUR, JPY, SGD (config-driven)
 - Featured banks (Seylan · HNB · Commercial)
 - Bank comparison + best buying / best selling highlights
-- Intraday historical observations (not one row per day)
-- History table + simple chart
+- Intraday historical observations **plus** a guaranteed one-row-per-day snapshot
+- History table + chart over 1D / 1W / 1M / 3M / 6M / 1Y / All
 - Forecast panel: trend detection + best/worst day-of-week, with an optional free AI-written summary (Gemini or Groq)
 - Source freshness / health indicators
 - Manual refresh (with cooldown) + scheduled collection every 30 minutes
@@ -82,7 +82,8 @@ See [`docs/SOURCES.md`](docs/SOURCES.md) for details.
 1. Create a project at [supabase.com](https://supabase.com).
 2. Open **SQL Editor** → New query.
 3. Paste and run the full contents of [`supabase/migrations/001_init.sql`](supabase/migrations/001_init.sql).
-4. Open **Project Settings → API** and copy:
+4. Run [`supabase/migrations/002_daily_rates.sql`](supabase/migrations/002_daily_rates.sql) as well. It adds the `daily_rates` snapshot table and backfills it from any observations already stored, so existing history shows up in the long-range charts immediately.
+5. Open **Project Settings → API** and copy:
    - **Project URL** → `SUPABASE_URL`
    - **Publishable / anon key** → `SUPABASE_ANON_KEY`
    - **Secret / service_role key** → `SUPABASE_SERVICE_ROLE_KEY`
@@ -248,11 +249,33 @@ Scheduled functions need a Netlify plan that supports them. If scheduling is una
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/api/rates?currency=USD` | Latest rates + best rates |
-| `GET` | `/api/history?bank=SEYLAN&currency=USD&date=2026-08-14` | Intraday history |
+| `GET` | `/api/history?bank=SEYLAN&currency=USD&range=1d&date=2026-08-14` | Intraday history for one day |
+| `GET` | `/api/history?bank=SEYLAN&currency=USD&range=1m` | Daily history (`1w`, `1m`, `3m`, `6m`, `1y`, `all`) |
 | `GET` | `/api/forecast?bank=SEYLAN&currency=USD&days=30` | Trend + best/worst day-of-week forecast, with AI summary |
 | `GET` | `/api/banks` | Bank config |
 | `GET` | `/api/currencies` | Currency config |
 | `POST` | `/api/refresh` | Fetch banks + store new observations |
+
+---
+
+## How history is stored
+
+Two tables, two purposes:
+
+| Table | Granularity | Written when |
+|-------|-------------|--------------|
+| `exchange_rates` | Every observation | First ever check, the first check of a new Colombo day, or whenever a rate moves |
+| `daily_rates` | One row per bank + currency + day | Created on the first successful check of the day, then **updated in place** each time the rate moves that day |
+
+Why both: `exchange_rates` answers "what happened during the day", `daily_rates` guarantees the long-range charts have exactly one point per day that was checked — including days where the rate never moved.
+
+`daily_rates` also tracks `open_tt_buying` / `open_tt_selling` (first values of the day), `change_count` (how many times the rate moved), and `last_checked_at` (proof the day was checked even when nothing changed).
+
+A repeated check within the same day with identical values writes no new observation; it only bumps `last_checked_at` and `observations` on the daily row.
+
+**Gaps still mean "not collected".** Rates are only recorded when something actually runs, so a day with no scheduled refresh, no cron hit, and no manual refresh stays absent — nothing is back-filled or interpolated. Make sure the scheduled function is enabled on your deployed site (or an external cron hits `/api/refresh`) if you want unbroken daily history. See [Scheduled collection](#f-scheduled-collection).
+
+If migration 002 hasn't been applied, `/api/history` still works: it collapses raw observations into a daily series and flags `dailySource: "observations"` in the response.
 
 ---
 
@@ -306,6 +329,8 @@ Covers:
 - Validation ranges
 - Duplicate detection helpers
 - Sampath JSON normalization
+- Day-boundary storage rules (new day recorded even when unchanged; same-day repeats skipped)
+- Daily series aggregation + range summaries
 
 Live bank check:
 
@@ -347,6 +372,8 @@ npm run test:live
 | `Please wait 60s…` | Cooldown — wait, or lower `REFRESH_COOLDOWN_SECONDS` locally |
 | Supabase insert errors | Confirm `SUPABASE_SERVICE_ROLE_KEY` is the **secret/service_role** key, not the publishable key |
 | One bank missing | Check Netlify function logs; that provider failed independently |
+| History shows only one or two days | Those are the only days a refresh actually ran. Enable the scheduled function or an external cron on `/api/refresh` |
+| Long ranges look sparse after upgrading | Run `supabase/migrations/002_daily_rates.sql`; it backfills `daily_rates` from existing observations |
 
 ---
 
@@ -356,4 +383,5 @@ npm run test:live
 - If a provider fails, the UI keeps the last valid rate and shows a stale/error indicator.
 - HNB’s public API returns one buy/sell pair labelled as Telegraphic Transfer in their UI.
 - Some banks may omit a currency on some days; missing values are not stored as zeros.
+- Daily history only covers days on which a refresh ran; missed days are left empty rather than estimated.
 - Rates are indicative — confirm with your bank before transacting.
