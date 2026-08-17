@@ -10,7 +10,7 @@ export function BankRateCard({
   highlight?: "buying" | "selling" | null;
 }) {
   return (
-    <article className="rounded-2xl border border-[var(--color-line)] bg-[var(--color-panel)] p-5 shadow-[0_1px_0_rgba(16,35,28,0.04)]">
+    <article className="@container rounded-2xl border border-[var(--color-line)] bg-[var(--color-panel)] p-5 shadow-[0_1px_0_rgba(16,35,28,0.04)]">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="text-lg font-bold tracking-tight">{rate.bankName}</h3>
@@ -28,8 +28,8 @@ export function BankRateCard({
         )}
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-4">
-        <div>
+      <div className="mt-5 grid grid-cols-2 gap-3">
+        <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-ink-muted)]">
             TT Buying
           </p>
@@ -40,7 +40,7 @@ export function BankRateCard({
             size="lg"
           />
         </div>
-        <div>
+        <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-ink-muted)]">
             TT Selling
           </p>
