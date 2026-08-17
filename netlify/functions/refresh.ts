@@ -31,6 +31,8 @@ const handler: Handler = wrap(async (event) => {
     storage: usingSupabase() ? "supabase" : "local",
     checked: persisted.checked,
     inserted: persisted.inserted,
+    dailyCreated: persisted.dailyCreated,
+    dailyUpdated: persisted.dailyUpdated,
     results: results.map((r) => ({
       bankCode: r.bankCode,
       success: r.success,

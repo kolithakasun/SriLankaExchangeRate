@@ -52,6 +52,11 @@ export function BestRatesPanel({
         <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--color-ink-muted)]">
           Day comparison · {day.bankCode ?? "featured"}
         </h3>
+        {(day.todayDate || day.previousDate) && (
+          <p className="mt-1 text-xs text-[var(--color-ink-muted)]">
+            {day.todayDate ?? "—"} vs {day.previousDate ?? "no earlier day stored"}
+          </p>
+        )}
         <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
           <div>
             <p className="text-[var(--color-ink-muted)]">TT Buying</p>

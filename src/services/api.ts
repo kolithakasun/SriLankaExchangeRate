@@ -1,10 +1,13 @@
 import type {
   BestRates,
+  DailyRatePoint,
   DayComparison,
   ForecastResult,
   HistoryPoint,
+  HistoryRange,
   LatestRateView,
 } from "@shared/types";
+import type { DailySeriesSummary } from "@shared/utils/history";
 
 export interface RatesResponse {
   currency: string;
@@ -27,9 +30,16 @@ export interface RatesResponse {
 export interface HistoryResponse {
   bank: string;
   currency: string;
+  mode: "day" | "range";
+  range: HistoryRange;
   date: string;
+  days: number;
   storage: string;
+  /** Whether the daily series came from the snapshot table or raw observations. */
+  dailySource: "snapshot" | "observations" | null;
   points: HistoryPoint[];
+  daily: DailyRatePoint[];
+  summary: DailySeriesSummary | null;
   availableDates: string[];
 }
 
@@ -50,6 +60,8 @@ export interface RefreshResponse {
   storage: string;
   checked: number;
   inserted: number;
+  dailyCreated?: number;
+  dailyUpdated?: number;
   results: Array<{
     bankCode: string;
     success: boolean;
@@ -82,9 +94,15 @@ export function fetchRates(currency: string): Promise<RatesResponse> {
 export function fetchHistory(params: {
   bank: string;
   currency: string;
-  date: string;
+  range: HistoryRange;
+  date?: string;
 }): Promise<HistoryResponse> {
-  const q = new URLSearchParams(params);
+  const q = new URLSearchParams({
+    bank: params.bank,
+    currency: params.currency,
+    range: params.range,
+    ...(params.date ? { date: params.date } : {}),
+  });
   return api(`/api/history?${q.toString()}`);
 }
 

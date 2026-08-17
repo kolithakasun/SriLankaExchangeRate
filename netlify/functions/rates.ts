@@ -4,8 +4,7 @@ import { json, wrap } from "./lib/http.js";
 import { getEnabledBanks } from "../../shared/config/banks.js";
 import { DEFAULT_CURRENCY } from "../../shared/config/currencies.js";
 import type { BestRates, DayComparison, LatestRateView } from "../../shared/types.js";
-import { getHistory } from "./lib/store.js";
-import { colomboDateKey } from "../../shared/utils/time.js";
+import { getDailyHistory } from "./lib/store.js";
 
 function computeBest(rates: LatestRateView[], currency: string): BestRates {
   let bestBuying: BestRates["bestBuying"] = null;
@@ -39,28 +38,24 @@ async function dayComparison(
   currency: string,
   bankCode?: string,
 ): Promise<DayComparison> {
-  const today = colomboDateKey();
-  const yesterdayDate = new Date(`${today}T12:00:00+05:30`);
-  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-  const yesterday = colomboDateKey(yesterdayDate);
-
   const bank = bankCode ?? getEnabledBanks()[0]?.code ?? "SEYLAN";
-  const [todayRows, yesterdayRows] = await Promise.all([
-    getHistory({ bank, currency, date: today }),
-    getHistory({ bank, currency, date: yesterday }),
-  ]);
 
-  const todayLatest = todayRows[todayRows.length - 1];
-  const yesterdayLatest = yesterdayRows[yesterdayRows.length - 1];
+  // Compare the two most recent days that actually have data, so a missed day
+  // (holiday, outage) still yields a meaningful change instead of a blank.
+  const { daily } = await getDailyHistory({ bank, currency, days: 30 });
+  const latest = daily[daily.length - 1] ?? null;
+  const previous = daily.length > 1 ? daily[daily.length - 2] : null;
 
-  const todayBuying = todayLatest?.ttBuying ?? null;
-  const yesterdayBuying = yesterdayLatest?.ttBuying ?? null;
-  const todaySelling = todayLatest?.ttSelling ?? null;
-  const yesterdaySelling = yesterdayLatest?.ttSelling ?? null;
+  const todayBuying = latest?.ttBuying ?? null;
+  const yesterdayBuying = previous?.ttBuying ?? null;
+  const todaySelling = latest?.ttSelling ?? null;
+  const yesterdaySelling = previous?.ttSelling ?? null;
 
   return {
     currency,
     bankCode: bank,
+    todayDate: latest?.date ?? null,
+    previousDate: previous?.date ?? null,
     todayBuying,
     yesterdayBuying,
     buyingChange:
