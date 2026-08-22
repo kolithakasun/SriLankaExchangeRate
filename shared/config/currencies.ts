@@ -6,16 +6,16 @@ import type { CurrencyConfig } from "../types.js";
  */
 export const currencies: CurrencyConfig[] = [
   {
-    code: "AUD",
-    name: "Australian Dollar",
-    symbol: "A$",
+    code: "USD",
+    name: "United States Dollar",
+    symbol: "$",
     enabled: true,
     decimals: 2,
   },
   {
-    code: "USD",
-    name: "United States Dollar",
-    symbol: "$",
+    code: "AUD",
+    name: "Australian Dollar",
+    symbol: "A$",
     enabled: true,
     decimals: 2,
   },
@@ -43,7 +43,7 @@ export const currencies: CurrencyConfig[] = [
 ];
 
 /** Default currency shown on the dashboard and API when none is specified. */
-export const DEFAULT_CURRENCY = "AUD";
+export const DEFAULT_CURRENCY = "USD";
 
 export const supportedCurrencyCodes = currencies
   .filter((c) => c.enabled)
