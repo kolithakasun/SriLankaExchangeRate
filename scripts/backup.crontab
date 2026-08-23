@@ -1,0 +1,10 @@
+# BEGIN SL-EXCHANGE-BACKUP
+# 4 times a day, Asia/Colombo. Do not prune last-good copies if dumps fail.
+# Install: sudo bash /opt/SriLankaExchangeRate/scripts/install-backup-cron.sh
+# If cron cannot see node: prepend NODE_BIN=/usr/bin/node to the command.
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin:/bin
+CRON_TZ=Asia/Colombo
+
+0 0,6,12,18 * * * APP_ROOT=/opt/SriLankaExchangeRate BACKUP_DIR=/opt/SriLankaExchangeRate/backups /opt/SriLankaExchangeRate/scripts/backup-cron.sh >>/opt/SriLankaExchangeRate/backups/cron.out 2>&1
+# END SL-EXCHANGE-BACKUP

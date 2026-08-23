@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "test:live": "LIVE_PROVIDERS=1 vitest run tests/live-providers.test.ts",
     "netlify:dev": "npx netlify-cli dev",
-    "db:backup": "node scripts/backup-db.mjs"
+    "db:backup": "node scripts/backup-db.mjs",
+    "db:backup:cron": "bash scripts/backup-cron.sh"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.8",
