@@ -1,5 +1,11 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { banks, getBankByCode } from "../../../shared/config/banks.js";
+import {
+  getBankByCode,
+  getEnabledBanks,
+  getEnabledSources,
+  getReferenceSources,
+} from "../../../shared/config/banks.js";
+import type { SourceKind } from "../../../shared/types.js";
 import { currencies } from "../../../shared/config/currencies.js";
 import { decideObservation, ratesEqual } from "../../../shared/utils/rates.js";
 import {
@@ -145,6 +151,30 @@ export async function persistProviderResults(
   return persistWithLocal(results);
 }
 
+async function ensureSourceRows(
+  client: SupabaseClient,
+  results: ProviderResult[],
+): Promise<void> {
+  for (const result of results) {
+    const bank = getBankByCode(result.bankCode);
+    if (!bank) continue;
+    const { error } = await client.from("banks").upsert(
+      {
+        code: bank.code,
+        name: bank.name,
+        source_url: bank.sourceUrl,
+        priority: bank.priority,
+        enabled: bank.enabled,
+        featured: bank.featured,
+      },
+      { onConflict: "code" },
+    );
+    if (error) {
+      console.error("Bank upsert failed", bank.code, error.message);
+    }
+  }
+}
+
 async function persistWithSupabase(
   client: SupabaseClient,
   results: ProviderResult[],
@@ -153,6 +183,8 @@ async function persistWithSupabase(
   let checked = 0;
   let dailyCreated = 0;
   let dailyUpdated = 0;
+
+  await ensureSourceRows(client, results);
 
   for (const result of results) {
     checked += 1;
@@ -463,10 +495,21 @@ function persistWithLocal(results: ProviderResult[]): PersistSummary {
   return { inserted, checked, dailyCreated, dailyUpdated, results };
 }
 
-export async function getLatestRates(filters?: {
+export type LatestRateFilters = {
   bank?: string;
   currency?: string;
-}): Promise<LatestRateView[]> {
+  kind?: SourceKind | "all";
+};
+
+function sourcesForLatest(filters?: LatestRateFilters) {
+  if (filters?.kind === "reference") return getReferenceSources();
+  if (filters?.kind === "all") return getEnabledSources();
+  return getEnabledBanks();
+}
+
+export async function getLatestRates(
+  filters?: LatestRateFilters,
+): Promise<LatestRateView[]> {
   const client = getServiceClient();
   if (client) return getLatestFromSupabase(client, filters);
   return getLatestFromLocal(filters);
@@ -474,7 +517,7 @@ export async function getLatestRates(filters?: {
 
 async function getLatestFromSupabase(
   client: SupabaseClient,
-  filters?: { bank?: string; currency?: string },
+  filters?: LatestRateFilters,
 ): Promise<LatestRateView[]> {
   const { data: statusRows } = await client.from("bank_status").select("*");
   const statusMap = new Map(
@@ -520,7 +563,7 @@ async function getLatestFromSupabase(
     }
   }
 
-  const enabledBanks = banks.filter((b) => b.enabled);
+  const enabledBanks = sourcesForLatest(filters);
   const views: LatestRateView[] = [];
 
   for (const bank of enabledBanks) {
@@ -560,12 +603,9 @@ async function getLatestFromSupabase(
   return views.sort((a, b) => a.priority - b.priority);
 }
 
-function getLatestFromLocal(filters?: {
-  bank?: string;
-  currency?: string;
-}): LatestRateView[] {
+function getLatestFromLocal(filters?: LatestRateFilters): LatestRateView[] {
   const store = readLocal();
-  const enabledBanks = banks.filter((b) => b.enabled);
+  const enabledBanks = sourcesForLatest(filters);
   const views: LatestRateView[] = [];
 
   for (const bank of enabledBanks) {

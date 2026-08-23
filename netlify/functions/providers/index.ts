@@ -1,4 +1,4 @@
-import { getEnabledBanks } from "../../../shared/config/banks.js";
+import { getEnabledSources } from "../../../shared/config/banks.js";
 import type { ProviderResult } from "../../../shared/types.js";
 import type { BankExchangeRateProvider } from "./types.js";
 import { seylanProvider } from "./seylan.js";
@@ -8,6 +8,8 @@ import { sampathProvider } from "./sampath.js";
 import { ndbProvider } from "./ndb.js";
 import { peoplesProvider } from "./peoples.js";
 import { bocProvider } from "./boc.js";
+import { cbslProvider } from "./cbsl.js";
+import { googleProvider } from "./google.js";
 
 const providers: Record<string, BankExchangeRateProvider> = {
   seylan: seylanProvider,
@@ -17,6 +19,8 @@ const providers: Record<string, BankExchangeRateProvider> = {
   ndb: ndbProvider,
   peoples: peoplesProvider,
   boc: bocProvider,
+  cbsl: cbslProvider,
+  google: googleProvider,
 };
 
 export function getProvider(providerKey: string): BankExchangeRateProvider | undefined {
@@ -24,7 +28,7 @@ export function getProvider(providerKey: string): BankExchangeRateProvider | und
 }
 
 export async function fetchAllBankRates(): Promise<ProviderResult[]> {
-  const enabled = getEnabledBanks();
+  const enabled = getEnabledSources();
   const tasks = enabled.map(async (bank) => {
     const provider = getProvider(bank.provider);
     if (!provider) {

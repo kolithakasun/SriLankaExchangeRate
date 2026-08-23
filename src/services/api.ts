@@ -2,6 +2,7 @@ import type {
   BestRates,
   DailyRatePoint,
   DayComparison,
+  ForecastRange,
   ForecastResult,
   HistoryPoint,
   HistoryRange,
@@ -15,6 +16,7 @@ export interface RatesResponse {
   storage: string;
   lastCheckedAt: string | null;
   rates: LatestRateView[];
+  references?: LatestRateView[];
   best: BestRates;
   dayComparison: DayComparison;
   banks: Array<{
@@ -47,8 +49,11 @@ export interface ForecastResponse {
   bank: string;
   currency: string;
   storage: string;
+  range?: ForecastRange;
+  days?: number;
   daysAnalyzed: number;
   confidence: ForecastResult["confidence"];
+  includeReferences?: boolean;
   forecast: ForecastResult;
   narration: string;
   narrationSource: "gemini" | "groq" | "template";
@@ -109,12 +114,16 @@ export function fetchHistory(params: {
 export function fetchForecast(params: {
   bank: string;
   currency: string;
+  range?: ForecastRange;
   provider?: "auto" | "gemini" | "groq";
+  references?: boolean;
 }): Promise<ForecastResponse> {
   const q = new URLSearchParams({
     bank: params.bank,
     currency: params.currency,
+    ...(params.range ? { range: params.range } : {}),
     ...(params.provider ? { provider: params.provider } : {}),
+    references: params.references === false ? "0" : "1",
   });
   return api(`/api/forecast?${q.toString()}`);
 }

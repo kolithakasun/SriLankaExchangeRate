@@ -12,7 +12,7 @@ Built for **Netlify** (static frontend + serverless functions) with **Supabase**
 - Bank comparison + best buying / best selling highlights
 - Intraday historical observations **plus** a guaranteed one-row-per-day snapshot
 - History table + chart over 1D / 1W / 1M / 3M / 6M / 1Y / All
-- Forecast panel: trend detection + best/worst day-of-week, with an optional free AI-written summary (Gemini or Groq)
+- Forecast panel: 1W / 2W / 1M / 3M / 6M lookback, trend + best/worst weekday, optional CBSL/Google signal and AI summary
 - Source freshness / health indicators
 - Manual refresh (with cooldown) + scheduled collection every 30 minutes
 - Light / dark mode
@@ -83,7 +83,8 @@ See [`docs/SOURCES.md`](docs/SOURCES.md) for details.
 2. Open **SQL Editor** → New query.
 3. Paste and run the full contents of [`supabase/migrations/001_init.sql`](supabase/migrations/001_init.sql).
 4. Run [`supabase/migrations/002_daily_rates.sql`](supabase/migrations/002_daily_rates.sql) as well. It adds the `daily_rates` snapshot table and backfills it from any observations already stored, so existing history shows up in the long-range charts immediately.
-5. Open **Project Settings → API** and copy:
+5. Run [`supabase/migrations/003_reference_sources.sql`](supabase/migrations/003_reference_sources.sql) to seed CBSL and Google as forecast reference sources. Refresh also upserts those rows if this migration has not been applied yet.
+6. Open **Project Settings → API** and copy:
    - **Project URL** → `SUPABASE_URL`
    - **Publishable / anon key** → `SUPABASE_ANON_KEY`
    - **Secret / service_role key** → `SUPABASE_SERVICE_ROLE_KEY`
@@ -251,7 +252,7 @@ Scheduled functions need a Netlify plan that supports them. If scheduling is una
 | `GET` | `/api/rates?currency=USD` | Latest rates + best rates |
 | `GET` | `/api/history?bank=SEYLAN&currency=USD&range=1d&date=2026-08-14` | Intraday history for one day |
 | `GET` | `/api/history?bank=SEYLAN&currency=USD&range=1m` | Daily history (`1w`, `1m`, `3m`, `6m`, `1y`, `all`) |
-| `GET` | `/api/forecast?bank=SEYLAN&currency=USD&days=30` | Trend + best/worst day-of-week forecast, with AI summary |
+| `GET` | `/api/forecast?bank=SEYLAN&currency=USD&range=1m&references=1` | Bank trend + optional CBSL/Google signal (`1w`, `2w`, `1m`, `3m`, `6m`) |
 | `GET` | `/api/banks` | Bank config |
 | `GET` | `/api/currencies` | Currency config |
 | `POST` | `/api/refresh` | Fetch banks + store new observations |
@@ -281,12 +282,17 @@ If migration 002 hasn't been applied, `/api/history` still works: it collapses r
 
 ## Forecast methodology
 
-`/api/forecast` computes everything from your own collected `exchange_rates` history — no external market data, no paid API required:
+`/api/forecast` computes the bank trend from stored daily snapshots (`daily_rates`, falling back to `exchange_rates`). Pick a lookback window in the UI or pass `range=1w|2w|1m|3m|6m` (default **1M** — long enough for a stable trend, short enough that a thin Google series does not dominate). `days=` still works and snaps to the nearest window.
 
-1. Intraday observations are grouped into daily averages per bank/currency.
+When `references=1` (the UI default), it loads the **same window** of **CBSL official 9:30 a.m. TT** and **Google Finance mid** from the database, then qualifies the bank signal (spread vs official/mid, whether trends agree). CBSL is live-fetched only when stored coverage is too thin for that window. Google has no official history API, so the stored daily trend is used and today's mid is overlaid. The bank-only numbers stay unchanged if those sources fail.
+
+Bank-only path (no paid API required):
+
+1. Daily snapshots for the selected window are used as the series (one row per Colombo day).
 2. With **3+ days** of history: a simple linear trend (least-squares regression) gives a direction (up/down/flat) and a naive next-day projection.
-3. With **14+ days** of history: day-of-week averages become meaningful enough to surface a "historically best/worst day" signal.
+3. With **14+ days** of history: day-of-week averages become meaningful enough to surface a "historically best/worst day" signal (use 2W or longer).
 4. Below 3 days, the panel honestly reports "not enough history yet" rather than guessing.
+5. Optional CBSL + Google layer (uncheck in the Forecast panel, or pass `references=0`): compare that bank's latest TT and trend to CBSL's official buy/sell and Google's mid. Missing references never blank the bank forecast.
 
 An optional `GEMINI_API_KEY` or `GROQ_API_KEY` (both free tier, no billing card — see [Environment variables](#2-environment-variables)) turns those numbers into a 2–3 sentence plain-English summary. If both are set, Gemini is tried first (override with `AI_PROVIDER=groq`); if a provider's request fails, it falls through to the next one, then to a template sentence built from the same numbers — the forecast itself never depends on the AI call succeeding, since numeric forecasting is done statistically and the AI is only used for narration. Use whichever free key you already have — anyone deploying this doesn't need Gemini specifically.
 

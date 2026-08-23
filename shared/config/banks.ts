@@ -1,4 +1,4 @@
-import type { BankConfig } from "../types.js";
+import type { BankCode, BankConfig, SourceKind } from "../types.js";
 
 export const banks: BankConfig[] = [
   {
@@ -8,6 +8,7 @@ export const banks: BankConfig[] = [
     priority: 1,
     enabled: true,
     featured: true,
+    kind: "bank",
     sourceUrl: "https://www.seylan.lk/exchange-rates",
     provider: "seylan",
   },
@@ -18,6 +19,7 @@ export const banks: BankConfig[] = [
     priority: 2,
     enabled: true,
     featured: true,
+    kind: "bank",
     sourceUrl: "https://www.hnb.lk/exchange-rates",
     provider: "hnb",
   },
@@ -28,6 +30,7 @@ export const banks: BankConfig[] = [
     priority: 3,
     enabled: true,
     featured: true,
+    kind: "bank",
     sourceUrl: "https://www.combank.lk/rates-tariff#exchange-rates",
     provider: "commercial",
   },
@@ -38,6 +41,7 @@ export const banks: BankConfig[] = [
     priority: 4,
     enabled: true,
     featured: false,
+    kind: "bank",
     sourceUrl:
       "https://www.sampath.lk/rates-and-charges?activeTab=exchange-rates",
     provider: "sampath",
@@ -49,6 +53,7 @@ export const banks: BankConfig[] = [
     priority: 5,
     enabled: true,
     featured: false,
+    kind: "bank",
     sourceUrl: "https://www.ndbbank.com/rates/exchange-rates",
     provider: "ndb",
   },
@@ -59,6 +64,7 @@ export const banks: BankConfig[] = [
     priority: 6,
     enabled: true,
     featured: false,
+    kind: "bank",
     sourceUrl: "https://www.peoplesbank.lk/exchange-rates/",
     provider: "peoples",
   },
@@ -69,13 +75,72 @@ export const banks: BankConfig[] = [
     priority: 7,
     enabled: true,
     featured: false,
+    kind: "bank",
     sourceUrl: "https://www.boc.lk/rates-tariff",
     provider: "boc",
   },
+  {
+    code: "CBSL",
+    name: "Central Bank of Sri Lanka",
+    shortName: "CBSL",
+    priority: 90,
+    enabled: true,
+    featured: false,
+    kind: "reference",
+    sourceUrl:
+      "https://www.cbsl.gov.lk/en/rates-and-indicators/exchange-rates/daily-buy-and-sell-exchange-rates",
+    provider: "cbsl",
+  },
+  {
+    code: "GOOGLE",
+    name: "Google Finance",
+    shortName: "Google",
+    priority: 91,
+    enabled: true,
+    featured: false,
+    kind: "reference",
+    sourceUrl: "https://www.google.com/finance/quote/USD-LKR",
+    provider: "google",
+  },
 ];
 
+export function sourceKind(bank: BankConfig | string): SourceKind {
+  if (typeof bank === "string") {
+    return getBankByCode(bank)?.kind ?? "bank";
+  }
+  return bank.kind ?? "bank";
+}
+
+export function isReferenceSource(code: string): boolean {
+  return sourceKind(code) === "reference";
+}
+
+/** Licensed banks shown in comparison, history, and forecast bank pickers. */
 export function getEnabledBanks(): BankConfig[] {
+  return banks
+    .filter((b) => b.enabled && sourceKind(b) === "bank")
+    .sort((a, b) => a.priority - b.priority);
+}
+
+/** Banks plus CBSL/Google — used only by collectors. */
+export function getEnabledSources(): BankConfig[] {
   return banks.filter((b) => b.enabled).sort((a, b) => a.priority - b.priority);
+}
+
+export function getReferenceSources(): BankConfig[] {
+  return getEnabledSources().filter((b) => sourceKind(b) === "reference");
+}
+
+export function isKnownSource(code: string): boolean {
+  return Boolean(getBankByCode(code));
+}
+
+export function isEnabledSource(code: string): boolean {
+  return getEnabledSources().some((b) => b.code === code.toUpperCase());
+}
+
+export function isForecastableBank(code: string): boolean {
+  return getEnabledBanks().some((b) => b.code === code.toUpperCase() as BankCode);
 }
 
 export function getBankByCode(code: string): BankConfig | undefined {

@@ -1,10 +1,17 @@
 import { colomboDateKey } from "./time.js";
 import type {
+  BankVsReference,
   DailyAggregate,
+  DailyRatePoint,
   DayOfWeekStat,
+  ForecastReferences,
   ForecastResult,
   ForecastTrend,
   HistoryPoint,
+  ReferenceQuoteKind,
+  ReferenceSeriesView,
+  ReferenceSourceId,
+  TrendAlignment,
 } from "../types.js";
 
 const WEEKDAY_NAMES = [
@@ -35,6 +42,43 @@ function round(value: number | null, decimals = 4): number | null {
 /** Weekday (0=Sunday..6=Saturday) for a "yyyy-MM-dd" date key, timezone-independent. */
 function weekdayOf(dateKey: string): number {
   return new Date(`${dateKey}T00:00:00Z`).getUTCDay();
+}
+
+const CBSL_MIN_STORED_DAYS = 3;
+
+/**
+ * Prefer stored CBSL daily rows. Live official history is only needed when
+ * the DB is thinner than ~30% of expected weekdays in the window.
+ */
+export function cbslStoredCoverageIsEnough(
+  storedDays: number,
+  requestedDays: number,
+): boolean {
+  if (storedDays < CBSL_MIN_STORED_DAYS) return false;
+  const expectedWeekdays = Math.floor((requestedDays * 5) / 7);
+  const threshold = Math.max(
+    CBSL_MIN_STORED_DAYS,
+    Math.floor(expectedWeekdays * 0.3),
+  );
+  return storedDays >= threshold;
+}
+
+/** Snapshot table rows → the daily series forecast already understands. */
+export function dailyPointsToAggregates(
+  points: DailyRatePoint[],
+): DailyAggregate[] {
+  return [...points]
+    .sort((a, b) => (a.date < b.date ? -1 : 1))
+    .map((point) => ({
+      date: point.date,
+      avgBuying: point.ttBuying,
+      minBuying: point.ttBuying,
+      maxBuying: point.ttBuying,
+      avgSelling: point.ttSelling,
+      minSelling: point.ttSelling,
+      maxSelling: point.ttSelling,
+      samples: Math.max(point.observations, 1),
+    }));
 }
 
 export function groupByColomboDay(points: HistoryPoint[]): DailyAggregate[] {
@@ -211,5 +255,134 @@ export function buildForecast(daily: DailyAggregate[]): ForecastResult {
     worstDayOfWeek,
     suggestedAction: buildSuggestedAction(daysCovered, trend, bestDayOfWeek),
     daily,
+  };
+}
+
+function lastDaily(daily: DailyAggregate[]): DailyAggregate | null {
+  return daily.length ? daily[daily.length - 1] : null;
+}
+
+function spread(bank: number | null, reference: number | null): number | null {
+  if (bank === null || reference === null) return null;
+  return round(bank - reference);
+}
+
+export function trendAlignment(
+  bank: ForecastTrend | null,
+  reference: ForecastTrend | null,
+): TrendAlignment {
+  if (!bank || !reference) return "unknown";
+  if (bank.direction === "flat" || reference.direction === "flat") return "aligned";
+  return bank.direction === reference.direction ? "aligned" : "diverging";
+}
+
+export function toReferenceSeriesView(options: {
+  source: ReferenceSourceId;
+  label: string;
+  quoteKind: ReferenceQuoteKind;
+  daily: DailyAggregate[];
+}): ReferenceSeriesView {
+  const forecast = buildForecast(options.daily);
+  const latest = lastDaily(options.daily);
+  return {
+    source: options.source,
+    label: options.label,
+    quoteKind: options.quoteKind,
+    latestDate: latest?.date ?? null,
+    latestBuying: latest?.avgBuying ?? null,
+    latestSelling: latest?.avgSelling ?? null,
+    daysCovered: forecast.daysCovered,
+    trend: forecast.trend,
+  };
+}
+
+function comparisonNote(comparison: BankVsReference): string {
+  const buy =
+    comparison.buyingSpread === null
+      ? null
+      : `${comparison.buyingSpread > 0 ? "+" : ""}${comparison.buyingSpread.toFixed(2)}`;
+  const sell =
+    comparison.sellingSpread === null
+      ? null
+      : `${comparison.sellingSpread > 0 ? "+" : ""}${comparison.sellingSpread.toFixed(2)}`;
+
+  if (comparison.quoteKind === "mid") {
+    if (buy === null) return `${comparison.label} is not available yet.`;
+    return `Bank TT buying is ${buy} vs ${comparison.label}; selling is ${sell ?? "n/a"} vs the same mid.`;
+  }
+
+  const parts = [`vs ${comparison.label}`];
+  if (buy !== null) parts.push(`buying ${buy}`);
+  if (sell !== null) parts.push(`selling ${sell}`);
+  if (comparison.alignment === "diverging") {
+    parts.push("trend is moving opposite the official series");
+  } else if (comparison.alignment === "aligned" && comparison.source === "CBSL") {
+    parts.push("trend matches the official series");
+  }
+  return parts.join(" — ");
+}
+
+export function buildCombinedReferenceSignal(options: {
+  bankCode: string;
+  currency: string;
+  comparisons: BankVsReference[];
+  errors: ForecastReferences["errors"];
+}): string {
+  if (!options.comparisons.length) {
+    const failed = Object.values(options.errors).filter(Boolean);
+    return failed.length
+      ? `Could not load CBSL/Google references (${failed.join("; ")}). Bank-only forecast is unchanged.`
+      : "CBSL and Google references are not available yet for this currency.";
+  }
+
+  const bits = options.comparisons.map(comparisonNote);
+  return `${options.currency}/LKR at ${options.bankCode}: ${bits.join(" ")}`;
+}
+
+export function buildReferenceSignals(options: {
+  bankCode: string;
+  currency: string;
+  bankDaily: DailyAggregate[];
+  bankTrend: ForecastTrend | null;
+  references: Array<{
+    source: ReferenceSourceId;
+    label: string;
+    quoteKind: ReferenceQuoteKind;
+    daily: DailyAggregate[];
+  }>;
+  errors?: ForecastReferences["errors"];
+}): ForecastReferences {
+  const bankLatest = lastDaily(options.bankDaily);
+  const errors = options.errors ?? {};
+  const views: Partial<Record<ReferenceSourceId, ReferenceSeriesView>> = {};
+  const comparisons: BankVsReference[] = [];
+
+  for (const ref of options.references) {
+    if (!ref.daily.length) continue;
+    const view = toReferenceSeriesView(ref);
+    views[ref.source] = view;
+    comparisons.push({
+      source: ref.source,
+      label: ref.label,
+      quoteKind: ref.quoteKind,
+      buyingSpread: spread(bankLatest?.avgBuying ?? null, view.latestBuying),
+      sellingSpread: spread(bankLatest?.avgSelling ?? null, view.latestSelling),
+      referenceDate: view.latestDate,
+      bankDate: bankLatest?.date ?? null,
+      alignment: trendAlignment(options.bankTrend, view.trend),
+    });
+  }
+
+  return {
+    cbsl: views.CBSL ?? null,
+    google: views.GOOGLE ?? null,
+    comparisons,
+    combinedSignal: buildCombinedReferenceSignal({
+      bankCode: options.bankCode,
+      currency: options.currency,
+      comparisons,
+      errors,
+    }),
+    errors,
   };
 }

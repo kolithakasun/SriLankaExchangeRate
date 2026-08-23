@@ -1,12 +1,26 @@
 import { describe, expect, it } from "vitest";
 import {
   buildForecast,
+  buildReferenceSignals,
+  cbslStoredCoverageIsEnough,
+  dailyPointsToAggregates,
   dayOfWeekAverages,
   groupByColomboDay,
   linearTrend,
+  trendAlignment,
   weekdayName,
 } from "../shared/utils/forecast";
-import type { HistoryPoint } from "../shared/types";
+import {
+  DEFAULT_FORECAST_RANGE,
+  getForecastRangeDays,
+  resolveForecastWindow,
+} from "../shared/config/ranges";
+import type { DailyAggregate, DailyRatePoint, HistoryPoint } from "../shared/types";
+import {
+  getEnabledBanks,
+  getEnabledSources,
+  isReferenceSource,
+} from "../shared/config/banks";
 
 function point(
   dateKey: string,
@@ -23,6 +37,78 @@ function point(
     retrievedAt: `${dateKey}T${hour}:00:00+05:30`,
   };
 }
+
+describe("forecast windows", () => {
+  it("defaults to 1 month", () => {
+    expect(DEFAULT_FORECAST_RANGE).toBe("1m");
+    expect(resolveForecastWindow({})).toEqual({ range: "1m", days: 30 });
+  });
+
+  it("prefers an explicit range over days", () => {
+    expect(resolveForecastWindow({ range: "6m", days: "7" })).toEqual({
+      range: "6m",
+      days: 180,
+    });
+    expect(getForecastRangeDays("2w")).toBe(14);
+  });
+
+  it("snaps a raw days value to the nearest window", () => {
+    expect(resolveForecastWindow({ days: "45" }).range).toBe("1m");
+    expect(resolveForecastWindow({ days: "200" })).toEqual({
+      range: "6m",
+      days: 180,
+    });
+  });
+});
+
+describe("dailyPointsToAggregates", () => {
+  it("maps snapshot rows into the forecast daily series", () => {
+    const points: DailyRatePoint[] = [
+      {
+        date: "2026-08-21",
+        ttBuying: 322,
+        ttSelling: 334,
+        openTtBuying: 321,
+        openTtSelling: 333,
+        sourceTimestamp: null,
+        firstSeenAt: null,
+        lastCheckedAt: null,
+        lastChangedAt: null,
+        changeCount: 1,
+        observations: 3,
+      },
+      {
+        date: "2026-08-20",
+        ttBuying: 321,
+        ttSelling: 333,
+        openTtBuying: 321,
+        openTtSelling: 333,
+        sourceTimestamp: null,
+        firstSeenAt: null,
+        lastCheckedAt: null,
+        lastChangedAt: null,
+        changeCount: 0,
+        observations: 1,
+      },
+    ];
+    const daily = dailyPointsToAggregates(points);
+    expect(daily.map((d) => d.date)).toEqual(["2026-08-20", "2026-08-21"]);
+    expect(daily[1].avgBuying).toBe(322);
+    expect(daily[1].samples).toBe(3);
+  });
+});
+
+describe("CBSL stored coverage", () => {
+  it("uses the database once a short window has 3 days", () => {
+    expect(cbslStoredCoverageIsEnough(3, 7)).toBe(true);
+    expect(cbslStoredCoverageIsEnough(2, 7)).toBe(false);
+  });
+
+  it("live-fills long windows when the DB is still thin", () => {
+    expect(cbslStoredCoverageIsEnough(5, 180)).toBe(false);
+    expect(cbslStoredCoverageIsEnough(40, 180)).toBe(true);
+  });
+});
 
 describe("groupByColomboDay", () => {
   it("buckets intraday points into daily averages", () => {
@@ -112,5 +198,102 @@ describe("buildForecast", () => {
     expect(forecast.confidence).toBe("high");
     expect(forecast.bestDayOfWeek).not.toBeNull();
     expect(forecast.worstDayOfWeek).not.toBeNull();
+  });
+});
+
+function daily(
+  date: string,
+  avgBuying: number,
+  avgSelling: number,
+): DailyAggregate {
+  return {
+    date,
+    avgBuying,
+    minBuying: avgBuying,
+    maxBuying: avgBuying,
+    avgSelling,
+    minSelling: avgSelling,
+    maxSelling: avgSelling,
+    samples: 2,
+  };
+}
+
+describe("reference sources", () => {
+  it("does not put CBSL or Google in the licensed-bank list", () => {
+    const bankCodes = getEnabledBanks().map((b) => b.code);
+    expect(bankCodes).not.toContain("CBSL");
+    expect(bankCodes).not.toContain("GOOGLE");
+    expect(getEnabledSources().some((b) => b.code === "CBSL")).toBe(true);
+    expect(isReferenceSource("GOOGLE")).toBe(true);
+    expect(isReferenceSource("SEYLAN")).toBe(false);
+    expect(getEnabledSources().some((b) => b.code === "GOOGLE")).toBe(true);
+  });
+});
+
+describe("reference signals", () => {
+  it("compares a bank to CBSL official TT and Google mid without changing bank trend", () => {
+    const bankDaily = [
+      daily("2026-08-19", 320, 332),
+      daily("2026-08-20", 321, 333),
+      daily("2026-08-21", 322, 334),
+    ];
+    const bankForecast = buildForecast(bankDaily);
+    const refs = buildReferenceSignals({
+      bankCode: "SEYLAN",
+      currency: "USD",
+      bankDaily,
+      bankTrend: bankForecast.trend,
+      references: [
+        {
+          source: "CBSL",
+          label: "CBSL official TT",
+          quoteKind: "tt",
+          daily: [
+            daily("2026-08-19", 324, 333),
+            daily("2026-08-20", 325, 334),
+            daily("2026-08-21", 326, 335),
+          ],
+        },
+        {
+          source: "GOOGLE",
+          label: "Google mid",
+          quoteKind: "mid",
+          daily: [daily("2026-08-21", 329.1, 329.1)],
+        },
+      ],
+    });
+
+    expect(bankForecast.trend?.direction).toBe("up");
+    expect(refs.cbsl?.latestBuying).toBe(326);
+    expect(refs.comparisons.find((c) => c.source === "CBSL")?.buyingSpread).toBe(-4);
+    expect(refs.comparisons.find((c) => c.source === "GOOGLE")?.buyingSpread).toBe(
+      -7.1,
+    );
+    expect(refs.comparisons.find((c) => c.source === "CBSL")?.alignment).toBe(
+      "aligned",
+    );
+    expect(refs.combinedSignal).toMatch(/SEYLAN/);
+  });
+
+  it("marks opposite trends as diverging", () => {
+    expect(
+      trendAlignment(
+        { direction: "up", pctChangePerDay: 0.2, projectedNextDayBuying: 1, projectedNextDaySelling: 2 },
+        { direction: "down", pctChangePerDay: -0.1, projectedNextDayBuying: 1, projectedNextDaySelling: 2 },
+      ),
+    ).toBe("diverging");
+  });
+
+  it("returns a fallback message when no reference series loaded", () => {
+    const refs = buildReferenceSignals({
+      bankCode: "HNB",
+      currency: "AUD",
+      bankDaily: [daily("2026-08-21", 230, 241)],
+      bankTrend: null,
+      references: [],
+      errors: { CBSL: "timeout" },
+    });
+    expect(refs.cbsl).toBeNull();
+    expect(refs.combinedSignal).toMatch(/timeout/);
   });
 });

@@ -5,7 +5,14 @@ export type BankCode =
   | "SAMPATH"
   | "NDB"
   | "PEOPLES"
-  | "BOC";
+  | "BOC"
+  | "CBSL"
+  | "GOOGLE";
+
+/** Licensed banks vs official/market references used for forecast signals. */
+export type SourceKind = "bank" | "reference";
+
+export type ReferenceSourceId = "CBSL" | "GOOGLE";
 
 export type CurrencyCode = "USD" | "AUD" | "EUR" | "JPY" | "SGD" | string;
 
@@ -25,6 +32,8 @@ export interface BankConfig {
   priority: number;
   enabled: boolean;
   featured: boolean;
+  /** Defaults to "bank". Reference sources are collected but hidden from comparison UI. */
+  kind?: SourceKind;
   sourceUrl: string;
   provider: string;
 }
@@ -96,6 +105,9 @@ export interface HistoryPoint {
 }
 
 export type HistoryRange = "1d" | "1w" | "1m" | "3m" | "6m" | "1y" | "all";
+
+/** Windows offered on the Forecast panel. Default is 1m. */
+export type ForecastRange = "1w" | "2w" | "1m" | "3m" | "6m";
 
 /**
  * One row per bank/currency/Colombo day. Created on the first check of the day
@@ -174,6 +186,42 @@ export interface ForecastTrend {
   projectedNextDaySelling: number | null;
 }
 
+export type ReferenceQuoteKind = "tt" | "mid";
+
+export type TrendAlignment = "aligned" | "diverging" | "unknown";
+
+export interface ReferenceSeriesView {
+  source: ReferenceSourceId;
+  label: string;
+  quoteKind: ReferenceQuoteKind;
+  latestDate: string | null;
+  latestBuying: number | null;
+  latestSelling: number | null;
+  daysCovered: number;
+  trend: ForecastTrend | null;
+}
+
+export interface BankVsReference {
+  source: ReferenceSourceId;
+  label: string;
+  quoteKind: ReferenceQuoteKind;
+  /** Bank TT buying minus reference buying (or mid). */
+  buyingSpread: number | null;
+  /** Bank TT selling minus reference selling (or mid). */
+  sellingSpread: number | null;
+  referenceDate: string | null;
+  bankDate: string | null;
+  alignment: TrendAlignment;
+}
+
+export interface ForecastReferences {
+  cbsl: ReferenceSeriesView | null;
+  google: ReferenceSeriesView | null;
+  comparisons: BankVsReference[];
+  combinedSignal: string;
+  errors: Partial<Record<ReferenceSourceId, string>>;
+}
+
 export interface ForecastResult {
   daysCovered: number;
   confidence: ForecastConfidence;
@@ -182,4 +230,6 @@ export interface ForecastResult {
   worstDayOfWeek: DayOfWeekStat | null;
   suggestedAction: string;
   daily: DailyAggregate[];
+  /** Present only when the forecast was requested with CBSL/Google references. */
+  references?: ForecastReferences;
 }
