@@ -9,25 +9,53 @@ type NarrationSource = "gemini" | "groq" | "template";
 
 function templateNarration(
   forecast: ForecastResult,
-  context: { bank: string; currency: string },
+  context: { bank: string; currency: string; rangeLabel?: string },
 ): string {
-  return forecast.suggestedAction.replace(
+  const base = forecast.suggestedAction.replace(
     "TT buying rate",
     `${context.currency}/LKR TT buying rate at ${context.bank}`,
   );
+  const extra = forecast.references?.combinedSignal;
+  return extra ? `${base} ${extra}` : base;
+}
+
+function referencePromptBlock(forecast: ForecastResult): string {
+  const refs = forecast.references;
+  if (!refs) return "";
+
+  const cbsl = refs.cbsl
+    ? `CBSL official 9:30 TT (latest ${refs.cbsl.latestDate ?? "n/a"}): buy ${refs.cbsl.latestBuying ?? "n/a"}, sell ${refs.cbsl.latestSelling ?? "n/a"}; trend ${refs.cbsl.trend ? `${refs.cbsl.trend.direction} ${refs.cbsl.trend.pctChangePerDay}%/day` : "not enough CBSL history"}.`
+    : `CBSL official TT unavailable${refs.errors.CBSL ? ` (${refs.errors.CBSL})` : ""}.`;
+  const google = refs.google
+    ? `Google Finance mid (latest ${refs.google.latestDate ?? "n/a"}): ${refs.google.latestBuying ?? "n/a"}; trend ${refs.google.trend ? `${refs.google.trend.direction} ${refs.google.trend.pctChangePerDay}%/day` : "not enough Google history"}.`
+    : `Google mid unavailable${refs.errors.GOOGLE ? ` (${refs.errors.GOOGLE})` : ""}.`;
+  const spreads = refs.comparisons
+    .map((c) => {
+      const buy = c.buyingSpread === null ? "n/a" : c.buyingSpread;
+      const sell = c.sellingSpread === null ? "n/a" : c.sellingSpread;
+      return `${c.label}: buying spread ${buy}, selling spread ${sell}, trend ${c.alignment}`;
+    })
+    .join("; ");
+
+  return `Reference signal (use this to qualify the bank forecast, do not replace it):
+${cbsl}
+${google}
+Bank vs references: ${spreads || "none"}.
+Combined: ${refs.combinedSignal}`;
 }
 
 function buildPrompt(
   forecast: ForecastResult,
-  context: { bank: string; currency: string },
+  context: { bank: string; currency: string; rangeLabel?: string },
 ): string {
   return `You are summarizing a currency exchange rate forecast for a Sri Lankan bank rate comparison site.
 Bank: ${context.bank}, Currency: ${context.currency}/LKR.
-Days of history analyzed: ${forecast.daysCovered} (confidence: ${forecast.confidence}).
+Lookback window: ${context.rangeLabel ?? "default"}. Days with data in that window: ${forecast.daysCovered} (confidence: ${forecast.confidence}).
 Trend: ${forecast.trend ? `${forecast.trend.direction}, ${forecast.trend.pctChangePerDay}% per day, projected next-day TT buying ${forecast.trend.projectedNextDayBuying}` : "not enough data yet"}.
 Best day of week historically (TT buying): ${forecast.bestDayOfWeek ? `${weekdayName(forecast.bestDayOfWeek.weekday)} (avg ${forecast.bestDayOfWeek.avgBuying})` : "not enough data yet"}.
+${referencePromptBlock(forecast)}
 
-Write a 2-3 sentence, plain-English summary for a non-technical reader, grounded strictly in the numbers above. Do not invent data points, do not give financial advice beyond what the numbers support, and do not mention that you are an AI.`;
+Write a 2-3 sentence, plain-English summary for a non-technical reader, grounded strictly in the numbers above. If CBSL or Google references are present, mention how this bank compares (spread and whether the trend agrees). Do not invent data points, do not give financial advice beyond what the numbers support, and do not mention that you are an AI.`;
 }
 
 async function withTimeout<T>(
@@ -126,7 +154,7 @@ export function getAvailableProviders(): Array<Exclude<NarrationSource, "templat
 
 export async function narrateForecast(
   forecast: ForecastResult,
-  context: { bank: string; currency: string },
+  context: { bank: string; currency: string; rangeLabel?: string },
   options?: { requestedProvider?: string },
 ): Promise<{ text: string; source: NarrationSource }> {
   const requested = options?.requestedProvider?.toLowerCase();

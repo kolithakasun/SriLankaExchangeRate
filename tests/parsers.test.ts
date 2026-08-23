@@ -3,6 +3,12 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { parseTtRatesFromHtmlTables } from "../shared/utils/html";
 import {
+  latestCbslRates,
+  parseCbslChartWidget,
+  parseCbslTtResultsHtml,
+} from "../shared/utils/cbsl";
+import { parseGoogleFinanceMid } from "../shared/utils/google-finance";
+import {
   filterValidRates,
   parseRateNumber,
   ratesEqual,
@@ -145,5 +151,43 @@ describe("Sampath JSON normalization", () => {
     expect(valid).toHaveLength(2);
     expect(valid.find((r) => r.currency === "USD")?.ttBuying).toBe(329.5);
     expect(valid.find((r) => r.currency === "USD")?.ttSelling).toBe(337.5);
+  });
+});
+
+describe("CBSL TT results HTML", () => {
+  it("extracts USD and AUD buy/sell rows and latest snapshot", () => {
+    const rows = parseCbslTtResultsHtml(load("cbsl-tt.html"));
+    expect(rows).toHaveLength(4);
+    const latest = latestCbslRates(rows, "2026-08-23T04:00:00.000Z", "test");
+    expect(latest.find((r) => r.currency === "USD")).toMatchObject({
+      ttBuying: 325.1086,
+      ttSelling: 334.2331,
+    });
+    expect(latest.find((r) => r.currency === "AUD")?.ttBuying).toBe(229.8865);
+  });
+
+  it("parses Indicative/Buy/Sell from the chart widget", () => {
+    const parsed = parseCbslChartWidget(load("cbsl-chart.html"));
+    expect(parsed.indicative).toBe(330.1657);
+    expect(parsed.buy).toBe(325.1086);
+    expect(parsed.sell).toBe(334.2331);
+  });
+});
+
+describe("Google Finance mid", () => {
+  it("skips the type-tag integer and reads the clustered USD price", () => {
+    expect(parseGoogleFinanceMid(load("google-usd.html"), "USD", "LKR")).toBe(
+      329.314055,
+    );
+  });
+
+  it("does not treat AUD type-tag 3 as the mid", () => {
+    expect(parseGoogleFinanceMid(load("google-aud.html"), "AUD", "LKR")).toBe(
+      235.87019853,
+    );
+  });
+
+  it("returns null when the pair is absent", () => {
+    expect(parseGoogleFinanceMid("<html></html>", "AUD", "LKR")).toBeNull();
   });
 });

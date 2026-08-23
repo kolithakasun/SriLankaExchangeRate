@@ -112,6 +112,25 @@ export default function Dashboard() {
             </div>
           </section>
 
+          {data?.references && data.references.length > 0 && (
+            <section className="mb-10">
+              <div className="mb-4">
+                <h2 className="text-2xl font-extrabold tracking-tight">
+                  CBSL & Google
+                </h2>
+                <p className="text-sm text-[var(--color-ink-muted)]">
+                  Official 9:30 a.m. TT average and Google Finance mid — not used for
+                  best-bank highlights
+                </p>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                {data.references.map((rate) => (
+                  <BankRateCard key={rate.bankCode} rate={rate} />
+                ))}
+              </div>
+            </section>
+          )}
+
           <div className="mb-12">
             <ForecastPanel defaultCurrency={currency} />
           </div>
@@ -125,7 +144,13 @@ export default function Dashboard() {
                 Highest buying and lowest selling rates are highlighted
               </p>
             </div>
-            {data && <ComparisonTable rates={data.rates} best={data.best} />}
+            {data && (
+              <ComparisonTable
+                rates={data.rates}
+                best={data.best}
+                references={data.references}
+              />
+            )}
           </section>
 
           <HistorySection defaultCurrency={currency} />

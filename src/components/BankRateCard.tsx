@@ -28,30 +28,44 @@ export function BankRateCard({
         )}
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-3">
-        <div className="min-w-0">
+      {rate.bankCode === "GOOGLE" ? (
+        <div className="mt-5">
           <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-ink-muted)]">
-            TT Buying
+            Mid-market
           </p>
           <RateValue
-            value={rate.ttBuying}
+            value={rate.ttBuying ?? rate.ttSelling}
             currency={rate.currency}
-            previous={rate.previousTtBuying}
+            previous={rate.previousTtBuying ?? rate.previousTtSelling}
             size="lg"
           />
         </div>
-        <div className="min-w-0">
-          <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-ink-muted)]">
-            TT Selling
-          </p>
-          <RateValue
-            value={rate.ttSelling}
-            currency={rate.currency}
-            previous={rate.previousTtSelling}
-            size="lg"
-          />
+      ) : (
+        <div className="mt-5 grid grid-cols-2 gap-3">
+          <div className="min-w-0">
+            <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-ink-muted)]">
+              TT Buying
+            </p>
+            <RateValue
+              value={rate.ttBuying}
+              currency={rate.currency}
+              previous={rate.previousTtBuying}
+              size="lg"
+            />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-ink-muted)]">
+              TT Selling
+            </p>
+            <RateValue
+              value={rate.ttSelling}
+              currency={rate.currency}
+              previous={rate.previousTtSelling}
+              size="lg"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       <BankStatusLine rate={rate} />
     </article>

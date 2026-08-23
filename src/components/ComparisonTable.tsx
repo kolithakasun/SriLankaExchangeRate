@@ -3,12 +3,63 @@ import { formatRate } from "@shared/utils/rates";
 import { RateValue } from "./RateValue";
 import { StatusDot } from "./BankStatus";
 
+function RateRow({
+  rate,
+  best,
+  highlightBest,
+}: {
+  rate: LatestRateView;
+  best: BestRates;
+  highlightBest: boolean;
+}) {
+  const isBestBuy =
+    highlightBest &&
+    best.bestBuying &&
+    rate.bankCode === best.bestBuying.bankCode &&
+    rate.ttBuying === best.bestBuying.rate;
+  const isBestSell =
+    highlightBest &&
+    best.bestSelling &&
+    rate.bankCode === best.bestSelling.bankCode &&
+    rate.ttSelling === best.bestSelling.rate;
+
+  return (
+    <tr className="border-b border-[var(--color-line)] last:border-0">
+      <td className="px-4 py-3 font-semibold">{rate.bankName}</td>
+      <td className={`px-4 py-3 ${isBestBuy ? "bg-[var(--color-accent-soft)]" : ""}`}>
+        <RateValue
+          value={rate.ttBuying}
+          currency={rate.currency}
+          previous={rate.previousTtBuying}
+          size="sm"
+        />
+      </td>
+      <td className={`px-4 py-3 ${isBestSell ? "bg-[var(--color-accent-soft)]" : ""}`}>
+        <RateValue
+          value={rate.ttSelling}
+          currency={rate.currency}
+          previous={rate.previousTtSelling}
+          size="sm"
+        />
+      </td>
+      <td className="px-4 py-3 text-sm text-[var(--color-ink-muted)]">
+        <span className="inline-flex items-center gap-2">
+          <StatusDot status={rate.status} />
+          {rate.status}
+        </span>
+      </td>
+    </tr>
+  );
+}
+
 export function ComparisonTable({
   rates,
   best,
+  references = [],
 }: {
   rates: LatestRateView[];
   best: BestRates;
+  references?: LatestRateView[];
 }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-[var(--color-line)] bg-[var(--color-panel)]">
@@ -23,49 +74,28 @@ export function ComparisonTable({
             </tr>
           </thead>
           <tbody>
-            {rates.map((r) => {
-              const isBestBuy =
-                best.bestBuying &&
-                r.bankCode === best.bestBuying.bankCode &&
-                r.ttBuying === best.bestBuying.rate;
-              const isBestSell =
-                best.bestSelling &&
-                r.bankCode === best.bestSelling.bankCode &&
-                r.ttSelling === best.bestSelling.rate;
-              return (
-                <tr key={r.bankCode} className="border-b border-[var(--color-line)] last:border-0">
-                  <td className="px-4 py-3 font-semibold">{r.bankName}</td>
-                  <td className={`px-4 py-3 ${isBestBuy ? "bg-[var(--color-accent-soft)]" : ""}`}>
-                    <RateValue
-                      value={r.ttBuying}
-                      currency={r.currency}
-                      previous={r.previousTtBuying}
-                      size="sm"
-                    />
-                  </td>
-                  <td className={`px-4 py-3 ${isBestSell ? "bg-[var(--color-accent-soft)]" : ""}`}>
-                    <RateValue
-                      value={r.ttSelling}
-                      currency={r.currency}
-                      previous={r.previousTtSelling}
-                      size="sm"
-                    />
-                  </td>
-                  <td className="px-4 py-3 text-sm text-[var(--color-ink-muted)]">
-                    <span className="inline-flex items-center gap-2">
-                      <StatusDot status={r.status} />
-                      {r.status}
-                    </span>
-                  </td>
-                </tr>
-              );
-            })}
+            {rates.map((r) => (
+              <RateRow key={r.bankCode} rate={r} best={best} highlightBest />
+            ))}
+            {references.length > 0 && (
+              <tr className="border-b border-[var(--color-line)] bg-[var(--color-accent-soft)]/30">
+                <td
+                  colSpan={4}
+                  className="px-4 py-2 text-xs font-bold uppercase tracking-wide text-[var(--color-ink-muted)]"
+                >
+                  Official / market references
+                </td>
+              </tr>
+            )}
+            {references.map((r) => (
+              <RateRow key={r.bankCode} rate={r} best={best} highlightBest={false} />
+            ))}
           </tbody>
         </table>
       </div>
 
       <div className="grid gap-3 p-3 md:hidden">
-        {rates.map((r) => (
+        {[...rates, ...references].map((r) => (
           <div
             key={r.bankCode}
             className="rounded-xl border border-[var(--color-line)] p-4"

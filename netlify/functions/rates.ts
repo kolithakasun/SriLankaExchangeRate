@@ -1,10 +1,10 @@
 import type { Handler } from "@netlify/functions";
-import { getLatestRates, usingSupabase } from "./lib/store.js";
+import { getDailyHistory, getLatestRates, usingSupabase } from "./lib/store.js";
 import { json, wrap } from "./lib/http.js";
+import { overlayLiveReferenceRates } from "./lib/live-references.js";
 import { getEnabledBanks } from "../../shared/config/banks.js";
 import { DEFAULT_CURRENCY } from "../../shared/config/currencies.js";
 import type { BestRates, DayComparison, LatestRateView } from "../../shared/types.js";
-import { getDailyHistory } from "./lib/store.js";
 
 function computeBest(rates: LatestRateView[], currency: string): BestRates {
   let bestBuying: BestRates["bestBuying"] = null;
@@ -84,16 +84,26 @@ const handler: Handler = wrap(async (event) => {
     return json(400, { error: "Unknown bank" });
   }
 
-  const rates = await getLatestRates({
-    bank,
-    currency: params.currency ? currency : undefined,
-  });
+  const [rates, storedReferences] = await Promise.all([
+    getLatestRates({
+      bank,
+      currency: params.currency ? currency : undefined,
+    }),
+    getLatestRates({
+      currency: params.currency ? currency : undefined,
+      kind: "reference",
+    }),
+  ]);
 
   const forCurrency = rates.filter((r) => r.currency === currency);
+  const references = await overlayLiveReferenceRates(
+    storedReferences.filter((r) => r.currency === currency),
+    currency,
+  );
   const best = computeBest(forCurrency, currency);
   const comparison = await dayComparison(currency, bank);
 
-  const lastChecked = forCurrency
+  const lastChecked = [...forCurrency, ...references]
     .map((r) => r.lastCheckedAt || r.retrievedAt)
     .filter(Boolean)
     .sort()
@@ -105,6 +115,7 @@ const handler: Handler = wrap(async (event) => {
     storage: usingSupabase() ? "supabase" : "local",
     lastCheckedAt: lastChecked ?? null,
     rates: params.currency ? forCurrency : rates,
+    references,
     comparison: forCurrency,
     best,
     dayComparison: comparison,

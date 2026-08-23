@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { isReferenceSource } from "../shared/config/banks";
 import { fetchAllBankRates } from "../netlify/functions/providers/index";
 
 const runLive = process.env.LIVE_PROVIDERS === "1";
@@ -8,7 +9,8 @@ describe.runIf(runLive)("live providers", () => {
     "fetches TT rates from enabled banks independently",
     async () => {
       const results = await fetchAllBankRates();
-      expect(results.length).toBeGreaterThanOrEqual(7);
+      const bankResults = results.filter((r) => !isReferenceSource(r.bankCode));
+      expect(bankResults.length).toBeGreaterThanOrEqual(7);
 
       for (const r of results) {
         // eslint-disable-next-line no-console
@@ -20,7 +22,7 @@ describe.runIf(runLive)("live providers", () => {
         );
       }
 
-      const successes = results.filter((r) => r.success);
+      const successes = bankResults.filter((r) => r.success);
       expect(successes.length).toBeGreaterThanOrEqual(3);
 
       for (const r of successes) {

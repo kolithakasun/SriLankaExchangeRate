@@ -15,6 +15,7 @@ const handler: Handler = wrap(async (event) => {
       priority: b.priority,
       enabled: b.enabled,
       featured: b.featured,
+      kind: b.kind ?? "bank",
       sourceUrl: b.sourceUrl,
       provider: b.provider,
     })),

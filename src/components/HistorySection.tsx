@@ -9,13 +9,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { getEnabledBanks } from "@shared/config/banks";
+import { getEnabledBanks, getReferenceSources } from "@shared/config/banks";
 import { getEnabledCurrencies } from "@shared/config/currencies";
 import { DEFAULT_RANGE, historyRanges } from "@shared/config/ranges";
 import { formatRate } from "@shared/utils/rates";
 import { colomboDateKey, toColomboTime } from "@shared/utils/time";
 import { fetchHistory, type HistoryResponse } from "../services/api";
-import type { HistoryRange } from "@shared/types";
+import type { DailyRatePoint, HistoryRange } from "@shared/types";
 
 function formatSigned(value: number | null): string {
   if (value === null) return "—";
@@ -30,6 +30,7 @@ function changeClass(value: number | null): string {
 
 export function HistorySection({ defaultCurrency }: { defaultCurrency: string }) {
   const banks = getEnabledBanks();
+  const references = getReferenceSources();
   const currencies = getEnabledCurrencies();
   const [bank, setBank] = useState<string>(banks[0]?.code ?? "SEYLAN");
   const [currency, setCurrency] = useState(defaultCurrency);
@@ -37,6 +38,10 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
   const [date, setDate] = useState(colomboDateKey());
   const [dates, setDates] = useState<string[]>([colomboDateKey()]);
   const [data, setData] = useState<HistoryResponse | null>(null);
+  const [overlay, setOverlay] = useState<{
+    cbsl: DailyRatePoint[];
+    google: DailyRatePoint[];
+  }>({ cbsl: [], google: [] });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,6 +64,26 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
         if (cancelled) return;
         setData(res);
         if (res.availableDates.length) setDates(res.availableDates);
+
+        if (range !== "1d") {
+          const extras = await Promise.allSettled([
+            bank === "CBSL"
+              ? Promise.resolve({ daily: [] as DailyRatePoint[] })
+              : fetchHistory({ bank: "CBSL", currency, range }),
+            bank === "GOOGLE"
+              ? Promise.resolve({ daily: [] as DailyRatePoint[] })
+              : fetchHistory({ bank: "GOOGLE", currency, range }),
+          ]);
+          if (cancelled) return;
+          setOverlay({
+            cbsl:
+              extras[0].status === "fulfilled" ? extras[0].value.daily ?? [] : [],
+            google:
+              extras[1].status === "fulfilled" ? extras[1].value.daily ?? [] : [],
+          });
+        } else {
+          setOverlay({ cbsl: [], google: [] });
+        }
       } catch (err) {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : String(err));
@@ -87,12 +112,30 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
         selling: p.ttSelling,
       }));
     }
-    return daily.map((d) => ({
-      label: d.date.slice(5),
-      buying: d.ttBuying,
-      selling: d.ttSelling,
-    }));
-  }, [isIntraday, points, daily]);
+    const cbslByDate = new Map(overlay.cbsl.map((d) => [d.date, d]));
+    const googleByDate = new Map(overlay.google.map((d) => [d.date, d]));
+    const dates = [
+      ...new Set([
+        ...daily.map((d) => d.date),
+        ...overlay.cbsl.map((d) => d.date),
+        ...overlay.google.map((d) => d.date),
+      ]),
+    ].sort();
+    const primaryByDate = new Map(daily.map((d) => [d.date, d]));
+    return dates.map((date) => {
+      const primary = primaryByDate.get(date);
+      const cbsl = cbslByDate.get(date);
+      const google = googleByDate.get(date);
+      return {
+        label: date.slice(5),
+        buying: primary?.ttBuying ?? null,
+        selling: primary?.ttSelling ?? null,
+        cbslBuying: cbsl?.ttBuying ?? null,
+        cbslSelling: cbsl?.ttSelling ?? null,
+        googleMid: google?.ttBuying ?? google?.ttSelling ?? null,
+      };
+    });
+  }, [isIntraday, points, daily, overlay]);
 
   /** Daily rows newest first, with the day-over-day move already computed. */
   const dailyRows = useMemo(
@@ -112,7 +155,9 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
     [daily],
   );
 
-  const hasData = isIntraday ? points.length > 0 : daily.length > 0;
+  const hasData = isIntraday
+    ? points.length > 0
+    : daily.length > 0 || overlay.cbsl.length > 0 || overlay.google.length > 0;
   const activeRange = historyRanges.find((r) => r.value === range);
 
   return (
@@ -122,8 +167,8 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
           <h2 className="text-2xl font-extrabold tracking-tight">History</h2>
           <p className="text-sm text-[var(--color-ink-muted)]">
             {isIntraday
-              ? "Intraday TT observations for a bank and currency"
-              : `Daily TT rates · ${activeRange?.description ?? ""}`}
+              ? "Intraday TT observations for a source and currency"
+              : `Daily TT rates with CBSL and Google overlays · ${activeRange?.description ?? ""}`}
           </p>
         </div>
 
@@ -153,17 +198,26 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
 
       <div className={`mb-4 grid gap-3 ${isIntraday ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
         <label className="text-sm">
-          <span className="mb-1 block text-[var(--color-ink-muted)]">Bank</span>
+          <span className="mb-1 block text-[var(--color-ink-muted)]">Source</span>
           <select
             className="w-full rounded-lg border border-[var(--color-line)] bg-[var(--color-panel)] px-3 py-2"
             value={bank}
             onChange={(e) => setBank(e.target.value)}
           >
-            {banks.map((b) => (
-              <option key={b.code} value={b.code}>
-                {b.name}
-              </option>
-            ))}
+            <optgroup label="Banks">
+              {banks.map((b) => (
+                <option key={b.code} value={b.code}>
+                  {b.name}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="References">
+              {references.map((b) => (
+                <option key={b.code} value={b.code}>
+                  {b.name}
+                </option>
+              ))}
+            </optgroup>
           </select>
         </label>
         <label className="text-sm">
@@ -318,21 +372,59 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
                 <Line
                   type="monotone"
                   dataKey="buying"
-                  name="TT Buying"
+                  name={bank === "GOOGLE" ? "Google mid" : "TT Buying"}
                   stroke="var(--color-accent)"
                   strokeWidth={2}
                   dot={chartData.length <= 40}
                   connectNulls
                 />
-                <Line
-                  type="monotone"
-                  dataKey="selling"
-                  name="TT Selling"
-                  stroke="#2f6fed"
-                  strokeWidth={2}
-                  dot={chartData.length <= 40}
-                  connectNulls
-                />
+                {bank !== "GOOGLE" && (
+                  <Line
+                    type="monotone"
+                    dataKey="selling"
+                    name="TT Selling"
+                    stroke="#2f6fed"
+                    strokeWidth={2}
+                    dot={chartData.length <= 40}
+                    connectNulls
+                  />
+                )}
+                {!isIntraday && overlay.cbsl.length > 0 && (
+                  <>
+                    <Line
+                      type="monotone"
+                      dataKey="cbslBuying"
+                      name="CBSL buying"
+                      stroke="#0f766e"
+                      strokeWidth={1.5}
+                      strokeDasharray="5 4"
+                      dot={false}
+                      connectNulls
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="cbslSelling"
+                      name="CBSL selling"
+                      stroke="#155e75"
+                      strokeWidth={1.5}
+                      strokeDasharray="5 4"
+                      dot={false}
+                      connectNulls
+                    />
+                  </>
+                )}
+                {!isIntraday && overlay.google.length > 0 && (
+                  <Line
+                    type="monotone"
+                    dataKey="googleMid"
+                    name="Google mid"
+                    stroke="#c2410c"
+                    strokeWidth={1.5}
+                    strokeDasharray="2 3"
+                    dot={false}
+                    connectNulls
+                  />
+                )}
               </LineChart>
             </ResponsiveContainer>
           </div>

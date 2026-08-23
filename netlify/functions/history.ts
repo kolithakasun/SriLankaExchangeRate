@@ -6,7 +6,12 @@ import {
   usingSupabase,
 } from "./lib/store.js";
 import { json, wrap } from "./lib/http.js";
-import { getEnabledBanks } from "../../shared/config/banks.js";
+import { isEnabledSource } from "../../shared/config/banks.js";
+import { fetchCbslHistory } from "./providers/cbsl.js";
+import { fetchGoogleMid } from "./providers/google.js";
+import { summarizeDailySeries, toDailySeries } from "../../shared/utils/history.js";
+import type { DailyRatePoint, HistoryPoint } from "../../shared/types.js";
+import { colomboDateKey, nowIso } from "../../shared/utils/time.js";
 import {
   DEFAULT_CURRENCY,
   supportedCurrencyCodes,
@@ -16,8 +21,6 @@ import {
   historyRanges,
   isHistoryRange,
 } from "../../shared/config/ranges.js";
-import { summarizeDailySeries } from "../../shared/utils/history.js";
-import { colomboDateKey } from "../../shared/utils/time.js";
 
 const handler: Handler = wrap(async (event) => {
   if (event.httpMethod !== "GET") {
@@ -30,7 +33,7 @@ const handler: Handler = wrap(async (event) => {
   const date = params.date ?? colomboDateKey();
   const range = (params.range ?? "1d").toLowerCase();
 
-  if (!getEnabledBanks().some((b) => b.code === bank)) {
+  if (!isEnabledSource(bank)) {
     return json(400, { error: "Unknown bank" });
   }
   if (!supportedCurrencyCodes.includes(currency)) {
@@ -48,10 +51,11 @@ const handler: Handler = wrap(async (event) => {
   const storage = usingSupabase() ? "supabase" : "local";
 
   if (range === "1d") {
-    const [points, dates] = await Promise.all([
+    const [storedPoints, dates] = await Promise.all([
       getHistory({ bank, currency, date }),
       getAvailableHistoryDates({ bank, currency }),
     ]);
+    const points = await withLiveHistoryPoints(bank, currency, date, storedPoints);
 
     return json(200, {
       bank,
@@ -70,10 +74,17 @@ const handler: Handler = wrap(async (event) => {
   }
 
   const days = getRangeDays(range);
-  const [{ daily, source }, dates] = await Promise.all([
+  const [{ daily: storedDaily, source: storedSource }, dates] = await Promise.all([
     getDailyHistory({ bank, currency, days }),
     getAvailableHistoryDates({ bank, currency }),
   ]);
+  const { daily, source } = await withLiveDailyHistory(
+    bank,
+    currency,
+    days,
+    storedDaily,
+    storedSource,
+  );
 
   return json(200, {
     bank,
@@ -90,5 +101,93 @@ const handler: Handler = wrap(async (event) => {
     availableDates: dates,
   });
 });
+
+async function withLiveHistoryPoints(
+  bank: string,
+  currency: string,
+  date: string,
+  stored: HistoryPoint[],
+): Promise<HistoryPoint[]> {
+  if (stored.length) return stored;
+  if (bank === "CBSL") {
+    try {
+      const live = await fetchCbslHistory({ days: 7, currencies: [currency] });
+      return live.filter(
+        (point) => point.currency === currency && colomboDateKey(point.retrievedAt) === date,
+      );
+    } catch {
+      return stored;
+    }
+  }
+  if (bank === "GOOGLE" && date === colomboDateKey()) {
+    try {
+      const mid = await fetchGoogleMid(currency);
+      if (mid === null) return stored;
+      const retrievedAt = nowIso();
+      return [
+        {
+          bankCode: "GOOGLE",
+          currency,
+          ttBuying: mid,
+          ttSelling: mid,
+          sourceTimestamp: retrievedAt,
+          retrievedAt,
+        },
+      ];
+    } catch {
+      return stored;
+    }
+  }
+  return stored;
+}
+
+async function withLiveDailyHistory(
+  bank: string,
+  currency: string,
+  days: number,
+  stored: DailyRatePoint[],
+  source: "snapshot" | "observations",
+): Promise<{ daily: DailyRatePoint[]; source: "snapshot" | "observations" }> {
+  if (bank === "CBSL" && stored.length < 3) {
+    try {
+      const live = await fetchCbslHistory({ days, currencies: [currency] });
+      const liveDaily = toDailySeries(live.filter((point) => point.currency === currency));
+      if (liveDaily.length > stored.length) {
+        return { daily: liveDaily, source: "observations" };
+      }
+    } catch {
+      return { daily: stored, source };
+    }
+  }
+
+  if (bank === "GOOGLE") {
+    try {
+      const mid = await fetchGoogleMid(currency);
+      if (mid === null) return { daily: stored, source };
+      const today = colomboDateKey();
+      const merged = stored.filter((day) => day.date !== today);
+      const now = nowIso();
+      merged.push({
+        date: today,
+        ttBuying: mid,
+        ttSelling: mid,
+        openTtBuying: mid,
+        openTtSelling: mid,
+        sourceTimestamp: now,
+        firstSeenAt: now,
+        lastCheckedAt: now,
+        lastChangedAt: now,
+        changeCount: 0,
+        observations: 1,
+      });
+      merged.sort((a, b) => (a.date < b.date ? -1 : 1));
+      return { daily: merged, source: stored.length ? source : "observations" };
+    } catch {
+      return { daily: stored, source };
+    }
+  }
+
+  return { daily: stored, source };
+}
 
 export { handler };
