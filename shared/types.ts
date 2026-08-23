@@ -107,7 +107,7 @@ export interface HistoryPoint {
 export type HistoryRange = "1d" | "1w" | "1m" | "3m" | "6m" | "1y" | "all";
 
 /** Windows offered on the Forecast panel. Default is 1m. */
-export type ForecastRange = "1w" | "2w" | "1m" | "3m" | "6m";
+export type ForecastRange = "1w" | "2w" | "1m" | "3m" | "6m" | "1y" | "all";
 
 /**
  * One row per bank/currency/Colombo day. Created on the first check of the day

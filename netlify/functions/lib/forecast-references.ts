@@ -17,9 +17,22 @@ import type {
 } from "../../../shared/types.js";
 
 const CBSL_LIVE_TIMEOUT_MS = 18_000;
+/** Official CBSL form is too slow for multi-year dumps; longer windows stay DB-first. */
+const CBSL_LIVE_MAX_DAYS = 365;
 
 function sortDaily(daily: DailyAggregate[]): DailyAggregate[] {
   return [...daily].sort((a, b) => (a.date < b.date ? -1 : 1));
+}
+
+function mergeDaily(
+  stored: DailyAggregate[],
+  live: DailyAggregate[],
+): DailyAggregate[] {
+  const byDate = new Map(stored.map((day) => [day.date, day]));
+  for (const day of live) {
+    byDate.set(day.date, day);
+  }
+  return sortDaily([...byDate.values()]);
 }
 
 async function loadStoredDaily(
@@ -57,7 +70,10 @@ async function loadCbslDaily(
     stored = [];
     const message = err instanceof Error ? err.message : String(err);
     try {
-      const live = await fetchCbslHistoryBounded({ days, currencies: [currency] });
+      const live = await fetchCbslHistoryBounded({
+        days: Math.min(days, CBSL_LIVE_MAX_DAYS),
+        currencies: [currency],
+      });
       const liveDaily = groupByColomboDay(
         live.filter((point) => point.currency === currency),
       );
@@ -73,11 +89,14 @@ async function loadCbslDaily(
   }
 
   try {
-    const live = await fetchCbslHistoryBounded({ days, currencies: [currency] });
+    const live = await fetchCbslHistoryBounded({
+      days: Math.min(days, CBSL_LIVE_MAX_DAYS),
+      currencies: [currency],
+    });
     const liveDaily = groupByColomboDay(
       live.filter((point) => point.currency === currency),
     );
-    if (liveDaily.length) return { daily: liveDaily };
+    if (liveDaily.length) return { daily: mergeDaily(stored, liveDaily) };
     if (stored.length) return { daily: stored };
     return { daily: [], error: "CBSL has not published TT rates for this range" };
   } catch (err) {

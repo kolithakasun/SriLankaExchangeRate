@@ -19,7 +19,7 @@ Inspected August 2026. Each provider is isolated so a source change only require
 - HNB’s public site is a React SPA; rates are loaded from `venus.hnb.lk`, not from static HTML.
 - Sampath’s marketing site is Nuxt; rates are loaded from `/api/exchange-rates`.
 - Commercial Bank and People's Bank HTML layouts are non-trivial (colspans / th+td rows). Providers use explicit TT column fallbacks.
-- CBSL and Google are **forecast reference sources**, not licensed banks. Forecasts read their stored daily trend for the selected window (1W–6M). CBSL is live-fetched only when the DB is too thin for that window; Google uses stored days plus today's mid. They do not win best-rate highlights.
+- CBSL and Google are **forecast reference sources**, not licensed banks. Forecasts read their stored daily trend for the selected window (1W–All). CBSL is live-fetched only when the DB is too thin for that window (capped at 1 year); Google uses stored days plus today's mid. They do not win best-rate highlights.
 - CBSL TT search has no weekend/holiday rows; the collector looks back 7 days and keeps the newest published date.
 - Google Finance has no official API. The parser reads the `"USD / LKR",<price>` blob. Treat the quote as mid-market, not bank TT.
 - Do not scrape from the browser. Collection runs only in Netlify Functions.

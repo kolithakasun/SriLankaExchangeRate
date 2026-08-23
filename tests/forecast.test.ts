@@ -12,6 +12,7 @@ import {
 } from "../shared/utils/forecast";
 import {
   DEFAULT_FORECAST_RANGE,
+  MAX_RANGE_DAYS,
   getForecastRangeDays,
   resolveForecastWindow,
 } from "../shared/config/ranges";
@@ -50,6 +51,14 @@ describe("forecast windows", () => {
       days: 180,
     });
     expect(getForecastRangeDays("2w")).toBe(14);
+    expect(resolveForecastWindow({ range: "1y" })).toEqual({
+      range: "1y",
+      days: 365,
+    });
+    expect(resolveForecastWindow({ range: "all" })).toEqual({
+      range: "all",
+      days: MAX_RANGE_DAYS,
+    });
   });
 
   it("snaps a raw days value to the nearest window", () => {
@@ -58,6 +67,7 @@ describe("forecast windows", () => {
       range: "6m",
       days: 180,
     });
+    expect(resolveForecastWindow({ days: "400" }).range).toBe("1y");
   });
 });
 

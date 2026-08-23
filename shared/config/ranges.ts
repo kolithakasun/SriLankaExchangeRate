@@ -44,8 +44,8 @@ export interface ForecastRangeConfig {
 
 /**
  * Forecast windows. 1M is the default: long enough for a stable trend,
- * short enough that a stale Google series does not dominate. 3M/6M unlock
- * weekday seasonality once the DB has enough daily snapshots.
+ * short enough that a stale Google series does not dominate. 1Y/All use
+ * everything stored; CBSL live-fill is capped at 1 year.
  */
 export const forecastRanges: ForecastRangeConfig[] = [
   { value: "1w", label: "1W", days: 7, description: "Last 7 days" },
@@ -53,6 +53,8 @@ export const forecastRanges: ForecastRangeConfig[] = [
   { value: "1m", label: "1M", days: 30, description: "Last 30 days" },
   { value: "3m", label: "3M", days: 90, description: "Last 3 months" },
   { value: "6m", label: "6M", days: 180, description: "Last 6 months" },
+  { value: "1y", label: "1Y", days: 365, description: "Last 12 months" },
+  { value: "all", label: "All", days: MAX_RANGE_DAYS, description: "Everything stored" },
 ];
 
 export const DEFAULT_FORECAST_RANGE: ForecastRange = "1m";

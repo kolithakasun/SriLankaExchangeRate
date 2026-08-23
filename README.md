@@ -12,7 +12,7 @@ Built for **Netlify** (static frontend + serverless functions) with **Supabase**
 - Bank comparison + best buying / best selling highlights
 - Intraday historical observations **plus** a guaranteed one-row-per-day snapshot
 - History table + chart over 1D / 1W / 1M / 3M / 6M / 1Y / All
-- Forecast panel: 1W / 2W / 1M / 3M / 6M lookback, trend + best/worst weekday, optional CBSL/Google signal and AI summary
+- Forecast panel: 1W / 2W / 1M / 3M / 6M / 1Y / All lookback, trend + best/worst weekday, optional CBSL/Google signal and AI summary
 - Source freshness / health indicators
 - Manual refresh (with cooldown) + scheduled collection every 30 minutes
 - Light / dark mode
@@ -252,7 +252,7 @@ Scheduled functions need a Netlify plan that supports them. If scheduling is una
 | `GET` | `/api/rates?currency=USD` | Latest rates + best rates |
 | `GET` | `/api/history?bank=SEYLAN&currency=USD&range=1d&date=2026-08-14` | Intraday history for one day |
 | `GET` | `/api/history?bank=SEYLAN&currency=USD&range=1m` | Daily history (`1w`, `1m`, `3m`, `6m`, `1y`, `all`) |
-| `GET` | `/api/forecast?bank=SEYLAN&currency=USD&range=1m&references=1` | Bank trend + optional CBSL/Google signal (`1w`, `2w`, `1m`, `3m`, `6m`) |
+| `GET` | `/api/forecast?bank=SEYLAN&currency=USD&range=1m&references=1` | Bank trend + optional CBSL/Google signal (`1w`, `2w`, `1m`, `3m`, `6m`, `1y`, `all`) |
 | `GET` | `/api/banks` | Bank config |
 | `GET` | `/api/currencies` | Currency config |
 | `POST` | `/api/refresh` | Fetch banks + store new observations |
@@ -282,7 +282,7 @@ If migration 002 hasn't been applied, `/api/history` still works: it collapses r
 
 ## Forecast methodology
 
-`/api/forecast` computes the bank trend from stored daily snapshots (`daily_rates`, falling back to `exchange_rates`). Pick a lookback window in the UI or pass `range=1w|2w|1m|3m|6m` (default **1M** — long enough for a stable trend, short enough that a thin Google series does not dominate). `days=` still works and snaps to the nearest window.
+`/api/forecast` computes the bank trend from stored daily snapshots (`daily_rates`, falling back to `exchange_rates`). Pick a lookback window in the UI or pass `range=1w|2w|1m|3m|6m|1y|all` (default **1M** — long enough for a stable trend, short enough that a thin Google series does not dominate). `days=` still works and snaps to the nearest window. **All** uses everything stored; CBSL live-fill stays capped at 1 year.
 
 When `references=1` (the UI default), it loads the **same window** of **CBSL official 9:30 a.m. TT** and **Google Finance mid** from the database, then qualifies the bank signal (spread vs official/mid, whether trends agree). CBSL is live-fetched only when stored coverage is too thin for that window. Google has no official history API, so the stored daily trend is used and today's mid is overlaid. The bank-only numbers stay unchanged if those sources fail.
 
