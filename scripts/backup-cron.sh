@@ -47,6 +47,18 @@ find_node() {
   return 1
 }
 
+# GNU stat (Linux): -c %Y. BSD stat (macOS): -f %m.
+# Do not try BSD -f first — on Linux -f means --file-system and still exits 0,
+# then (( epoch < cutoff )) treats the word "File" as an unbound variable.
+file_mtime() {
+  local path="$1"
+  if stat --version >/dev/null 2>&1; then
+    stat -c %Y "${path}"
+  else
+    stat -f %m "${path}"
+  fi
+}
+
 write_status() {
   local name="$1"
   cat > "${BACKUP_DIR}/${name}" <<EOF
@@ -133,7 +145,7 @@ prune_old_archives() {
 
   for file in "${archives[@]}"; do
     keep_count=$((keep_count + 1))
-    epoch="$(stat -f %m "${file}" 2>/dev/null || stat -c %Y "${file}")"
+    epoch="$(file_mtime "${file}")"
     if (( keep_count <= MIN_KEEP )); then
       continue
     fi
@@ -149,7 +161,7 @@ cleanup_incomplete_dirs() {
   cutoff=$(( $(date +%s) - 2 * 24 * 60 * 60 ))
   while IFS= read -r dir; do
     [[ -z "${dir}" ]] && continue
-    epoch="$(stat -f %m "${dir}" 2>/dev/null || stat -c %Y "${dir}")"
+    epoch="$(file_mtime "${dir}")"
     if (( epoch < cutoff )) && [[ ! -f "${dir}/manifest.json" ]]; then
       log "Removing incomplete dump dir ${dir}"
       rm -rf "${dir}"
