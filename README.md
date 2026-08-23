@@ -278,6 +278,18 @@ A repeated check within the same day with identical values writes no new observa
 
 If migration 002 hasn't been applied, `/api/history` still works: it collapses raw observations into a daily series and flags `dailySource: "observations"` in the response.
 
+### Database backup
+
+```bash
+npm run db:backup
+```
+
+Writes timestamped JSON under `backups/` (gitignored): one file per table plus `backup.json` and `manifest.json`. Uses `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` from `.env`. If those are unset, it copies the local temp `store.json` instead.
+
+```bash
+node scripts/backup-db.mjs --out ./backups --tables daily_rates,exchange_rates
+```
+
 ---
 
 ## Forecast methodology
@@ -359,6 +371,7 @@ npm run test:live
 │   ├── scheduled-refresh.ts
 │   └── providers/
 ├── supabase/migrations/      # SQL schema
+├── scripts/backup-db.mjs     # Dump Supabase (or local store) to backups/
 ├── tests/                    # Vitest + fixtures
 ├── docs/SOURCES.md           # Bank source notes
 ├── netlify.toml
