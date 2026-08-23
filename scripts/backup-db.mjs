@@ -6,6 +6,7 @@
  *   npm run db:backup
  *   node scripts/backup-db.mjs
  *   node scripts/backup-db.mjs --out ./backups --tables daily_rates,exchange_rates
+ *   node scripts/backup-db.mjs --out /opt/SriLankaExchangeRate/backups --require-supabase
  *
  * Reads SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY from the environment or .env.
  * If those are missing, copies the local temp store.json used in development.
@@ -55,7 +56,11 @@ function loadEnvFile(path) {
 }
 
 function parseArgs(argv) {
-  const args = { out: join(ROOT, "backups"), tables: BACKUP_TABLES };
+  const args = {
+    out: join(ROOT, "backups"),
+    tables: BACKUP_TABLES,
+    requireSupabase: false,
+  };
   for (let i = 0; i < argv.length; i += 1) {
     const flag = argv[i];
     const next = argv[i + 1];
@@ -68,8 +73,9 @@ function parseArgs(argv) {
         .map((name) => name.trim())
         .filter(Boolean);
       i += 1;
+    } else if (flag === "--require-supabase") {
+      args.requireSupabase = true;
     } else if (flag === "--help" || flag === "-h") {
-      args.help = true;
     } else {
       throw new Error(`Unknown argument: ${flag}`);
     }
@@ -160,10 +166,11 @@ async function main() {
 
 Usage:
   npm run db:backup
-  node scripts/backup-db.mjs [--out DIR] [--tables a,b]
+  node scripts/backup-db.mjs [--out DIR] [--tables a,b] [--require-supabase]
 
 Writes timestamped JSON under backups/ (gitignored).
-Needs SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY, or a local store.json.`);
+Needs SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY, or a local store.json.
+--require-supabase fails instead of copying the local store.`);
     return;
   }
 
@@ -173,6 +180,12 @@ Needs SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY, or a local store.json.`);
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   let manifest;
+
+  if (args.requireSupabase && (!url || !key)) {
+    throw new Error(
+      "Supabase is required (--require-supabase) but SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is missing.",
+    );
+  }
 
   if (url && key) {
     const client = createClient(url, key, {

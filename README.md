@@ -290,6 +290,31 @@ Writes timestamped JSON under `backups/` (gitignored): one file per table plus `
 node scripts/backup-db.mjs --out ./backups --tables daily_rates,exchange_rates
 ```
 
+### Scheduled backups (4x / day)
+
+On the server (`/opt/SriLankaExchangeRate`):
+
+```bash
+chmod +x scripts/backup-cron.sh scripts/install-backup-cron.sh
+sudo bash scripts/install-backup-cron.sh
+```
+
+That installs a Colombo-time cron at **00:00, 06:00, 12:00, 18:00**. Each run:
+
+1. Dumps Supabase (`--require-supabase` — no silent local fallback if the DB is down)
+2. Compresses the dump to `backups/<timestamp>.tar.gz`
+3. Deletes archives older than **14 days** only if newer successful backups exist
+4. Always keeps at least the **8 newest** archives
+
+If dumps fail for more than two weeks, old copies are **not** deleted. Check `backups/LAST_SUCCESS`, `backups/LAST_FAILURE`, `backups/STALE_ALERT`, and `backups/backup.log`.
+
+Manual run:
+
+```bash
+APP_ROOT=/opt/SriLankaExchangeRate BACKUP_DIR=/opt/SriLankaExchangeRate/backups \
+  /opt/SriLankaExchangeRate/scripts/backup-cron.sh
+```
+
 ---
 
 ## Forecast methodology
@@ -372,6 +397,7 @@ npm run test:live
 │   └── providers/
 ├── supabase/migrations/      # SQL schema
 ├── scripts/backup-db.mjs     # Dump Supabase (or local store) to backups/
+├── scripts/backup-cron.sh    # Compress + safe 14-day prune (cron wrapper)
 ├── tests/                    # Vitest + fixtures
 ├── docs/SOURCES.md           # Bank source notes
 ├── netlify.toml

@@ -150,16 +150,16 @@
     "semantic_hash": "a92b0fc523cbc5e528a8be25260d3226"
   },
   "package.json": {
-    "mtime": 1787473082.914453,
-    "seen": 1787473183.8497128,
-    "ast_hash": "5ccde4262ef5e186f4e031fc61890666",
-    "semantic_hash": "5ccde4262ef5e186f4e031fc61890666"
+    "mtime": 1787474535.0998392,
+    "seen": 1787474557.33987,
+    "ast_hash": "b146e6c11c462994bf5202d3a881b3dc",
+    "semantic_hash": ""
   },
   "scripts/backup-db.mjs": {
-    "mtime": 1787473089.4366581,
-    "seen": 1787473183.8497128,
-    "ast_hash": "bfee9d66d4750595e1a0619ea25abf0c",
-    "semantic_hash": "bfee9d66d4750595e1a0619ea25abf0c"
+    "mtime": 1787474498.2923164,
+    "seen": 1787474557.339873,
+    "ast_hash": "fe84cb95b60653c2c6b84032e53dd11e",
+    "semantic_hash": ""
   },
   "shared/config/banks.ts": {
     "mtime": 1787471755.913531,
@@ -364,5 +364,95 @@
     "seen": 1787473183.849728,
     "ast_hash": "c9ec890af7eabdf9845e73ae2ea107ea",
     "semantic_hash": "c9ec890af7eabdf9845e73ae2ea107ea"
+  },
+  "scripts/backup-cron.sh": {
+    "mtime": 1787474534.7780254,
+    "seen": 1787474557.339872,
+    "ast_hash": "dc3b84074e460b3232d0d897b2cfb191",
+    "semantic_hash": ""
+  },
+  "scripts/install-backup-cron.sh": {
+    "mtime": 1787474531.7730982,
+    "seen": 1787474557.339874,
+    "ast_hash": "8124c0f37716ac2d3021f7621b504a23",
+    "semantic_hash": ""
+  },
+  ".github/copilot-instructions.md": {
+    "mtime": 1787471846.665887,
+    "seen": 1787474557.3406131,
+    "ast_hash": "ec2dc0dc7bef63488889f34de2f5584d",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1787474538.8947637,
+    "seen": 1787474557.3406138,
+    "ast_hash": "0bc128fa6a0f6cc7b75a89a216d968f5",
+    "semantic_hash": ""
+  },
+  "docs/SOURCES.md": {
+    "mtime": 1787472874.1149838,
+    "seen": 1787474557.3406138,
+    "ast_hash": "9b2d783952a9edd8137e5b8d7ce4de6f",
+    "semantic_hash": ""
+  },
+  "index.html": {
+    "mtime": 1786710597.2521005,
+    "seen": 1787474557.3406148,
+    "ast_hash": "4fd1d41018d88aeecad5d3c61fb369c6",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/cbsl-chart.html": {
+    "mtime": 1787462786.8740795,
+    "seen": 1787474557.340616,
+    "ast_hash": "78d16e2fbc48ec8db9d1818ef0dc6802",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/cbsl-tt.html": {
+    "mtime": 1787462786.6548083,
+    "seen": 1787474557.340616,
+    "ast_hash": "116a111ec20db81573e5554515457bff",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/commercial.html": {
+    "mtime": 1786710990.2595377,
+    "seen": 1787474557.340617,
+    "ast_hash": "856f1a2b545573a27cefc73ca2a02076",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/google-aud.html": {
+    "mtime": 1787463333.360733,
+    "seen": 1787474557.340617,
+    "ast_hash": "3299b667542a978acdae7bc729fc592a",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/google-usd.html": {
+    "mtime": 1787463332.6562197,
+    "seen": 1787474557.340618,
+    "ast_hash": "62a955d47f6e148092134fde1186fc52",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/invalid.html": {
+    "mtime": 1786710713.3104172,
+    "seen": 1787474557.340618,
+    "ast_hash": "a6805762c6890daedde38871025ed42c",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/ndb.html": {
+    "mtime": 1786710713.3102243,
+    "seen": 1787474557.340619,
+    "ast_hash": "df1c541da57220686a1d0556e3481dbd",
+    "semantic_hash": ""
+  },
+  "tests/fixtures/seylan.html": {
+    "mtime": 1786710713.3099933,
+    "seen": 1787474557.340619,
+    "ast_hash": "b2e6646b870c0a64c874c3f54011e37c",
+    "semantic_hash": ""
+  },
+  "public/favicon.svg": {
+    "mtime": 1786710748.2329838,
+    "seen": 1787474557.340619,
+    "ast_hash": "b53db74121b87613bbc762f6c85768be",
+    "semantic_hash": ""
   }
 }
