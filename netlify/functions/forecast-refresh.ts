@@ -1,4 +1,4 @@
-import type { Handler } from "@netlify/functions";
+import type { Config, Handler } from "@netlify/functions";
 import { fetchAllBankRates } from "./providers/index.js";
 import { persistProviderResults } from "./lib/store.js";
 import { requireUser } from "./lib/auth.js";
@@ -22,9 +22,9 @@ import {
 } from "./lib/cursor-narration.js";
 
 /**
- * Manual forecast update: re-collects every source, re-pulls the official CBSL
- * series, then returns the recomputed forecast. When provider=cursor, requires
- * a signed-in user and uses the global 2/day Cursor quota asynchronously.
+ * Manual forecast update. Non-Cursor path re-scrapes all banks. Cursor path
+ * uses stored daily rates + live CBSL (and kicks a background scrape) so the
+ * request stays under the function timeout and can launch the cloud agent.
  */
 const handler: Handler = wrap(async (event) => {
   if (event.httpMethod !== "POST" && event.httpMethod !== "GET") {
@@ -60,23 +60,43 @@ const handler: Handler = wrap(async (event) => {
       ? "Starting Cursor forecast refresh…"
       : "Starting manual forecast refresh…",
   );
-  const results = await fetchAllBankRates();
-  for (const r of results) {
-    if (!r.success) {
-      console.error(`Provider: ${r.bankCode} Error: ${r.error}`);
-    }
-  }
-  const persisted = await persistProviderResults(results);
 
-  const collection = {
-    checked: persisted.checked,
-    inserted: persisted.inserted,
-    dailyCreated: persisted.dailyCreated,
-    dailyUpdated: persisted.dailyUpdated,
-    failed: results
-      .filter((r) => !r.success)
-      .map((r) => ({ bankCode: r.bankCode, error: r.error ?? null })),
+  let collection: {
+    checked: number;
+    inserted: number;
+    dailyCreated?: number;
+    dailyUpdated?: number;
+    failed: Array<{ bankCode: string; error: string | null }>;
   };
+
+  if (wantsCursor) {
+    // Background scrape — do not block Cursor launch on every bank HTML fetch.
+    void fetchAllBankRates()
+      .then((results) => persistProviderResults(results))
+      .catch((err) => console.error("Background rate refresh failed", err));
+    collection = {
+      checked: 0,
+      inserted: 0,
+      failed: [],
+    };
+  } else {
+    const results = await fetchAllBankRates();
+    for (const r of results) {
+      if (!r.success) {
+        console.error(`Provider: ${r.bankCode} Error: ${r.error}`);
+      }
+    }
+    const persisted = await persistProviderResults(results);
+    collection = {
+      checked: persisted.checked,
+      inserted: persisted.inserted,
+      dailyCreated: persisted.dailyCreated,
+      dailyUpdated: persisted.dailyUpdated,
+      failed: results
+        .filter((r) => !r.success)
+        .map((r) => ({ bankCode: r.bankCode, error: r.error ?? null })),
+    };
+  }
 
   if (!wantsCursor || !userId) {
     const payload = await buildForecastPayload(resolved.request, {
@@ -122,31 +142,33 @@ const handler: Handler = wrap(async (event) => {
   });
 
   if ("exhausted" in claimed) {
-    const latest = await findLatestCompletedCursorNarration();
+    const latest = await findLatestCompletedCursorNarration({
+      bank: numeric.bank,
+      currency: numeric.currency,
+      range: numeric.range,
+    });
     const quota = await getCursorQuotaStatus();
-    if (latest?.narration) {
-      return json(200, {
-        ok: true,
-        collection,
-        ...numericRest,
-        narration: latest.narration,
-        narrationSource: "cursor",
-        narrationCached: true,
-        cursorQuotaExhausted: true,
-        cursorRun: {
-          id: latest.id,
-          status: latest.status,
-          slot: latest.slot,
-        },
-        cursorQuota: quota,
-        availableProviders: providers,
-      });
-    }
-    return json(429, {
-      error:
-        "Cursor daily limit reached (2 generations per Colombo day). Try again after midnight Colombo time.",
-      cursorQuota: quota,
+    // Always return refreshed numbers; reuse the last Cursor summary when available.
+    return json(200, {
+      ok: true,
       collection,
+      ...numericRest,
+      narration:
+        latest?.narration ??
+        "Cursor daily limit reached (2 generations per Colombo day). No prior Cursor summary is saved yet — try again after midnight Colombo time.",
+      narrationSource: latest?.narration ? "cursor" : "template",
+      narrationCached: Boolean(latest?.narration),
+      cursorQuotaExhausted: true,
+      cursorRun: latest
+        ? {
+            id: latest.id,
+            status: latest.status,
+            slot: latest.slot,
+            completedAt: latest.completedAt,
+          }
+        : undefined,
+      cursorQuota: quota,
+      availableProviders: providers,
     });
   }
 
@@ -190,3 +212,8 @@ const handler: Handler = wrap(async (event) => {
 });
 
 export { handler };
+
+/** Local + production budget for CBSL fill + Cursor launch (scrape is background). */
+export const config: Config = {
+  timeout: 60,
+};

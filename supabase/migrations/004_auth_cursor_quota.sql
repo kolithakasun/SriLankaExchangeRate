@@ -107,8 +107,48 @@ declare
   v_slot smallint;
   v_id uuid;
 begin
-  -- Pick the lowest free slot under a day-level advisory lock.
+  -- Pick / reclaim a free slot under a day-level advisory lock.
+  -- Released rows still occupy unique (quota_date, slot), so reclaim via UPDATE.
   perform pg_advisory_xact_lock(hashtext('cursor_quota:' || p_quota_date::text));
+
+  select r.id, r.slot
+    into v_id, v_slot
+  from public.cursor_forecast_runs r
+  where r.quota_date = p_quota_date
+    and (
+      r.status = 'released'
+      or (
+        r.status = 'reserved'
+        and r.updated_at < now() - interval '10 minutes'
+      )
+    )
+  order by
+    case when r.status = 'released' then 0 else 1 end,
+    r.slot
+  limit 1
+  for update skip locked;
+
+  if v_id is not null then
+    update public.cursor_forecast_runs
+    set input_hash = p_input_hash,
+        bank_code = p_bank_code,
+        currency_code = p_currency_code,
+        forecast_range = p_forecast_range,
+        status = 'reserved',
+        agent_id = null,
+        run_id = null,
+        narration = null,
+        error = null,
+        requested_by = p_requested_by,
+        updated_at = now(),
+        completed_at = null
+    where id = v_id;
+
+    run_id := v_id;
+    slot := v_slot;
+    return next;
+    return;
+  end if;
 
   select s.slot
     into v_slot
@@ -118,7 +158,6 @@ begin
     from public.cursor_forecast_runs r
     where r.quota_date = p_quota_date
       and r.slot = s.slot
-      and r.status <> 'released'
   )
   order by s.slot
   limit 1;

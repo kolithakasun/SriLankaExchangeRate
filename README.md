@@ -85,6 +85,7 @@ See [`docs/SOURCES.md`](docs/SOURCES.md) for details.
 4. Run [`supabase/migrations/002_daily_rates.sql`](supabase/migrations/002_daily_rates.sql) as well. It adds the `daily_rates` snapshot table and backfills it from any observations already stored, so existing history shows up in the long-range charts immediately.
 5. Run [`supabase/migrations/003_reference_sources.sql`](supabase/migrations/003_reference_sources.sql) to seed CBSL and Google as forecast reference sources. Refresh also upserts those rows if this migration has not been applied yet.
 6. Run [`supabase/migrations/004_auth_cursor_quota.sql`](supabase/migrations/004_auth_cursor_quota.sql) for login profiles, admin roles, and the global Cursor 2/day quota tables.
+7. Run [`supabase/migrations/005_fix_cursor_quota_claim.sql`](supabase/migrations/005_fix_cursor_quota_claim.sql) so released quota slots can be reclaimed without hitting the unique constraint.
 7. Open **Project Settings → API** and copy:
    - **Project URL** → `SUPABASE_URL`
    - **Publishable / anon key** → `SUPABASE_ANON_KEY`
@@ -147,7 +148,7 @@ Without Supabase credentials, the app falls back to a **local temp JSON store** 
 ### Auth bootstrap (first admin)
 
 1. In Supabase Auth settings, **disable public sign-up**.
-2. Run migrations `001`–`004`.
+2. Run migrations `001`–`005`.
 3. Create the first user in the Supabase Dashboard (Authentication → Users → Add user).
 4. Promote that account:
 

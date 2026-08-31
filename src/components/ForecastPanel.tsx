@@ -74,12 +74,13 @@ export function ForecastPanel({
     setLoading(true);
     setError(null);
     try {
-      // Auto-refresh never launches Cursor — force sync providers only.
+      // Auto-refresh never launches Cursor; when Cursor is selected the GET
+      // path may still return the last saved Cursor summary if quota is exhausted.
       const res = await fetchForecast({
         bank,
         currency,
         range,
-        provider: provider === "cursor" ? "auto" : provider,
+        provider,
         references: includeReferences,
         accessToken,
       });
@@ -439,11 +440,13 @@ export function ForecastPanel({
                   : data?.narrationSource === "groq"
                     ? "Groq"
                     : data?.narrationSource === "cursor"
-                      ? data.narrationCached
-                        ? "Cursor · cached"
-                        : data.cursorPending
-                          ? "Cursor · pending"
-                          : "Cursor"
+                      ? data.cursorQuotaExhausted
+                        ? "Cursor · last saved"
+                        : data.narrationCached
+                          ? "Cursor · cached"
+                          : data.cursorPending
+                            ? "Cursor · pending"
+                            : "Cursor"
                       : "auto-generated"}
                 )
               </span>
@@ -451,8 +454,8 @@ export function ForecastPanel({
             <p className="mt-3 text-sm leading-relaxed">{data?.narration}</p>
             {data?.cursorQuotaExhausted && (
               <p className="mt-2 text-xs text-[var(--color-warn)]">
-                Daily Cursor limit reached — showing the latest saved Cursor summary
-                while numbers were refreshed.
+                Daily Cursor limit reached — showing the last generated Cursor
+                summary with the latest forecast numbers.
               </p>
             )}
             <p className="mt-4 text-xs text-[var(--color-ink-muted)]">

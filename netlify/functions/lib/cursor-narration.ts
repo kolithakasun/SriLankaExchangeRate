@@ -10,10 +10,6 @@ import {
   type CursorForecastRun,
 } from "./cursor-quota.js";
 
-const DEFAULT_REPO =
-  "https://github.com/kolithakasun/SriLankaExchangeRate.git";
-const DEFAULT_REF = "main";
-
 function cursorApiKey(): string | null {
   const key = process.env.CURSOR_API_KEY?.trim();
   return key || null;
@@ -23,12 +19,19 @@ function cursorModelId(): string {
   return process.env.CURSOR_MODEL?.trim() || "auto";
 }
 
-function repoUrl(): string {
-  return process.env.CURSOR_REPO_URL?.trim() || DEFAULT_REPO;
-}
-
-function repoRef(): string {
-  return process.env.CURSOR_REPO_REF?.trim() || DEFAULT_REF;
+/**
+ * Optional GitHub repo for the cloud agent. Empty / "none" = no-repo agent
+ * (recommended for short narration; avoids branch-access failures).
+ */
+function cloudRepos(): Array<{ url: string; startingRef: string }> {
+  const raw = process.env.CURSOR_REPO_URL?.trim();
+  if (!raw || raw.toLowerCase() === "none") return [];
+  return [
+    {
+      url: raw,
+      startingRef: process.env.CURSOR_REPO_REF?.trim() || "main",
+    },
+  ];
 }
 
 export function isCursorConfigured(): boolean {
@@ -61,11 +64,14 @@ export async function launchCursorNarration(options: {
 
   try {
     // Do not await-using: disposing the local handle must not cancel the cloud job.
+    // Default to a no-repo cloud agent so narration does not depend on GitHub
+    // branch visibility for this private/personal repo.
+    const repos = cloudRepos();
     const agent = await Agent.create({
       apiKey,
       model: { id: cursorModelId() },
       cloud: {
-        repos: [{ url: repoUrl(), startingRef: repoRef() }],
+        ...(repos.length ? { repos } : { repos: [] }),
         autoCreatePR: false,
         skipReviewerRequest: true,
       },
@@ -123,14 +129,12 @@ export async function reconcileCursorRun(
       apiKey,
     });
 
-    // Prefer conversation/status without blocking forever if wait hangs.
     if (cursorRun.supports("wait")) {
       const result = await Promise.race([
         cursorRun.wait(),
         new Promise<null>((resolve) => setTimeout(() => resolve(null), 12_000)),
       ]);
       if (!result) {
-        // Still running — leave pending for the next poll.
         return run;
       }
       if (result.status === "finished" && result.result?.trim()) {

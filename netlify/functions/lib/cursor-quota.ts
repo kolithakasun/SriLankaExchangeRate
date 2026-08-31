@@ -168,28 +168,57 @@ export async function findCompletedCursorNarration(
   return data ? mapRun(data) : null;
 }
 
-/** Latest completed Cursor narration for the day (quota-exhausted reuse). */
-export async function findLatestCompletedCursorNarration(
-  date = colomboDateKey(),
-): Promise<CursorForecastRun | null> {
+/**
+ * Latest completed Cursor narration for quota-exhausted reuse.
+ * Prefers the same bank/currency/range when provided, then same bank/currency,
+ * then any recent completed run (any Colombo day).
+ */
+export async function findLatestCompletedCursorNarration(options?: {
+  bank?: string;
+  currency?: string;
+  range?: string;
+}): Promise<CursorForecastRun | null> {
   const client = getServiceClient();
   if (!client) return null;
 
-  const { data, error } = await client
-    .from("cursor_forecast_runs")
-    .select("*")
-    .eq("quota_date", date)
-    .eq("status", "completed")
-    .not("narration", "is", null)
-    .order("completed_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (error) {
-    console.error("Latest Cursor narration lookup failed", error.message);
-    return null;
+  const attempts: Array<{
+    bank?: string;
+    currency?: string;
+    range?: string;
+  }> = [];
+  if (options?.bank && options?.currency && options?.range) {
+    attempts.push({
+      bank: options.bank,
+      currency: options.currency,
+      range: options.range,
+    });
   }
-  return data ? mapRun(data) : null;
+  if (options?.bank && options?.currency) {
+    attempts.push({ bank: options.bank, currency: options.currency });
+  }
+  attempts.push({});
+
+  for (const filter of attempts) {
+    let query = client
+      .from("cursor_forecast_runs")
+      .select("*")
+      .eq("status", "completed")
+      .not("narration", "is", null)
+      .order("completed_at", { ascending: false })
+      .limit(1);
+    if (filter.bank) query = query.eq("bank_code", filter.bank);
+    if (filter.currency) query = query.eq("currency_code", filter.currency);
+    if (filter.range) query = query.eq("forecast_range", filter.range);
+
+    const { data, error } = await query.maybeSingle();
+    if (error) {
+      console.error("Latest Cursor narration lookup failed", error.message);
+      return null;
+    }
+    if (data) return mapRun(data);
+  }
+
+  return null;
 }
 
 export async function claimCursorQuotaSlot(options: {
@@ -215,6 +244,12 @@ export async function claimCursorQuotaSlot(options: {
   });
 
   if (error) {
+    // Unique violation can still surface if an old claim function is deployed;
+    // treat it as exhausted rather than a 500.
+    if (/cursor_forecast_runs_day_slot|duplicate key/i.test(error.message)) {
+      console.warn("Cursor quota claim hit unique constraint; treating as exhausted");
+      return { exhausted: true };
+    }
     throw new Error(`Could not claim Cursor quota: ${error.message}`);
   }
 

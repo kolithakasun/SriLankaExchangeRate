@@ -178,13 +178,11 @@ export function fetchForecast(params: {
   references?: boolean;
   accessToken?: string | null;
 }): Promise<ForecastResponse> {
-  const provider =
-    params.provider === "cursor" ? "auto" : params.provider;
   const q = new URLSearchParams({
     bank: params.bank,
     currency: params.currency,
     ...(params.range ? { range: params.range } : {}),
-    ...(provider ? { provider } : {}),
+    ...(params.provider ? { provider: params.provider } : {}),
     references: params.references === false ? "0" : "1",
   });
   return api(`/api/forecast?${q.toString()}`, {
