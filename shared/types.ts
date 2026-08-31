@@ -186,6 +186,27 @@ export interface ForecastTrend {
   projectedNextDaySelling: number | null;
 }
 
+export interface ForecastHorizonAssumption {
+  horizonDays: 14 | 30 | 60;
+  label: "2 weeks" | "1 month" | "2 months";
+  projectedBuying: number;
+  change: number;
+  changePct: number;
+}
+
+export interface ForecastAssumptions {
+  /** Recency-weighted calendar-day slope blended from the selected bank and CBSL. */
+  slopePerDay: number;
+  bankDaysCovered: number;
+  cbslDaysCovered: number;
+  cbslFirstDate: string;
+  cbslLastDate: string;
+  halfLifeDays: number;
+  bankWeight: number;
+  cbslWeight: number;
+  horizons: ForecastHorizonAssumption[];
+}
+
 export type ReferenceQuoteKind = "tt" | "mid";
 
 export type TrendAlignment = "aligned" | "diverging" | "unknown";
@@ -226,6 +247,8 @@ export interface ForecastResult {
   daysCovered: number;
   confidence: ForecastConfidence;
   trend: ForecastTrend | null;
+  /** Longer-horizon TT buying assumptions built from all bank and CBSL history. */
+  assumptions?: ForecastAssumptions;
   bestDayOfWeek: DayOfWeekStat | null;
   worstDayOfWeek: DayOfWeekStat | null;
   suggestedAction: string;

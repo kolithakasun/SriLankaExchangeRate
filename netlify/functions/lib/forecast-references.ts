@@ -1,4 +1,7 @@
-import { getDailyHistory } from "./store.js";
+import {
+  getDailyHistory,
+  persistHistoricalDailyRates,
+} from "./store.js";
 import { fetchCbslHistory } from "../providers/cbsl.js";
 import { fetchGoogleMid } from "../providers/google.js";
 import {
@@ -17,8 +20,8 @@ import type {
 } from "../../../shared/types.js";
 
 const CBSL_LIVE_TIMEOUT_MS = 18_000;
-/** Official CBSL form is too slow for multi-year dumps; longer windows stay DB-first. */
-const CBSL_LIVE_MAX_DAYS = 365;
+/** CBSL publishes ten years in one response; a missing DB history is seeded once. */
+const CBSL_LIVE_MAX_DAYS = 3650;
 
 function sortDaily(daily: DailyAggregate[]): DailyAggregate[] {
   return [...daily].sort((a, b) => (a.date < b.date ? -1 : 1));
@@ -59,9 +62,10 @@ async function fetchCbslHistoryBounded(options: {
   ]);
 }
 
-async function loadCbslDaily(
+export async function loadCbslDaily(
   currency: string,
   days: number,
+  options: { forceLive?: boolean } = {},
 ): Promise<{ daily: DailyAggregate[]; error?: string }> {
   let stored: DailyAggregate[] = [];
   try {
@@ -74,6 +78,7 @@ async function loadCbslDaily(
         days: Math.min(days, CBSL_LIVE_MAX_DAYS),
         currencies: [currency],
       });
+      await persistHistoricalDailyRates(live);
       const liveDaily = groupByColomboDay(
         live.filter((point) => point.currency === currency),
       );
@@ -84,7 +89,7 @@ async function loadCbslDaily(
     return { daily: [], error: message };
   }
 
-  if (cbslStoredCoverageIsEnough(stored.length, days)) {
+  if (!options.forceLive && cbslStoredCoverageIsEnough(stored.length, days)) {
     return { daily: stored };
   }
 
@@ -93,6 +98,7 @@ async function loadCbslDaily(
       days: Math.min(days, CBSL_LIVE_MAX_DAYS),
       currencies: [currency],
     });
+    await persistHistoricalDailyRates(live);
     const liveDaily = groupByColomboDay(
       live.filter((point) => point.currency === currency),
     );

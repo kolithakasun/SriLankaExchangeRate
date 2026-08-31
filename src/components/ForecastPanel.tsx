@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getEnabledBanks } from "@shared/config/banks";
 import { getEnabledCurrencies } from "@shared/config/currencies";
 import {
@@ -8,14 +8,21 @@ import {
 } from "@shared/config/ranges";
 import { formatRate } from "@shared/utils/rates";
 import { weekdayName } from "@shared/utils/forecast";
-import { fetchForecast, type ForecastResponse } from "../services/api";
+import { relativeTime, toColombo } from "@shared/utils/time";
+import {
+  fetchForecast,
+  refreshForecast,
+  type ForecastResponse,
+} from "../services/api";
 import type {
+  ForecastResult,
   ForecastRange,
   ForecastReferences,
   ReferenceSeriesView,
 } from "@shared/types";
 
 type ProviderOption = "auto" | "gemini" | "groq";
+const FORECAST_AUTO_REFRESH_MS = 6 * 60 * 60 * 1000;
 
 const PROVIDER_LABELS: Record<ProviderOption, string> = {
   auto: "Auto (best available)",
@@ -23,7 +30,13 @@ const PROVIDER_LABELS: Record<ProviderOption, string> = {
   groq: "Groq",
 };
 
-export function ForecastPanel({ defaultCurrency }: { defaultCurrency: string }) {
+export function ForecastPanel({
+  defaultCurrency,
+  refreshKey,
+}: {
+  defaultCurrency: string;
+  refreshKey?: string | null;
+}) {
   const banks = getEnabledBanks();
   const currencies = getEnabledCurrencies();
   const [bank, setBank] = useState<string>(banks[0]?.code ?? "SEYLAN");
@@ -33,40 +46,66 @@ export function ForecastPanel({ defaultCurrency }: { defaultCurrency: string }) 
   const [includeReferences, setIncludeReferences] = useState(true);
   const [data, setData] = useState<ForecastResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** Guards against a slow earlier request overwriting a newer result. */
+  const requestId = useRef(0);
 
   useEffect(() => {
     setCurrency(defaultCurrency);
   }, [defaultCurrency]);
 
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await fetchForecast({
-          bank,
-          currency,
-          range,
-          provider,
-          references: includeReferences,
-        });
-        if (!cancelled) setData(res);
-      } catch (err) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : String(err));
-          setData(null);
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
+  const load = useCallback(async () => {
+    const id = ++requestId.current;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetchForecast({
+        bank,
+        currency,
+        range,
+        provider,
+        references: includeReferences,
+      });
+      if (requestId.current === id) setData(res);
+    } catch (err) {
+      if (requestId.current === id) {
+        setError(err instanceof Error ? err.message : String(err));
+        setData(null);
       }
+    } finally {
+      if (requestId.current === id) setLoading(false);
     }
-    void load();
-    return () => {
-      cancelled = true;
-    };
   }, [bank, currency, range, provider, includeReferences]);
+
+  /** Re-collects every source and re-pulls CBSL, then swaps in the new forecast. */
+  const updateNow = useCallback(async () => {
+    const id = ++requestId.current;
+    setUpdating(true);
+    setError(null);
+    try {
+      const res = await refreshForecast({
+        bank,
+        currency,
+        range,
+        provider,
+        references: includeReferences,
+      });
+      if (requestId.current === id) setData(res);
+    } catch (err) {
+      if (requestId.current === id) {
+        setError(err instanceof Error ? err.message : String(err));
+      }
+    } finally {
+      if (requestId.current === id) setUpdating(false);
+    }
+  }, [bank, currency, range, provider, includeReferences]);
+
+  useEffect(() => {
+    void load();
+    const timer = window.setInterval(() => void load(), FORECAST_AUTO_REFRESH_MS);
+    return () => window.clearInterval(timer);
+  }, [load, refreshKey]);
 
   const availableProviders = data?.availableProviders ?? [];
 
@@ -82,7 +121,28 @@ export function ForecastPanel({ defaultCurrency }: { defaultCurrency: string }) 
             Bank, CBSL, and Google daily history from the database
             {activeRange ? ` · ${activeRange.description}` : ""}
           </p>
+          <p className="mt-1 text-xs text-[var(--color-ink-muted)]">
+            {data?.generatedAt
+              ? `Computed ${relativeTime(data.generatedAt)} · ${toColombo(data.generatedAt)}`
+              : loading
+                ? "Analyzing history…"
+                : "Not computed yet"}
+          </p>
         </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => void updateNow()}
+            disabled={updating || loading}
+            title="Re-collect all sources, re-pull CBSL history, and recompute now"
+            className="rounded-lg bg-[var(--color-accent)] px-3 py-1.5 text-sm font-semibold text-white transition disabled:opacity-60"
+          >
+            {updating ? "Updating…" : "Update forecast"}
+          </button>
+        </div>
+      </div>
+
+      <div className="mb-4 flex justify-end">
         <div className="flex flex-wrap gap-2" role="tablist" aria-label="Forecast range">
           {forecastRanges.map((r) => {
             const active = r.value === range;
@@ -261,6 +321,13 @@ export function ForecastPanel({ defaultCurrency }: { defaultCurrency: string }) 
             </p>
           </div>
 
+          {forecast.assumptions && (
+            <ForecastAssumptionsCard
+              assumptions={forecast.assumptions}
+              currency={currency}
+            />
+          )}
+
           {includeReferences && forecast.references && (
             <ReferenceSignalsCard
               references={forecast.references}
@@ -270,6 +337,69 @@ export function ForecastPanel({ defaultCurrency }: { defaultCurrency: string }) 
         </div>
       )}
     </section>
+  );
+}
+
+function ForecastAssumptionsCard({
+  assumptions,
+  currency,
+}: {
+  assumptions: NonNullable<ForecastResult["assumptions"]>;
+  currency: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-[var(--color-line)] bg-[var(--color-panel)] p-5 lg:col-span-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-wide text-[var(--color-ink-muted)]">
+            Longer-term TT buying assumptions
+          </h3>
+          <p className="mt-1 text-xs text-[var(--color-ink-muted)]">
+            All stored bank history + {assumptions.cbslDaysCovered} CBSL days (
+            {assumptions.cbslFirstDate}–{assumptions.cbslLastDate})
+          </p>
+        </div>
+        <span className="rounded-full bg-[var(--color-accent-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--color-accent)]">
+          Recomputed every 6 h while this page is open
+        </span>
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        {assumptions.horizons.map((item) => (
+          <div
+            key={item.horizonDays}
+            className="rounded-xl border border-[var(--color-line)] p-4"
+          >
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-muted)]">
+              Next {item.label}
+            </p>
+            <p className="rate-num mt-2 text-xl font-extrabold">
+              {formatRate(item.projectedBuying, currency)}
+            </p>
+            <p
+              className={`mt-1 text-xs font-semibold ${
+                item.change < 0
+                  ? "text-[var(--color-down)]"
+                  : "text-[var(--color-up)]"
+              }`}
+            >
+              {item.change > 0 ? "+" : ""}
+              {formatRate(item.change, currency)} ({item.changePct > 0 ? "+" : ""}
+              {item.changePct}%)
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <p className="mt-4 text-xs leading-relaxed text-[var(--color-ink-muted)]">
+        Central assumptions use a calendar-day trend with a{" "}
+        {assumptions.halfLifeDays}-day half-life:{" "}
+        {Math.round(assumptions.cbslWeight * 100)}% CBSL and{" "}
+        {Math.round(assumptions.bankWeight * 100)}% selected-bank behavior. Every
+        historical CBSL point is included, but older exchange-rate regimes carry
+        progressively less weight. Indicative only; these are not forward quotes.
+      </p>
+    </div>
   );
 }
 

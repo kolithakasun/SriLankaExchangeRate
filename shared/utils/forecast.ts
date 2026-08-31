@@ -4,6 +4,7 @@ import type {
   DailyAggregate,
   DailyRatePoint,
   DayOfWeekStat,
+  ForecastAssumptions,
   ForecastReferences,
   ForecastResult,
   ForecastTrend,
@@ -27,6 +28,9 @@ const WEEKDAY_NAMES = [
 const MIN_DAYS_FOR_TREND = 3;
 const MIN_DAYS_FOR_SEASONALITY = 14;
 const FLAT_THRESHOLD_PCT = 0.05;
+const ASSUMPTION_HALF_LIFE_DAYS = 90;
+const ASSUMPTION_BANK_WEIGHT = 0.3;
+const ASSUMPTION_CBSL_WEIGHT = 0.7;
 
 function mean(values: number[]): number | null {
   if (!values.length) return null;
@@ -131,6 +135,106 @@ export function linearTrend(values: number[]): {
   const slopePerDay = den === 0 ? 0 : num / den;
   const intercept = yMean - slopePerDay * xMean;
   return { slopePerDay, intercept };
+}
+
+function dateToDay(date: string): number {
+  return Date.parse(`${date}T00:00:00Z`) / 86_400_000;
+}
+
+/**
+ * Calendar-day regression that still includes every point while progressively
+ * reducing the influence of older market regimes.
+ */
+function weightedCalendarSlope(
+  daily: DailyAggregate[],
+  halfLifeDays: number,
+): number | null {
+  const points = daily
+    .filter((day) => day.avgBuying !== null)
+    .map((day) => ({ x: dateToDay(day.date), y: day.avgBuying! }))
+    .filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y));
+  if (points.length < MIN_DAYS_FOR_TREND) return null;
+
+  const latestDay = Math.max(...points.map((point) => point.x));
+  const weighted = points.map((point) => ({
+    ...point,
+    weight: 0.5 ** ((latestDay - point.x) / halfLifeDays),
+  }));
+  const weightSum = weighted.reduce((sum, point) => sum + point.weight, 0);
+  const xMean =
+    weighted.reduce((sum, point) => sum + point.weight * point.x, 0) / weightSum;
+  const yMean =
+    weighted.reduce((sum, point) => sum + point.weight * point.y, 0) / weightSum;
+  const numerator = weighted.reduce(
+    (sum, point) =>
+      sum + point.weight * (point.x - xMean) * (point.y - yMean),
+    0,
+  );
+  const denominator = weighted.reduce(
+    (sum, point) => sum + point.weight * (point.x - xMean) ** 2,
+    0,
+  );
+  return denominator === 0 ? null : numerator / denominator;
+}
+
+/**
+ * Longer-horizon TT buying assumptions. CBSL supplies the market anchor while
+ * the selected bank contributes its recent quote behavior and current spread.
+ */
+export function buildForecastAssumptions(options: {
+  bankDaily: DailyAggregate[];
+  cbslDaily: DailyAggregate[];
+}): ForecastAssumptions | null {
+  const bankDaily = sortDailyWithBuying(options.bankDaily);
+  const cbslDaily = sortDailyWithBuying(options.cbslDaily);
+  const latestBank = bankDaily.at(-1);
+  if (!latestBank || latestBank.avgBuying === null) return null;
+
+  const bankSlope = weightedCalendarSlope(
+    bankDaily,
+    ASSUMPTION_HALF_LIFE_DAYS,
+  );
+  const cbslSlope = weightedCalendarSlope(
+    cbslDaily,
+    ASSUMPTION_HALF_LIFE_DAYS,
+  );
+  if (bankSlope === null || cbslSlope === null || !cbslDaily.length) return null;
+
+  const slopePerDay =
+    bankSlope * ASSUMPTION_BANK_WEIGHT + cbslSlope * ASSUMPTION_CBSL_WEIGHT;
+  const currentBuying = latestBank.avgBuying;
+  const definitions = [
+    { horizonDays: 14 as const, label: "2 weeks" as const },
+    { horizonDays: 30 as const, label: "1 month" as const },
+    { horizonDays: 60 as const, label: "2 months" as const },
+  ];
+
+  return {
+    slopePerDay: round(slopePerDay)!,
+    bankDaysCovered: bankDaily.length,
+    cbslDaysCovered: cbslDaily.length,
+    cbslFirstDate: cbslDaily[0].date,
+    cbslLastDate: cbslDaily.at(-1)!.date,
+    halfLifeDays: ASSUMPTION_HALF_LIFE_DAYS,
+    bankWeight: ASSUMPTION_BANK_WEIGHT,
+    cbslWeight: ASSUMPTION_CBSL_WEIGHT,
+    horizons: definitions.map(({ horizonDays, label }) => {
+      const change = slopePerDay * horizonDays;
+      return {
+        horizonDays,
+        label,
+        projectedBuying: round(currentBuying + change)!,
+        change: round(change)!,
+        changePct: round((change / currentBuying) * 100, 2)!,
+      };
+    }),
+  };
+}
+
+function sortDailyWithBuying(daily: DailyAggregate[]): DailyAggregate[] {
+  return daily
+    .filter((day) => day.avgBuying !== null)
+    .sort((a, b) => (a.date < b.date ? -1 : 1));
 }
 
 export function dayOfWeekAverages(daily: DailyAggregate[]): DayOfWeekStat[] {

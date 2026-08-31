@@ -54,10 +54,23 @@ export interface ForecastResponse {
   daysAnalyzed: number;
   confidence: ForecastResult["confidence"];
   includeReferences?: boolean;
+  /** When this forecast was computed on the server. */
+  generatedAt?: string;
   forecast: ForecastResult;
   narration: string;
   narrationSource: "gemini" | "groq" | "template";
   availableProviders: Array<"gemini" | "groq">;
+}
+
+export interface ForecastRefreshResponse extends ForecastResponse {
+  ok: boolean;
+  collection: {
+    checked: number;
+    inserted: number;
+    dailyCreated?: number;
+    dailyUpdated?: number;
+    failed: Array<{ bankCode: string; error: string | null }>;
+  };
 }
 
 export interface RefreshResponse {
@@ -126,6 +139,27 @@ export function fetchForecast(params: {
     references: params.references === false ? "0" : "1",
   });
   return api(`/api/forecast?${q.toString()}`);
+}
+
+export function refreshForecast(params: {
+  bank: string;
+  currency: string;
+  range?: ForecastRange;
+  provider?: "auto" | "gemini" | "groq";
+  references?: boolean;
+  token?: string;
+}): Promise<ForecastRefreshResponse> {
+  const q = new URLSearchParams({
+    bank: params.bank,
+    currency: params.currency,
+    ...(params.range ? { range: params.range } : {}),
+    ...(params.provider ? { provider: params.provider } : {}),
+    references: params.references === false ? "0" : "1",
+  });
+  return api(`/api/forecast-refresh?${q.toString()}`, {
+    method: "POST",
+    headers: params.token ? { "x-refresh-token": params.token } : {},
+  });
 }
 
 export function refreshRates(token?: string): Promise<RefreshResponse> {
