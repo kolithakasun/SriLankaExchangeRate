@@ -1,9 +1,9 @@
 {
   "0": "providers/cbsl.ts",
   "1": "shared/types.ts",
-  "2": "Dashboard.tsx",
+  "2": "api.ts",
   "3": "store.ts",
-  "4": "config/banks.ts",
+  "4": "cursor-quota.ts",
   "5": "scripts",
   "6": "compilerOptions",
   "7": "devDependencies",
@@ -13,6 +13,8 @@
   "11": "vite.config.ts",
   "12": "Sri Lanka Bank Exchange Rates",
   "13": "backup-cron.sh",
+  "14": "plugins",
   "15": "copilot-instructions.md",
-  "16": "install-backup-cron.sh"
+  "16": "install-backup-cron.sh",
+  "17": "store-local.test.ts"
 }

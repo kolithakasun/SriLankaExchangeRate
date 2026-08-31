@@ -1,5 +1,9 @@
 import { getDailyHistory, usingSupabase } from "./store.js";
-import { getAvailableProviders, narrateForecast } from "./ai.js";
+import {
+  getAvailableProviders,
+  narrateForecast,
+  templateForecastNarration,
+} from "./ai.js";
 import { isForecastableBank } from "../../../shared/config/banks.js";
 import {
   DEFAULT_CURRENCY,
@@ -21,7 +25,7 @@ import {
   loadForecastReferences,
   withReferences,
 } from "./forecast-references.js";
-import type { ForecastRange } from "../../../shared/types.js";
+import type { ForecastRange, ForecastResult } from "../../../shared/types.js";
 
 export interface ForecastRequest {
   bank: string;
@@ -30,6 +34,20 @@ export interface ForecastRequest {
   days: number;
   includeReferences: boolean;
   provider?: string;
+}
+
+export interface ForecastNumericPayload {
+  bank: string;
+  currency: string;
+  storage: string;
+  range: ForecastRange;
+  days: number;
+  daysAnalyzed: number;
+  confidence: ForecastResult["confidence"];
+  includeReferences: boolean;
+  generatedAt: string;
+  forecast: ForecastResult;
+  rangeLabel: string;
 }
 
 /** Shared query parsing so GET /api/forecast and the manual refresh agree. */
@@ -63,13 +81,13 @@ export function resolveForecastRequest(
 }
 
 /**
- * Builds the forecast response. `forceLiveCbsl` is used by the manual refresh
- * so the official series is re-pulled instead of trusting stored coverage.
+ * Numeric forecast only — no AI narration. Used by Cursor async flow so we can
+ * hash inputs and attach narration later.
  */
-export async function buildForecastPayload(
+export async function buildForecastNumericPayload(
   request: ForecastRequest,
   options: { forceLiveCbsl?: boolean } = {},
-) {
+): Promise<ForecastNumericPayload> {
   const { bank, currency, range, days, includeReferences } = request;
 
   const [{ daily: snapshots }, { daily: allBankSnapshots }, cbslAll] =
@@ -104,17 +122,9 @@ export async function buildForecastPayload(
   }
 
   const rangeConfig = getForecastRange(range);
-  const narration = await narrateForecast(
-    forecast,
-    {
-      bank,
-      currency,
-      rangeLabel: rangeConfig
-        ? `${rangeConfig.label} (${rangeConfig.description.toLowerCase()})`
-        : range,
-    },
-    { requestedProvider: request.provider },
-  );
+  const rangeLabel = rangeConfig
+    ? `${rangeConfig.label} (${rangeConfig.description.toLowerCase()})`
+    : range;
 
   return {
     bank,
@@ -127,8 +137,69 @@ export async function buildForecastPayload(
     includeReferences,
     generatedAt: nowIso(),
     forecast,
-    narration: narration.text,
-    narrationSource: narration.source,
-    availableProviders: getAvailableProviders(),
+    rangeLabel,
+  };
+}
+
+/**
+ * Builds the forecast response. `forceLiveCbsl` is used by the manual refresh
+ * so the official series is re-pulled instead of trusting stored coverage.
+ * Cursor is never invoked here — use the dedicated authenticated async path.
+ */
+export async function buildForecastPayload(
+  request: ForecastRequest,
+  options: {
+    forceLiveCbsl?: boolean;
+    includeCursorProvider?: boolean;
+    narrationOverride?: {
+      text: string;
+      source: "cursor" | "gemini" | "groq" | "template";
+      cached?: boolean;
+    };
+  } = {},
+) {
+  const numeric = await buildForecastNumericPayload(request, options);
+  const providerRequested = request.provider?.toLowerCase();
+
+  let narrationText: string;
+  let narrationSource: "gemini" | "groq" | "cursor" | "template";
+  let narrationCached = false;
+
+  if (options.narrationOverride) {
+    narrationText = options.narrationOverride.text;
+    narrationSource = options.narrationOverride.source;
+    narrationCached = Boolean(options.narrationOverride.cached);
+  } else if (providerRequested === "cursor") {
+    // Anonymous/sync path must not spend Cursor credits.
+    narrationText = templateForecastNarration(numeric.forecast, {
+      bank: numeric.bank,
+      currency: numeric.currency,
+      rangeLabel: numeric.rangeLabel,
+    });
+    narrationSource = "template";
+  } else {
+    const narration = await narrateForecast(
+      numeric.forecast,
+      {
+        bank: numeric.bank,
+        currency: numeric.currency,
+        rangeLabel: numeric.rangeLabel,
+      },
+      { requestedProvider: request.provider },
+    );
+    narrationText = narration.text;
+    narrationSource = narration.source;
+  }
+
+  const { rangeLabel: _rangeLabel, ...rest } = numeric;
+
+  return {
+    ...rest,
+    narration: narrationText,
+    narrationSource,
+    narrationCached,
+    availableProviders: getAvailableProviders({
+      includeCursor: options.includeCursorProvider,
+    }),
   };
 }

@@ -84,12 +84,13 @@ See [`docs/SOURCES.md`](docs/SOURCES.md) for details.
 3. Paste and run the full contents of [`supabase/migrations/001_init.sql`](supabase/migrations/001_init.sql).
 4. Run [`supabase/migrations/002_daily_rates.sql`](supabase/migrations/002_daily_rates.sql) as well. It adds the `daily_rates` snapshot table and backfills it from any observations already stored, so existing history shows up in the long-range charts immediately.
 5. Run [`supabase/migrations/003_reference_sources.sql`](supabase/migrations/003_reference_sources.sql) to seed CBSL and Google as forecast reference sources. Refresh also upserts those rows if this migration has not been applied yet.
-6. Open **Project Settings → API** and copy:
+6. Run [`supabase/migrations/004_auth_cursor_quota.sql`](supabase/migrations/004_auth_cursor_quota.sql) for login profiles, admin roles, and the global Cursor 2/day quota tables.
+7. Open **Project Settings → API** and copy:
    - **Project URL** → `SUPABASE_URL`
    - **Publishable / anon key** → `SUPABASE_ANON_KEY`
    - **Secret / service_role key** → `SUPABASE_SERVICE_ROLE_KEY`
 
-**Never** put the service role / secret key in frontend code or `VITE_*` variables.
+**Never** put the service role / secret key in frontend code or `VITE_*` variables. In **Authentication → Providers → Email**, disable public sign-up so only admins can create accounts.
 
 ---
 
@@ -108,31 +109,53 @@ SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 SUPABASE_ANON_KEY=your-publishable-or-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-secret-or-service-role-key
 
+# Browser login (email/password) — same anon key, never the service role
+VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+VITE_SUPABASE_ANON_KEY=your-publishable-or-anon-key
+
 REFRESH_TOKEN=any-long-random-string
 REQUIRE_REFRESH_TOKEN=false
 REFRESH_COOLDOWN_SECONDS=60
 RATE_REFRESH_INTERVAL=30
 
-# Leave empty — the UI uses /api, not Supabase directly
-VITE_SUPABASE_URL=
-VITE_SUPABASE_ANON_KEY=
+# Optional free narration providers
+# GEMINI_API_KEY=
+# GROQ_API_KEY=
+
+# Optional Cursor narration (signed-in only, 2/day global Colombo quota)
+# CURSOR_API_KEY=
 ```
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
 | `SUPABASE_URL` | Yes (prod / history) | Supabase project URL |
-| `SUPABASE_SERVICE_ROLE_KEY` | Yes (prod / history) | Server-side read/write for collectors |
-| `SUPABASE_ANON_KEY` | Optional | Documented for completeness |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes (prod / history / auth admin) | Server-side read/write for collectors and admin user APIs |
+| `SUPABASE_ANON_KEY` | Yes (auth) | JWT validation in Netlify functions |
+| `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` | Yes (login UI) | Browser Supabase Auth client |
 | `REFRESH_TOKEN` | Optional | Used if you set `REQUIRE_REFRESH_TOKEN=true` |
 | `REQUIRE_REFRESH_TOKEN` | No (default `false`) | When `true`, `/api/refresh` needs header `x-refresh-token` |
 | `REFRESH_COOLDOWN_SECONDS` | No (default `60`) | Limits how often refresh can run |
 | `RATE_REFRESH_INTERVAL` | No (default `30`) | Hint for “stale” status in the UI |
-| `GEMINI_API_KEY` | No | Free key (no card) from [Google AI Studio](https://aistudio.google.com/apikey) — enables AI-written Forecast summaries |
-| `GROQ_API_KEY` | No | Free key (no card) from [Groq Console](https://console.groq.com/keys) — alternative AI-written Forecast summaries (Llama models). Used if `GEMINI_API_KEY` isn't set, or if `AI_PROVIDER=groq` |
-| `AI_PROVIDER` | No | Force `gemini` or `groq` when both keys are set (default: tries Gemini first). Without any key, the Forecast panel still works, using a template-generated summary instead |
-| `VITE_SUPABASE_*` | No | Not used by the current UI |
+| `GEMINI_API_KEY` | No | Free key from [Google AI Studio](https://aistudio.google.com/apikey) — Forecast summaries |
+| `GROQ_API_KEY` | No | Free key from [Groq Console](https://console.groq.com/keys) — alternative summaries |
+| `AI_PROVIDER` | No | Force `gemini` or `groq` when both keys are set |
+| `CURSOR_API_KEY` | No | [Cursor Integrations](https://cursor.com/dashboard/integrations) key — signed-in Cursor summaries only |
+| `CURSOR_MODEL` | No | Cursor model id (default `auto`) |
 
-Without Supabase credentials, the app falls back to a **local temp JSON store** (fine for quick UI work, not for production history).
+Without Supabase credentials, the app falls back to a **local temp JSON store** (fine for quick UI work, not for production history). Login and Cursor quota require Supabase + migration `004_auth_cursor_quota.sql`.
+
+### Auth bootstrap (first admin)
+
+1. In Supabase Auth settings, **disable public sign-up**.
+2. Run migrations `001`–`004`.
+3. Create the first user in the Supabase Dashboard (Authentication → Users → Add user).
+4. Promote that account:
+
+```sql
+update public.profiles set role = 'admin' where email = 'you@example.com';
+```
+
+5. Sign in at `/login`. Admins can create more users at `/admin/users`.
 
 ---
 
@@ -254,6 +277,10 @@ Scheduled functions need a Netlify plan that supports them. If scheduling is una
 | `GET` | `/api/history?bank=SEYLAN&currency=USD&range=1m` | Daily history (`1w`, `1m`, `3m`, `6m`, `1y`, `all`) |
 | `GET` | `/api/forecast?bank=SEYLAN&currency=USD&range=1m&references=1` | Bank trend + optional CBSL/Google signal (`1w`, `2w`, `1m`, `3m`, `6m`, `1y`, `all`) |
 | `POST` | `/api/forecast-refresh?bank=SEYLAN&currency=USD&range=1m` | Re-collect all sources, re-pull CBSL history, return the recomputed forecast |
+| `POST` | `/api/forecast-refresh?…&provider=cursor` | Authenticated Cursor narration (Bearer JWT). Max **2** global Cursor generations per Colombo day; further clicks reuse the latest saved Cursor text |
+| `GET` | `/api/cursor-forecast?runId=` | Authenticated Cursor run status / quota |
+| `GET` | `/api/me` | Authenticated identity + role + Cursor quota |
+| `GET/POST/PATCH` | `/api/admin-users` | Admin-only user list / create / enable-disable |
 | `GET` | `/api/banks` | Bank config |
 | `GET` | `/api/currencies` | Currency config |
 | `POST` | `/api/refresh` | Fetch banks + store new observations |
@@ -330,11 +357,13 @@ Alongside the next-day projection, the panel shows central TT **buying** assumpt
 
 - Collection runs on the scheduled function every **30 minutes**, so the underlying `daily_rates` snapshot (including CBSL) stays current without anyone opening the site.
 - The forecast itself is computed **on request** — there is no cached forecast to expire.
-- While the dashboard is open, it re-requests rates every **30 minutes** and the forecast every **6 hours**, and it reloads the forecast whenever a rate refresh reports a new check. Those are browser timers, so they stop when the tab closes.
-- **Update forecast** in the panel calls `POST /api/forecast-refresh`, which re-collects every provider, force re-pulls the official CBSL series, and returns the recomputed forecast in the same response. It shares the `REFRESH_COOLDOWN_SECONDS` cooldown and optional `x-refresh-token` gate with `/api/refresh`.
+- While the dashboard is open, it re-requests rates every **30 minutes** and the forecast every **6 hours**, and it reloads the forecast whenever a rate refresh reports a new check. Those are browser timers, so they stop when the tab closes. The 6-hour timer never launches Cursor.
+- **Update forecast** in the panel calls `POST /api/forecast-refresh`. With Gemini/Groq/Auto it re-collects sources and narrates synchronously. With **Cursor** (signed-in only) it re-collects sources, claims one of two global Colombo-day slots when needed, launches a Cursor cloud agent, and polls until the summary is ready. Identical numeric inputs reuse a completed Cursor narration without spending a slot; after both slots are used, later updates refresh the numbers but reuse the latest saved Cursor text.
 
 ```bash
 curl -X POST "http://localhost:8888/api/forecast-refresh?bank=SEYLAN&currency=USD&range=1m"
+curl -X POST "http://localhost:8888/api/forecast-refresh?bank=SEYLAN&currency=USD&range=1m&provider=cursor" \
+  -H "Authorization: Bearer YOUR_SUPABASE_ACCESS_TOKEN"
 ```
 
 When `references=1` (the UI default), it loads the **same window** of **CBSL official 9:30 a.m. TT** and **Google Finance mid** from the database, then qualifies the bank signal (spread vs official/mid, whether trends agree). CBSL is live-fetched only when stored coverage is too thin for that window. Google has no official history API, so the stored daily trend is used and today's mid is overlaid. The bank-only numbers stay unchanged if those sources fail.

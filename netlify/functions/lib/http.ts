@@ -12,8 +12,9 @@ export function json(
     headers: {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "Content-Type, x-refresh-token",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers":
+        "Content-Type, Authorization, x-refresh-token",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PATCH, DELETE",
       "Cache-Control": "no-store",
       ...extraHeaders,
     },

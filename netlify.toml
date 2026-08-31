@@ -6,6 +6,7 @@
 [functions]
   node_bundler = "esbuild"
   included_files = ["shared/**"]
+  external_node_modules = ["@cursor/sdk"]
 
 [dev]
   command = "npm run dev"
@@ -17,6 +18,11 @@
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
   status = 200
 
 [[headers]]

@@ -3,7 +3,7 @@
   "1": "shared/types.ts",
   "2": "Dashboard.tsx",
   "3": "store.ts",
-  "4": "functions/rates.ts",
+  "4": "config/banks.ts",
   "5": "scripts",
   "6": "compilerOptions",
   "7": "devDependencies",
@@ -13,7 +13,6 @@
   "11": "vite.config.ts",
   "12": "Sri Lanka Bank Exchange Rates",
   "13": "backup-cron.sh",
-  "14": "store-local.test.ts",
   "15": "copilot-instructions.md",
   "16": "install-backup-cron.sh"
 }
