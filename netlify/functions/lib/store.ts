@@ -743,7 +743,7 @@ export async function getDailyHistory(options: {
       .eq("currency_code", currency)
       .gte("rate_date", from)
       .order("rate_date", { ascending: true })
-      .limit(2000);
+      .limit(5000);
 
     if (error) {
       if (isMissingTable(error)) {
@@ -758,6 +758,83 @@ export async function getDailyHistory(options: {
 
   const points = await getHistoryRange({ bank, currency, days: options.days });
   return { daily: toDailySeries(points), source: "observations" };
+}
+
+/**
+ * Seeds official historical rows without overwriting snapshots already
+ * collected by the regular refresh job.
+ */
+export async function persistHistoricalDailyRates(
+  points: HistoryPoint[],
+): Promise<void> {
+  if (!points.length) return;
+
+  const byDay = new Map<string, HistoryPoint>();
+  for (const point of points) {
+    const date = colomboDateKey(point.retrievedAt);
+    byDay.set(`${point.bankCode}:${point.currency}:${date}`, point);
+  }
+
+  const client = getServiceClient();
+  if (client && dailyTableAvailable()) {
+    const timestamp = nowIso();
+    const rows = [...byDay.values()].map((point) => ({
+      bank_code: point.bankCode,
+      currency_code: point.currency,
+      rate_date: colomboDateKey(point.retrievedAt),
+      tt_buying: point.ttBuying,
+      tt_selling: point.ttSelling,
+      open_tt_buying: point.ttBuying,
+      open_tt_selling: point.ttSelling,
+      source_timestamp: point.sourceTimestamp ?? null,
+      first_seen_at: point.retrievedAt,
+      last_checked_at: point.retrievedAt,
+      last_changed_at: point.retrievedAt,
+      change_count: 0,
+      observations: 1,
+      parser_version: "cbsl-history@1.0.0",
+      updated_at: timestamp,
+    }));
+
+    for (let offset = 0; offset < rows.length; offset += 500) {
+      const { error } = await client.from("daily_rates").upsert(
+        rows.slice(offset, offset + 500),
+        {
+          onConflict: "bank_code,currency_code,rate_date",
+          ignoreDuplicates: true,
+        },
+      );
+      if (error) {
+        console.error("Historical daily seed failed", error.message);
+        return;
+      }
+    }
+    return;
+  }
+
+  const store = readLocal();
+  const daily = store.daily ?? {};
+  for (const [key, point] of byDay) {
+    if (daily[key]) continue;
+    const date = colomboDateKey(point.retrievedAt);
+    daily[key] = {
+      bankCode: point.bankCode,
+      currency: point.currency,
+      date,
+      ttBuying: point.ttBuying,
+      ttSelling: point.ttSelling,
+      openTtBuying: point.ttBuying,
+      openTtSelling: point.ttSelling,
+      sourceTimestamp: point.sourceTimestamp ?? null,
+      firstSeenAt: point.retrievedAt,
+      lastCheckedAt: point.retrievedAt,
+      lastChangedAt: point.retrievedAt,
+      changeCount: 0,
+      observations: 1,
+    };
+  }
+  store.daily = daily;
+  writeLocal(store);
 }
 
 export async function getAvailableHistoryDates(options: {

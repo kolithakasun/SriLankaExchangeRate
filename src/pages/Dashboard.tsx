@@ -132,7 +132,10 @@ export default function Dashboard() {
           )}
 
           <div className="mb-12">
-            <ForecastPanel defaultCurrency={currency} />
+            <ForecastPanel
+              defaultCurrency={currency}
+              refreshKey={data?.lastCheckedAt}
+            />
           </div>
 
           <section className="mb-12">

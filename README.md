@@ -253,6 +253,7 @@ Scheduled functions need a Netlify plan that supports them. If scheduling is una
 | `GET` | `/api/history?bank=SEYLAN&currency=USD&range=1d&date=2026-08-14` | Intraday history for one day |
 | `GET` | `/api/history?bank=SEYLAN&currency=USD&range=1m` | Daily history (`1w`, `1m`, `3m`, `6m`, `1y`, `all`) |
 | `GET` | `/api/forecast?bank=SEYLAN&currency=USD&range=1m&references=1` | Bank trend + optional CBSL/Google signal (`1w`, `2w`, `1m`, `3m`, `6m`, `1y`, `all`) |
+| `POST` | `/api/forecast-refresh?bank=SEYLAN&currency=USD&range=1m` | Re-collect all sources, re-pull CBSL history, return the recomputed forecast |
 | `GET` | `/api/banks` | Bank config |
 | `GET` | `/api/currencies` | Currency config |
 | `POST` | `/api/refresh` | Fetch banks + store new observations |
@@ -319,7 +320,22 @@ APP_ROOT=/opt/SriLankaExchangeRate BACKUP_DIR=/opt/SriLankaExchangeRate/backups 
 
 ## Forecast methodology
 
-`/api/forecast` computes the bank trend from stored daily snapshots (`daily_rates`, falling back to `exchange_rates`). Pick a lookback window in the UI or pass `range=1w|2w|1m|3m|6m|1y|all` (default **1M** — long enough for a stable trend, short enough that a thin Google series does not dominate). `days=` still works and snaps to the nearest window. **All** uses everything stored; CBSL live-fill stays capped at 1 year.
+`/api/forecast` computes the bank trend from stored daily snapshots (`daily_rates`, falling back to `exchange_rates`). Pick a lookback window in the UI or pass `range=1w|2w|1m|3m|6m|1y|all` (default **1M** — long enough for a stable trend, short enough that a thin Google series does not dominate). `days=` still works and snaps to the nearest window. **All** uses everything stored; CBSL live-fill covers up to 10 years, which is what the official TT search returns in one response.
+
+### Longer-term assumptions (2 weeks / 1 month / 2 months)
+
+Alongside the next-day projection, the panel shows central TT **buying** assumptions for 14, 30, and 60 days. These use a calendar-day regression over **all** stored history for the selected bank plus **all** stored CBSL official days, with each observation weighted by a **90-day half-life** so older exchange-rate regimes count less without being discarded. The slope is blended **70% CBSL / 30% selected bank**, then applied to that bank's latest TT buying. If either series has fewer than 3 usable days, the block is omitted instead of guessing.
+
+### Keeping the forecast fresh
+
+- Collection runs on the scheduled function every **30 minutes**, so the underlying `daily_rates` snapshot (including CBSL) stays current without anyone opening the site.
+- The forecast itself is computed **on request** — there is no cached forecast to expire.
+- While the dashboard is open, it re-requests rates every **30 minutes** and the forecast every **6 hours**, and it reloads the forecast whenever a rate refresh reports a new check. Those are browser timers, so they stop when the tab closes.
+- **Update forecast** in the panel calls `POST /api/forecast-refresh`, which re-collects every provider, force re-pulls the official CBSL series, and returns the recomputed forecast in the same response. It shares the `REFRESH_COOLDOWN_SECONDS` cooldown and optional `x-refresh-token` gate with `/api/refresh`.
+
+```bash
+curl -X POST "http://localhost:8888/api/forecast-refresh?bank=SEYLAN&currency=USD&range=1m"
+```
 
 When `references=1` (the UI default), it loads the **same window** of **CBSL official 9:30 a.m. TT** and **Google Finance mid** from the database, then qualifies the bank signal (spread vs official/mid, whether trends agree). CBSL is live-fetched only when stored coverage is too thin for that window. Google has no official history API, so the stored daily trend is used and today's mid is overlaid. The bank-only numbers stay unchanged if those sources fail.
 

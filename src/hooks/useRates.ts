@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { fetchRates, refreshRates, type RatesResponse } from "../services/api";
 
+const RATE_AUTO_REFRESH_MS = 30 * 60 * 1000;
+
 export function useRates(currency: string) {
   const [data, setData] = useState<RatesResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -22,6 +24,8 @@ export function useRates(currency: string) {
 
   useEffect(() => {
     void load();
+    const timer = window.setInterval(() => void load(), RATE_AUTO_REFRESH_MS);
+    return () => window.clearInterval(timer);
   }, [load]);
 
   const refresh = useCallback(async () => {

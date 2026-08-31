@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildForecast,
+  buildForecastAssumptions,
   buildReferenceSignals,
   cbslStoredCoverageIsEnough,
   dailyPointsToAggregates,
@@ -227,6 +228,41 @@ function daily(
     samples: 2,
   };
 }
+
+describe("longer-horizon assumptions", () => {
+  it("blends all CBSL and bank calendar-day slopes", () => {
+    const bankDaily = [
+      daily("2026-08-01", 100, 110),
+      daily("2026-08-02", 101, 111),
+      daily("2026-08-03", 102, 112),
+    ];
+    const cbslDaily = [
+      daily("2026-08-01", 200, 210),
+      daily("2026-08-02", 202, 212),
+      daily("2026-08-03", 204, 214),
+    ];
+
+    const assumptions = buildForecastAssumptions({ bankDaily, cbslDaily });
+
+    expect(assumptions).not.toBeNull();
+    expect(assumptions!.slopePerDay).toBeCloseTo(1.7, 4);
+    expect(assumptions!.bankDaysCovered).toBe(3);
+    expect(assumptions!.cbslDaysCovered).toBe(3);
+    expect(assumptions!.horizons.map((item) => item.horizonDays)).toEqual([
+      14, 30, 60,
+    ]);
+    expect(assumptions!.horizons[0].projectedBuying).toBeCloseTo(125.8, 4);
+  });
+
+  it("does not guess without enough history from both sources", () => {
+    expect(
+      buildForecastAssumptions({
+        bankDaily: [daily("2026-08-01", 100, 110)],
+        cbslDaily: [daily("2026-08-01", 100, 110)],
+      }),
+    ).toBeNull();
+  });
+});
 
 describe("reference sources", () => {
   it("does not put CBSL or Google in the licensed-bank list", () => {
