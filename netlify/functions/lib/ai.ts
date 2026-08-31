@@ -5,7 +5,8 @@ const GEMINI_MODEL = "gemini-flash-lite-latest";
 const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
 const AI_TIMEOUT_MS = 8000;
 
-type NarrationSource = "gemini" | "groq" | "template";
+export type NarrationSource = "gemini" | "groq" | "cursor" | "template";
+export type SyncNarrationSource = Exclude<NarrationSource, "cursor">;
 
 function templateNarration(
   forecast: ForecastResult,
@@ -44,7 +45,7 @@ Bank vs references: ${spreads || "none"}.
 Combined: ${refs.combinedSignal}`;
 }
 
-function buildPrompt(
+export function buildPrompt(
   forecast: ForecastResult,
   context: { bank: string; currency: string; rangeLabel?: string },
 ): string {
@@ -140,7 +141,7 @@ async function groqNarration(
 }
 
 const PROVIDERS: Array<{
-  source: Exclude<NarrationSource, "template">;
+  source: "gemini" | "groq";
   envKey: string;
   run: (prompt: string, apiKey: string) => Promise<string | null>;
 }> = [
@@ -148,19 +149,38 @@ const PROVIDERS: Array<{
   { source: "groq", envKey: "GROQ_API_KEY", run: groqNarration },
 ];
 
-export function getAvailableProviders(): Array<Exclude<NarrationSource, "template">> {
-  return PROVIDERS.filter((p) => Boolean(process.env[p.envKey])).map((p) => p.source);
+/**
+ * Sync providers only. Cursor is auth-gated and launched separately so it
+ * never runs from anonymous GET /api/forecast or the 6-hour browser timer.
+ */
+export function getAvailableProviders(options?: {
+  includeCursor?: boolean;
+}): Array<"gemini" | "groq" | "cursor"> {
+  const list: Array<"gemini" | "groq" | "cursor"> = PROVIDERS.filter((p) =>
+    Boolean(process.env[p.envKey]),
+  ).map((p) => p.source);
+  if (options?.includeCursor && process.env.CURSOR_API_KEY?.trim()) {
+    list.push("cursor");
+  }
+  return list;
 }
 
 export async function narrateForecast(
   forecast: ForecastResult,
   context: { bank: string; currency: string; rangeLabel?: string },
   options?: { requestedProvider?: string },
-): Promise<{ text: string; source: NarrationSource }> {
+): Promise<{ text: string; source: SyncNarrationSource }> {
   const requested = options?.requestedProvider?.toLowerCase();
+  // Cursor is never selected here — callers must use the dedicated async path.
+  if (requested === "cursor") {
+    return { text: templateNarration(forecast, context), source: "template" };
+  }
   const forced =
     requested && requested !== "auto" ? requested : process.env.AI_PROVIDER?.toLowerCase();
-  const candidates = forced ? PROVIDERS.filter((p) => p.source === forced) : PROVIDERS;
+  const candidates =
+    forced && forced !== "cursor"
+      ? PROVIDERS.filter((p) => p.source === forced)
+      : PROVIDERS;
 
   const prompt = buildPrompt(forecast, context);
 
@@ -172,4 +192,11 @@ export async function narrateForecast(
   }
 
   return { text: templateNarration(forecast, context), source: "template" };
+}
+
+export function templateForecastNarration(
+  forecast: ForecastResult,
+  context: { bank: string; currency: string; rangeLabel?: string },
+): string {
+  return templateNarration(forecast, context);
 }

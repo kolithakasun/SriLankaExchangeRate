@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { getEnabledBanks } from "@shared/config/banks";
 import { getEnabledCurrencies } from "@shared/config/currencies";
 import {
@@ -9,9 +10,13 @@ import {
 import { formatRate } from "@shared/utils/rates";
 import { weekdayName } from "@shared/utils/forecast";
 import { relativeTime, toColombo } from "@shared/utils/time";
+import { useAuth } from "../contexts/AuthContext";
 import {
+  fetchCursorForecastStatus,
   fetchForecast,
   refreshForecast,
+  type AiProviderOption,
+  type CursorQuota,
   type ForecastResponse,
 } from "../services/api";
 import type {
@@ -21,13 +26,14 @@ import type {
   ReferenceSeriesView,
 } from "@shared/types";
 
-type ProviderOption = "auto" | "gemini" | "groq";
 const FORECAST_AUTO_REFRESH_MS = 6 * 60 * 60 * 1000;
+const CURSOR_POLL_MS = 5_000;
 
-const PROVIDER_LABELS: Record<ProviderOption, string> = {
+const PROVIDER_LABELS: Record<AiProviderOption, string> = {
   auto: "Auto (best available)",
   gemini: "Gemini",
   groq: "Groq",
+  cursor: "Cursor (signed-in, 2/day)",
 };
 
 export function ForecastPanel({
@@ -37,37 +43,51 @@ export function ForecastPanel({
   defaultCurrency: string;
   refreshKey?: string | null;
 }) {
+  const { session, accessToken } = useAuth();
   const banks = getEnabledBanks();
   const currencies = getEnabledCurrencies();
   const [bank, setBank] = useState<string>(banks[0]?.code ?? "SEYLAN");
   const [currency, setCurrency] = useState(defaultCurrency);
-  const [provider, setProvider] = useState<ProviderOption>("auto");
+  const [provider, setProvider] = useState<AiProviderOption>("auto");
   const [range, setRange] = useState<ForecastRange>(DEFAULT_FORECAST_RANGE);
   const [includeReferences, setIncludeReferences] = useState(true);
   const [data, setData] = useState<ForecastResponse | null>(null);
+  const [quota, setQuota] = useState<CursorQuota | null>(null);
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  /** Guards against a slow earlier request overwriting a newer result. */
   const requestId = useRef(0);
+  const pendingRunId = useRef<string | null>(null);
 
   useEffect(() => {
     setCurrency(defaultCurrency);
   }, [defaultCurrency]);
+
+  useEffect(() => {
+    if (provider === "cursor" && !session) {
+      setProvider("auto");
+    }
+  }, [provider, session]);
 
   const load = useCallback(async () => {
     const id = ++requestId.current;
     setLoading(true);
     setError(null);
     try {
+      // Auto-refresh never launches Cursor; when Cursor is selected the GET
+      // path may still return the last saved Cursor summary if quota is exhausted.
       const res = await fetchForecast({
         bank,
         currency,
         range,
         provider,
         references: includeReferences,
+        accessToken,
       });
-      if (requestId.current === id) setData(res);
+      if (requestId.current === id) {
+        setData(res);
+        if (res.cursorQuota) setQuota(res.cursorQuota);
+      }
     } catch (err) {
       if (requestId.current === id) {
         setError(err instanceof Error ? err.message : String(err));
@@ -76,9 +96,8 @@ export function ForecastPanel({
     } finally {
       if (requestId.current === id) setLoading(false);
     }
-  }, [bank, currency, range, provider, includeReferences]);
+  }, [bank, currency, range, provider, includeReferences, accessToken]);
 
-  /** Re-collects every source and re-pulls CBSL, then swaps in the new forecast. */
   const updateNow = useCallback(async () => {
     const id = ++requestId.current;
     setUpdating(true);
@@ -90,8 +109,16 @@ export function ForecastPanel({
         range,
         provider,
         references: includeReferences,
+        accessToken,
       });
-      if (requestId.current === id) setData(res);
+      if (requestId.current !== id) return;
+      setData(res);
+      if (res.cursorQuota) setQuota(res.cursorQuota);
+      if (res.cursorPending && res.cursorRun?.id) {
+        pendingRunId.current = res.cursorRun.id;
+      } else {
+        pendingRunId.current = null;
+      }
     } catch (err) {
       if (requestId.current === id) {
         setError(err instanceof Error ? err.message : String(err));
@@ -99,7 +126,7 @@ export function ForecastPanel({
     } finally {
       if (requestId.current === id) setUpdating(false);
     }
-  }, [bank, currency, range, provider, includeReferences]);
+  }, [bank, currency, range, provider, includeReferences, accessToken]);
 
   useEffect(() => {
     void load();
@@ -107,10 +134,79 @@ export function ForecastPanel({
     return () => window.clearInterval(timer);
   }, [load, refreshKey]);
 
+  useEffect(() => {
+    if (!accessToken) {
+      setQuota(null);
+      return;
+    }
+    let cancelled = false;
+    void fetchCursorForecastStatus({ accessToken })
+      .then((res) => {
+        if (!cancelled) setQuota(res.cursorQuota);
+      })
+      .catch(() => {
+        /* quota is optional until migration is applied */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [accessToken]);
+
+  useEffect(() => {
+    if (!accessToken || !pendingRunId.current) return;
+    const runId = pendingRunId.current;
+    const timer = window.setInterval(() => {
+      void fetchCursorForecastStatus({ accessToken, runId })
+        .then((res) => {
+          if (res.cursorQuota) setQuota(res.cursorQuota);
+          const status = res.cursorRun?.status;
+          if (status === "completed" && res.cursorRun?.narration) {
+            pendingRunId.current = null;
+            setData((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    narration: res.cursorRun!.narration!,
+                    narrationSource: "cursor",
+                    narrationCached: false,
+                    cursorPending: false,
+                    cursorRun: res.cursorRun,
+                    cursorQuota: res.cursorQuota,
+                  }
+                : prev,
+            );
+          } else if (status === "failed" || status === "released") {
+            pendingRunId.current = null;
+            setError(res.cursorRun?.error ?? "Cursor generation failed");
+            setData((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    cursorPending: false,
+                    cursorRun: res.cursorRun,
+                    cursorQuota: res.cursorQuota,
+                  }
+                : prev,
+            );
+          }
+        })
+        .catch((err) => {
+          setError(err instanceof Error ? err.message : String(err));
+        });
+    }, CURSOR_POLL_MS);
+    return () => window.clearInterval(timer);
+  }, [accessToken, data?.cursorPending]);
+
   const availableProviders = data?.availableProviders ?? [];
+  const providerOptions = useMemo(() => {
+    const base: AiProviderOption[] = ["auto", "gemini", "groq"];
+    if (session) base.push("cursor");
+    return base;
+  }, [session]);
 
   const forecast = data?.forecast;
   const activeRange = getForecastRange(data?.range ?? range);
+  const cursorBusy = Boolean(data?.cursorPending);
 
   return (
     <section id="forecast" className="scroll-mt-8">
@@ -128,16 +224,40 @@ export function ForecastPanel({
                 ? "Analyzing history…"
                 : "Not computed yet"}
           </p>
+          {session && quota && (
+            <p className="mt-1 text-xs text-[var(--color-ink-muted)]">
+              Cursor quota today (Colombo): {quota.used}/{quota.limit}
+              {quota.remaining === 0
+                ? ` · exhausted until ${toColombo(quota.resetAt)}`
+                : ` · ${quota.remaining} remaining`}
+            </p>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {!session && (
+            <Link
+              to="/login"
+              className="rounded-lg border border-[var(--color-line)] px-3 py-1.5 text-sm font-semibold"
+            >
+              Sign in for Cursor
+            </Link>
+          )}
           <button
             type="button"
             onClick={() => void updateNow()}
-            disabled={updating || loading}
-            title="Re-collect all sources, re-pull CBSL history, and recompute now"
+            disabled={updating || loading || cursorBusy}
+            title={
+              provider === "cursor"
+                ? "Re-collect sources and spend at most one Cursor credit (max 2/day globally)"
+                : "Re-collect all sources, re-pull CBSL history, and recompute now"
+            }
             className="rounded-lg bg-[var(--color-accent)] px-3 py-1.5 text-sm font-semibold text-white transition disabled:opacity-60"
           >
-            {updating ? "Updating…" : "Update forecast"}
+            {cursorBusy
+              ? "Cursor running…"
+              : updating
+                ? "Updating…"
+                : "Update forecast"}
           </button>
         </div>
       </div>
@@ -201,12 +321,20 @@ export function ForecastPanel({
           <select
             className="w-full rounded-lg border border-[var(--color-line)] bg-[var(--color-panel)] px-3 py-2"
             value={provider}
-            onChange={(e) => setProvider(e.target.value as ProviderOption)}
+            onChange={(e) => setProvider(e.target.value as AiProviderOption)}
           >
-            {(Object.keys(PROVIDER_LABELS) as ProviderOption[]).map((p) => (
+            {providerOptions.map((p) => (
               <option key={p} value={p}>
                 {PROVIDER_LABELS[p]}
-                {p !== "auto" && data && !availableProviders.includes(p)
+                {p !== "auto" &&
+                p !== "cursor" &&
+                data &&
+                !availableProviders.includes(p)
+                  ? " — not configured"
+                  : ""}
+                {p === "cursor" &&
+                data &&
+                !availableProviders.includes("cursor")
                   ? " — not configured"
                   : ""}
               </option>
@@ -311,13 +439,29 @@ export function ForecastPanel({
                   ? "Gemini"
                   : data?.narrationSource === "groq"
                     ? "Groq"
-                    : "auto-generated"}
+                    : data?.narrationSource === "cursor"
+                      ? data.cursorQuotaExhausted
+                        ? "Cursor · last saved"
+                        : data.narrationCached
+                          ? "Cursor · cached"
+                          : data.cursorPending
+                            ? "Cursor · pending"
+                            : "Cursor"
+                      : "auto-generated"}
                 )
               </span>
             </h3>
             <p className="mt-3 text-sm leading-relaxed">{data?.narration}</p>
+            {data?.cursorQuotaExhausted && (
+              <p className="mt-2 text-xs text-[var(--color-warn)]">
+                Daily Cursor limit reached — showing the last generated Cursor
+                summary with the latest forecast numbers.
+              </p>
+            )}
             <p className="mt-4 text-xs text-[var(--color-ink-muted)]">
               Indicative only, derived from statistics above — not financial advice.
+              Cursor runs only when you click Update with Cursor selected (max 2/day
+              globally).
             </p>
           </div>
 

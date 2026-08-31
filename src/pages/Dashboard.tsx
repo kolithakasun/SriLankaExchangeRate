@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { relativeTime, toColombo } from "@shared/utils/time";
 import { DEFAULT_CURRENCY } from "@shared/config/currencies";
 import { useRates } from "../hooks/useRates";
+import { useAuth } from "../contexts/AuthContext";
 import { CurrencySelector } from "../components/CurrencySelector";
 import { BankRateCard } from "../components/BankRateCard";
 import { ComparisonTable } from "../components/ComparisonTable";
@@ -13,6 +15,7 @@ import { ThemeToggle } from "../components/ThemeToggle";
 export default function Dashboard() {
   const [currency, setCurrency] = useState(DEFAULT_CURRENCY);
   const { data, loading, refreshing, error, refresh } = useRates(currency);
+  const { configured, session, profile, isAdmin, signOut } = useAuth();
 
   const featured = data?.rates.filter((r) => r.featured) ?? [];
   const others = data?.rates.filter((r) => !r.featured) ?? [];
@@ -39,8 +42,37 @@ export default function Dashboard() {
                 : "No rates stored yet — refresh to collect"}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <ThemeToggle />
+          {configured && session ? (
+            <>
+              <span className="hidden text-xs text-[var(--color-ink-muted)] sm:inline">
+                {profile?.email}
+              </span>
+              {isAdmin && (
+                <Link
+                  to="/admin/users"
+                  className="rounded-lg border border-[var(--color-line)] px-3 py-2 text-sm font-semibold"
+                >
+                  Manage users
+                </Link>
+              )}
+              <button
+                type="button"
+                onClick={() => void signOut()}
+                className="rounded-lg border border-[var(--color-line)] px-3 py-2 text-sm font-semibold"
+              >
+                Sign out
+              </button>
+            </>
+          ) : configured ? (
+            <Link
+              to="/login"
+              className="rounded-lg border border-[var(--color-line)] px-3 py-2 text-sm font-semibold"
+            >
+              Sign in
+            </Link>
+          ) : null}
           <button
             type="button"
             onClick={() => void refresh()}

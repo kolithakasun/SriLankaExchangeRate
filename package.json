@@ -16,6 +16,7 @@
     "db:backup:cron": "bash scripts/backup-cron.sh"
   },
   "dependencies": {
+    "@cursor/sdk": "^1.0.30",
     "@supabase/supabase-js": "^2.49.8",
     "cheerio": "^1.0.0",
     "date-fns": "^4.1.0",

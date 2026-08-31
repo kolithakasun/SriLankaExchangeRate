@@ -10,6 +10,9 @@ import type {
 } from "@shared/types";
 import type { DailySeriesSummary } from "@shared/utils/history";
 
+export type NarrationSource = "gemini" | "groq" | "cursor" | "template";
+export type AiProviderOption = "auto" | "gemini" | "groq" | "cursor";
+
 export interface RatesResponse {
   currency: string;
   bank: string | null;
@@ -37,12 +40,30 @@ export interface HistoryResponse {
   date: string;
   days: number;
   storage: string;
-  /** Whether the daily series came from the snapshot table or raw observations. */
   dailySource: "snapshot" | "observations" | null;
   points: HistoryPoint[];
   daily: DailyRatePoint[];
   summary: DailySeriesSummary | null;
   availableDates: string[];
+}
+
+export interface CursorQuota {
+  date: string;
+  used: number;
+  limit: number;
+  remaining: number;
+  resetAt: string;
+}
+
+export interface CursorRunSummary {
+  id: string;
+  status: string;
+  slot: number;
+  agentId?: string | null;
+  runId?: string | null;
+  narration?: string | null;
+  error?: string | null;
+  completedAt?: string | null;
 }
 
 export interface ForecastResponse {
@@ -54,12 +75,16 @@ export interface ForecastResponse {
   daysAnalyzed: number;
   confidence: ForecastResult["confidence"];
   includeReferences?: boolean;
-  /** When this forecast was computed on the server. */
   generatedAt?: string;
   forecast: ForecastResult;
   narration: string;
-  narrationSource: "gemini" | "groq" | "template";
-  availableProviders: Array<"gemini" | "groq">;
+  narrationSource: NarrationSource;
+  narrationCached?: boolean;
+  availableProviders: Array<"gemini" | "groq" | "cursor">;
+  cursorPending?: boolean;
+  cursorQuotaExhausted?: boolean;
+  cursorRun?: CursorRunSummary;
+  cursorQuota?: CursorQuota;
 }
 
 export interface ForecastRefreshResponse extends ForecastResponse {
@@ -71,6 +96,13 @@ export interface ForecastRefreshResponse extends ForecastResponse {
     dailyUpdated?: number;
     failed: Array<{ bankCode: string; error: string | null }>;
   };
+}
+
+export interface CursorForecastStatusResponse {
+  configured: boolean;
+  cursorQuota: CursorQuota;
+  availableProviders: Array<"gemini" | "groq" | "cursor">;
+  cursorRun?: CursorRunSummary;
 }
 
 export interface RefreshResponse {
@@ -90,12 +122,26 @@ export interface RefreshResponse {
   error?: string;
 }
 
-async function api<T>(path: string, init?: RequestInit): Promise<T> {
+export interface AdminUser {
+  id: string;
+  email: string;
+  role: "user" | "admin";
+  disabled: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+async function api<T>(
+  path: string,
+  init?: RequestInit & { accessToken?: string | null },
+): Promise<T> {
+  const { accessToken, ...rest } = init ?? {};
   const res = await fetch(path, {
-    ...init,
+    ...rest,
     headers: {
       Accept: "application/json",
-      ...(init?.headers ?? {}),
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      ...(rest.headers ?? {}),
     },
   });
   const data = await res.json();
@@ -128,8 +174,9 @@ export function fetchForecast(params: {
   bank: string;
   currency: string;
   range?: ForecastRange;
-  provider?: "auto" | "gemini" | "groq";
+  provider?: AiProviderOption;
   references?: boolean;
+  accessToken?: string | null;
 }): Promise<ForecastResponse> {
   const q = new URLSearchParams({
     bank: params.bank,
@@ -138,16 +185,19 @@ export function fetchForecast(params: {
     ...(params.provider ? { provider: params.provider } : {}),
     references: params.references === false ? "0" : "1",
   });
-  return api(`/api/forecast?${q.toString()}`);
+  return api(`/api/forecast?${q.toString()}`, {
+    accessToken: params.accessToken,
+  });
 }
 
 export function refreshForecast(params: {
   bank: string;
   currency: string;
   range?: ForecastRange;
-  provider?: "auto" | "gemini" | "groq";
+  provider?: AiProviderOption;
   references?: boolean;
   token?: string;
+  accessToken?: string | null;
 }): Promise<ForecastRefreshResponse> {
   const q = new URLSearchParams({
     bank: params.bank,
@@ -158,7 +208,21 @@ export function refreshForecast(params: {
   });
   return api(`/api/forecast-refresh?${q.toString()}`, {
     method: "POST",
+    accessToken: params.accessToken,
     headers: params.token ? { "x-refresh-token": params.token } : {},
+  });
+}
+
+export function fetchCursorForecastStatus(params: {
+  accessToken: string;
+  runId?: string;
+}): Promise<CursorForecastStatusResponse> {
+  const q = new URLSearchParams(
+    params.runId ? { runId: params.runId } : undefined,
+  );
+  const suffix = q.toString() ? `?${q.toString()}` : "";
+  return api(`/api/cursor-forecast${suffix}`, {
+    accessToken: params.accessToken,
   });
 }
 
@@ -166,6 +230,34 @@ export function refreshRates(token?: string): Promise<RefreshResponse> {
   return api("/api/refresh", {
     method: "POST",
     headers: token ? { "x-refresh-token": token } : {},
+  });
+}
+
+export function fetchAdminUsers(accessToken: string) {
+  return api<{ users: AdminUser[] }>("/api/admin-users", { accessToken });
+}
+
+export function createAdminUser(
+  accessToken: string,
+  body: { email: string; password: string; role?: "user" | "admin" },
+) {
+  return api<{ user: AdminUser }>("/api/admin-users", {
+    method: "POST",
+    accessToken,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+export function updateAdminUser(
+  accessToken: string,
+  body: { id: string; role?: "user" | "admin"; disabled?: boolean },
+) {
+  return api<{ user: AdminUser }>("/api/admin-users", {
+    method: "PATCH",
+    accessToken,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
   });
 }
 
