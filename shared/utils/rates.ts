@@ -11,6 +11,8 @@ const RANGE_HINTS: Record<string, { min: number; max: number }> = {
   EUR: { min: 50, max: 1200 },
   JPY: { min: 0.1, max: 20 },
   SGD: { min: 30, max: 800 },
+  // USDT/LKR P2P tracks near USD/LKR; keep loose bounds for spikes.
+  USDT: { min: 50, max: 1000 },
 };
 
 export function parseRateNumber(value: unknown): number | null {
@@ -33,7 +35,8 @@ export function parseRateNumber(value: unknown): number | null {
 }
 
 export function isValidCurrencyCode(code: string): boolean {
-  return /^[A-Z]{3}$/.test(code);
+  // ISO 4217 fiat is 3 letters; allow common 4-letter crypto tickers (USDT).
+  return /^[A-Z]{3,4}$/.test(code);
 }
 
 export function isRateInReasonableRange(
@@ -69,11 +72,13 @@ export function validateExchangeRate(
     return { valid: false, reason: `TT selling out of range: ${rate.ttSelling}` };
   }
   if (
+    rate.currency !== "USDT" &&
     rate.ttBuying !== null &&
     rate.ttSelling !== null &&
     rate.ttBuying > rate.ttSelling * 1.05
   ) {
-    // Buying above selling is unusual; allow small inversions but flag large ones
+    // Buying above selling is unusual for bank TT; allow small inversions.
+    // USDT P2P books are separate sides and can briefly invert.
     return {
       valid: false,
       reason: `Buying (${rate.ttBuying}) exceeds selling (${rate.ttSelling})`,

@@ -7,14 +7,16 @@ export type BankCode =
   | "PEOPLES"
   | "BOC"
   | "CBSL"
-  | "GOOGLE";
+  | "GOOGLE"
+  | "BINANCE_P2P"
+  | "BYBIT_P2P";
 
-/** Licensed banks vs official/market references used for forecast signals. */
-export type SourceKind = "bank" | "reference";
+/** Licensed banks, forecast references, and crypto P2P markets. */
+export type SourceKind = "bank" | "reference" | "p2p";
 
 export type ReferenceSourceId = "CBSL" | "GOOGLE";
 
-export type CurrencyCode = "USD" | "AUD" | "EUR" | "JPY" | "SGD" | string;
+export type CurrencyCode = "USD" | "AUD" | "EUR" | "JPY" | "SGD" | "USDT" | string;
 
 export interface CurrencyConfig {
   code: CurrencyCode;

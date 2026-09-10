@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { getEnabledBanks } from "@shared/config/banks";
+import { getComparisonSources } from "@shared/config/banks";
 import { getEnabledCurrencies } from "@shared/config/currencies";
 import {
   DEFAULT_FORECAST_RANGE,
@@ -44,10 +44,13 @@ export function ForecastPanel({
   refreshKey?: string | null;
 }) {
   const { session, accessToken } = useAuth();
-  const banks = getEnabledBanks();
   const currencies = getEnabledCurrencies();
-  const [bank, setBank] = useState<string>(banks[0]?.code ?? "SEYLAN");
   const [currency, setCurrency] = useState(defaultCurrency);
+  const banks = useMemo(
+    () => getComparisonSources(currency),
+    [currency],
+  );
+  const [bank, setBank] = useState<string>(banks[0]?.code ?? "SEYLAN");
   const [provider, setProvider] = useState<AiProviderOption>("auto");
   const [range, setRange] = useState<ForecastRange>(DEFAULT_FORECAST_RANGE);
   const [includeReferences, setIncludeReferences] = useState(true);
@@ -62,6 +65,19 @@ export function ForecastPanel({
   useEffect(() => {
     setCurrency(defaultCurrency);
   }, [defaultCurrency]);
+
+  useEffect(() => {
+    if (!banks.some((b) => b.code === bank)) {
+      setBank(banks[0]?.code ?? "SEYLAN");
+    }
+  }, [banks, bank]);
+
+  useEffect(() => {
+    // USDT has Google mid as a reference signal; CBSL does not publish USDT.
+    if (currency.toUpperCase() === "USDT") {
+      setIncludeReferences(true);
+    }
+  }, [currency]);
 
   useEffect(() => {
     if (provider === "cursor" && !session) {
@@ -214,7 +230,9 @@ export function ForecastPanel({
         <div>
           <h2 className="text-2xl font-extrabold tracking-tight">Forecast</h2>
           <p className="text-sm text-[var(--color-ink-muted)]">
-            Bank, CBSL, and Google daily history from the database
+            {currency.toUpperCase() === "USDT"
+              ? "Binance / Bybit P2P + Google Finance history from the database"
+              : "Bank, CBSL, and Google daily history from the database"}
             {activeRange ? ` · ${activeRange.description}` : ""}
           </p>
           <p className="mt-1 text-xs text-[var(--color-ink-muted)]">
@@ -347,9 +365,14 @@ export function ForecastPanel({
               type="checkbox"
               className="size-4 accent-[var(--color-accent)]"
               checked={includeReferences}
+              disabled={false}
               onChange={(e) => setIncludeReferences(e.target.checked)}
             />
-            <span>CBSL + Google signal</span>
+            <span>
+              {currency.toUpperCase() === "USDT"
+                ? "Google Finance signal"
+                : "CBSL + Google signal"}
+            </span>
           </span>
         </label>
       </div>

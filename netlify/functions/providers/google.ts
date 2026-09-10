@@ -19,6 +19,7 @@ export async function fetchGoogleMid(currency: string): Promise<number | null> {
     headers: {
       "User-Agent": BROWSER_UA,
       Accept: "text/html,application/xhtml+xml",
+      "Accept-Language": "en-US,en;q=0.9",
     },
   });
   const mid = parseGoogleFinanceMid(html, currency, "LKR");
@@ -44,6 +45,7 @@ export const googleProvider: BankExchangeRateProvider = {
             // Mid-market quote — stored on both sides so existing TT fields work.
             ttBuying: mid,
             ttSelling: mid,
+            sourceTimestamp: retrievedAt,
             retrievedAt,
             parserVersion: `google-finance@${PARSER_VERSION}`,
             rawReference: googleFinanceQuoteUrl(currency, "LKR"),

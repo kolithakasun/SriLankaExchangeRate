@@ -1,4 +1,4 @@
-import type { BankCode, BankConfig, SourceKind } from "../types.js";
+import type { BankConfig, SourceKind } from "../types.js";
 
 export const banks: BankConfig[] = [
   {
@@ -102,6 +102,29 @@ export const banks: BankConfig[] = [
     sourceUrl: "https://www.google.com/finance/quote/USD-LKR",
     provider: "google",
   },
+  {
+    code: "BINANCE_P2P",
+    name: "Binance P2P",
+    shortName: "Binance",
+    priority: 20,
+    enabled: true,
+    featured: true,
+    kind: "p2p",
+    sourceUrl:
+      "https://p2p.binance.com/trade/sell/USDT?fiat=LKR&payment=BankSriLanka",
+    provider: "binance-p2p",
+  },
+  {
+    code: "BYBIT_P2P",
+    name: "Bybit P2P",
+    shortName: "Bybit",
+    priority: 21,
+    enabled: true,
+    featured: true,
+    kind: "p2p",
+    sourceUrl: "https://www.bybit.com/en/p2p/sell/USDT/LKR",
+    provider: "bybit-p2p",
+  },
 ];
 
 export function sourceKind(bank: BankConfig | string): SourceKind {
@@ -122,7 +145,23 @@ export function getEnabledBanks(): BankConfig[] {
     .sort((a, b) => a.priority - b.priority);
 }
 
-/** Banks plus CBSL/Google — used only by collectors. */
+/** Crypto P2P markets (USDT/LKR bank transfer). */
+export function getEnabledP2pSources(): BankConfig[] {
+  return banks
+    .filter((b) => b.enabled && sourceKind(b) === "p2p")
+    .sort((a, b) => a.priority - b.priority);
+}
+
+/**
+ * Sources shown in comparison / history / forecast pickers.
+ * USDT is P2P-only; other currencies are licensed banks.
+ */
+export function getComparisonSources(currency?: string): BankConfig[] {
+  if (currency?.toUpperCase() === "USDT") return getEnabledP2pSources();
+  return getEnabledBanks();
+}
+
+/** Banks + P2P + CBSL/Google — used by collectors. */
 export function getEnabledSources(): BankConfig[] {
   return banks.filter((b) => b.enabled).sort((a, b) => a.priority - b.priority);
 }
@@ -140,7 +179,15 @@ export function isEnabledSource(code: string): boolean {
 }
 
 export function isForecastableBank(code: string): boolean {
-  return getEnabledBanks().some((b) => b.code === code.toUpperCase() as BankCode);
+  const upper = code.toUpperCase();
+  return (
+    getEnabledBanks().some((b) => b.code === upper) ||
+    getEnabledP2pSources().some((b) => b.code === upper)
+  );
+}
+
+export function isP2pSource(code: string): boolean {
+  return sourceKind(code) === "p2p";
 }
 
 export function getBankByCode(code: string): BankConfig | undefined {

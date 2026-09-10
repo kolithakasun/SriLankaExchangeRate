@@ -56,10 +56,12 @@ export function ComparisonTable({
   rates,
   best,
   references = [],
+  sourceLabel = "Bank",
 }: {
   rates: LatestRateView[];
   best: BestRates;
   references?: LatestRateView[];
+  sourceLabel?: string;
 }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-[var(--color-line)] bg-[var(--color-panel)]">
@@ -67,7 +69,7 @@ export function ComparisonTable({
         <table className="hidden w-full min-w-[640px] text-left md:table">
           <thead className="border-b border-[var(--color-line)] bg-[var(--color-accent-soft)]/50 text-xs uppercase tracking-wide text-[var(--color-ink-muted)]">
             <tr>
-              <th className="px-4 py-3 font-semibold">Bank</th>
+              <th className="px-4 py-3 font-semibold">{sourceLabel}</th>
               <th className="px-4 py-3 font-semibold">TT Buying</th>
               <th className="px-4 py-3 font-semibold">TT Selling</th>
               <th className="px-4 py-3 font-semibold">Status</th>

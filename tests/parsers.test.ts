@@ -187,6 +187,12 @@ describe("Google Finance mid", () => {
     );
   });
 
+  it("reads labeled crypto USDT / LKR clusters", () => {
+    expect(parseGoogleFinanceMid(load("google-usdt.html"), "USDT", "LKR")).toBe(
+      328.425254183,
+    );
+  });
+
   it("returns null when the pair is absent", () => {
     expect(parseGoogleFinanceMid("<html></html>", "AUD", "LKR")).toBeNull();
   });

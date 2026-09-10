@@ -32,4 +32,5 @@ export const handler: Handler = async () => {
 
 export const config: Config = {
   schedule: "*/30 * * * *",
+  timeout: 60,
 };

@@ -2,7 +2,7 @@ import type { Handler } from "@netlify/functions";
 import { getDailyHistory, getLatestRates, usingSupabase } from "./lib/store.js";
 import { json, wrap } from "./lib/http.js";
 import { overlayLiveReferenceRates } from "./lib/live-references.js";
-import { getEnabledBanks } from "../../shared/config/banks.js";
+import { getComparisonSources } from "../../shared/config/banks.js";
 import { DEFAULT_CURRENCY } from "../../shared/config/currencies.js";
 import type { BestRates, DayComparison, LatestRateView } from "../../shared/types.js";
 
@@ -38,7 +38,8 @@ async function dayComparison(
   currency: string,
   bankCode?: string,
 ): Promise<DayComparison> {
-  const bank = bankCode ?? getEnabledBanks()[0]?.code ?? "SEYLAN";
+  const bank =
+    bankCode ?? getComparisonSources(currency)[0]?.code ?? "SEYLAN";
 
   // Compare the two most recent days that actually have data, so a missed day
   // (holiday, outage) still yields a meaningful change instead of a blank.
@@ -80,7 +81,10 @@ const handler: Handler = wrap(async (event) => {
   const bank = params.bank?.toUpperCase();
   const currency = params.currency?.toUpperCase() ?? DEFAULT_CURRENCY;
 
-  if (bank && !getEnabledBanks().some((b) => b.code === bank)) {
+  if (
+    bank &&
+    !getComparisonSources(currency).some((b) => b.code === bank)
+  ) {
     return json(400, { error: "Unknown bank" });
   }
 
@@ -96,10 +100,16 @@ const handler: Handler = wrap(async (event) => {
   ]);
 
   const forCurrency = rates.filter((r) => r.currency === currency);
-  const references = await overlayLiveReferenceRates(
-    storedReferences.filter((r) => r.currency === currency),
-    currency,
-  );
+  const references = (
+    await overlayLiveReferenceRates(
+      storedReferences.filter((r) => r.currency === currency),
+      currency,
+    )
+  ).filter((r) => {
+    // USDT has no CBSL series — keep Google mid only.
+    if (currency === "USDT") return r.bankCode === "GOOGLE";
+    return true;
+  });
   const best = computeBest(forCurrency, currency);
   const comparison = await dayComparison(currency, bank);
 
@@ -119,7 +129,7 @@ const handler: Handler = wrap(async (event) => {
     comparison: forCurrency,
     best,
     dayComparison: comparison,
-    banks: getEnabledBanks().map((b) => ({
+    banks: getComparisonSources(currency).map((b) => ({
       code: b.code,
       name: b.name,
       shortName: b.shortName,

@@ -168,13 +168,16 @@ export async function loadForecastReferences(options: {
   bankDaily: DailyAggregate[];
   bankTrend: ForecastTrend | null;
 }): Promise<ForecastReferences> {
+  const isUsdt = options.currency.toUpperCase() === "USDT";
   const [cbsl, google] = await Promise.all([
-    loadCbslDaily(options.currency, options.days),
+    isUsdt
+      ? Promise.resolve({ daily: [] as DailyAggregate[] })
+      : loadCbslDaily(options.currency, options.days),
     loadGoogleDaily(options.currency, options.days),
   ]);
 
   const errors: ForecastReferences["errors"] = {};
-  if (cbsl.error) errors.CBSL = cbsl.error;
+  if (!isUsdt && cbsl.error) errors.CBSL = cbsl.error;
   if (google.error) errors.GOOGLE = google.error;
 
   const references: Array<{
