@@ -20,7 +20,7 @@
   "18": "providers/cbsl.ts",
   "19": "time.ts",
   "20": "binance-p2p.ts",
-  "21": "store-local.test.ts",
+  "21": "hnb.ts",
   "22": "html.ts",
   "23": "config/currencies.ts"
 }

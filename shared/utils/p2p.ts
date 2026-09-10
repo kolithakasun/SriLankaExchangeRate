@@ -1,28 +1,37 @@
 /**
  * Shared helpers for USDT/LKR P2P order-book snapshots.
  *
- * Mapping onto existing TT fields:
- * - ttBuying  = USDT → LKR (you sell USDT): maximum Bank Sri Lanka ad price
- * - ttSelling = LKR → USDT (you buy USDT): minimum Bank Sri Lanka ad price
+ * Mapping onto existing TT fields (same sense as bank TT):
+ * - ttBuying  = you sell USDT for LKR → best (highest) bid on the sell book
+ * - ttSelling = you buy USDT with LKR → best (lowest) ask on the buy book
+ *
+ * Prefer the competitive top of book. Absolute min/max across the whole page
+ * can pick outlier ads (e.g. 325 / 349) that the UI does not show first.
  */
 
-/** Binance P2P payType / method identifier matching payment=BankSriLanka. */
+/** Binance P2P payType matching payment=BankSriLanka. */
 export const BINANCE_BANK_SRI_LANKA = "BankSriLanka";
 
 /**
- * Bybit LKR "Bank Transfer" payment type id (same filter the P2P UI uses for
- * local bank rails; Binance's named BankSriLanka equivalent on Bybit).
+ * Bybit LKR Bank Transfer payment type id (Bybit has no "BankSriLanka" string).
  */
 export const BYBIT_BANK_TRANSFER_PAYMENT_ID = "14";
 
+/**
+ * Competitive top-of-book price from the first `window` ads (API order).
+ * - highest: best bid when selling USDT
+ * - lowest: best ask when buying USDT
+ */
 export function pickBookPrice(
   prices: number[],
   direction: "highest" | "lowest",
+  window = 5,
 ): number | null {
   const clean = prices.filter((p) => Number.isFinite(p) && p > 0);
   if (!clean.length) return null;
+  const sample = clean.slice(0, Math.min(window, clean.length));
   const value =
-    direction === "highest" ? Math.max(...clean) : Math.min(...clean);
+    direction === "highest" ? Math.max(...sample) : Math.min(...sample);
   return Number(value.toFixed(4));
 }
 

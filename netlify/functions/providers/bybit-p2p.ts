@@ -28,7 +28,10 @@ interface BybitOnlineResponse {
 }
 
 async function searchPrices(side: "0" | "1"): Promise<number[]> {
-  // side 0 = buy USDT (taker buys), side 1 = sell USDT (taker sells).
+  // Bybit side is the *advertiser* side of the token:
+  //   side 0 = advertisers buying USDT  → you sell USDT (sell page)
+  //   side 1 = advertisers selling USDT → you buy USDT (buy page)
+  // API returns competitive order: side0 highest-first, side1 lowest-first.
   const body = {
     userId: "",
     tokenId: "USDT",
@@ -72,10 +75,11 @@ export const bybitP2pProvider: BankExchangeRateProvider = {
     const retrievedAt = nowIso();
     try {
       const [sellPrices, buyPrices] = await Promise.all([
-        searchPrices("1"),
-        searchPrices("0"),
+        searchPrices("0"), // sell USDT (matches /p2p/sell/USDT/LKR)
+        searchPrices("1"), // buy USDT (matches /p2p/buy/USDT/LKR)
       ]);
 
+      // Top-of-book: highest bid when selling, lowest ask when buying.
       const ttBuying = pickBookPrice(sellPrices, "highest");
       const ttSelling = pickBookPrice(buyPrices, "lowest");
 

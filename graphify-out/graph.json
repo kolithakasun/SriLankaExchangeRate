@@ -755,7 +755,7 @@
       "file_type": "code",
       "norm_label": "dailyoutcome",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L294"
+      "source_location": "L319"
     },
     {
       "id": "netlify_functions_lib_store_dailysnapshot",
@@ -781,7 +781,7 @@
       "file_type": "code",
       "norm_label": "latestratefilters",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L522"
+      "source_location": "L547"
     },
     {
       "id": "netlify_functions_lib_store_localstore",
@@ -2414,7 +2414,7 @@
       "file_type": "code",
       "norm_label": "isbinancebanksrilanka()",
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L29"
+      "source_location": "L38"
     },
     {
       "id": "shared_utils_p2p_pickbookprice",
@@ -2426,7 +2426,7 @@
       "file_type": "code",
       "norm_label": "pickbookprice()",
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L18"
+      "source_location": "L25"
     },
     {
       "id": "netlify_functions_providers_types_bankexchangerateprovider_fetchrates",
@@ -2618,7 +2618,7 @@
       "file_type": "code",
       "norm_label": "getavailablehistorydates()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L867"
+      "source_location": "L892"
     },
     {
       "id": "netlify_functions_lib_store_getdailyhistory",
@@ -2630,7 +2630,7 @@
       "file_type": "code",
       "norm_label": "getdailyhistory()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L755"
+      "source_location": "L780"
     },
     {
       "id": "netlify_functions_lib_store_gethistory",
@@ -2642,7 +2642,7 @@
       "file_type": "code",
       "norm_label": "gethistory()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L677"
+      "source_location": "L702"
     },
     {
       "id": "netlify_functions_lib_store_gethistoryrange",
@@ -2654,7 +2654,7 @@
       "file_type": "code",
       "norm_label": "gethistoryrange()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L715"
+      "source_location": "L740"
     },
     {
       "id": "netlify_functions_lib_store_getlatestfromlocal",
@@ -2666,7 +2666,7 @@
       "file_type": "code",
       "norm_label": "getlatestfromlocal()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L633"
+      "source_location": "L658"
     },
     {
       "id": "netlify_functions_lib_store_getlatestfromsupabase",
@@ -2678,7 +2678,7 @@
       "file_type": "code",
       "norm_label": "getlatestfromsupabase()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L545"
+      "source_location": "L570"
     },
     {
       "id": "netlify_functions_lib_store_getlatestrates",
@@ -2690,7 +2690,7 @@
       "file_type": "code",
       "norm_label": "getlatestrates()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L537"
+      "source_location": "L562"
     },
     {
       "id": "netlify_functions_lib_store_getserviceclient",
@@ -2738,7 +2738,7 @@
       "file_type": "code",
       "norm_label": "mapdailyrow()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L927"
+      "source_location": "L952"
     },
     {
       "id": "netlify_functions_lib_store_maplocalrow",
@@ -2750,7 +2750,7 @@
       "file_type": "code",
       "norm_label": "maplocalrow()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L914"
+      "source_location": "L939"
     },
     {
       "id": "netlify_functions_lib_store_mapobservationrow",
@@ -2762,7 +2762,7 @@
       "file_type": "code",
       "norm_label": "mapobservationrow()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L901"
+      "source_location": "L926"
     },
     {
       "id": "netlify_functions_lib_store_notemissingdailytable",
@@ -2786,7 +2786,7 @@
       "file_type": "code",
       "norm_label": "numberornull()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L943"
+      "source_location": "L968"
     },
     {
       "id": "netlify_functions_lib_store_persisthistoricaldailyrates",
@@ -2798,7 +2798,7 @@
       "file_type": "code",
       "norm_label": "persisthistoricaldailyrates()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L794"
+      "source_location": "L819"
     },
     {
       "id": "netlify_functions_lib_store_persistwithlocal",
@@ -2810,7 +2810,7 @@
       "file_type": "code",
       "norm_label": "persistwithlocal()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L397"
+      "source_location": "L422"
     },
     {
       "id": "netlify_functions_lib_store_persistwithsupabase",
@@ -2846,7 +2846,7 @@
       "file_type": "code",
       "norm_label": "sourcesforlatest()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L528"
+      "source_location": "L553"
     },
     {
       "id": "netlify_functions_lib_store_statusfromtimestamps",
@@ -2870,7 +2870,7 @@
       "file_type": "code",
       "norm_label": "upsertdailysnapshot()",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L301"
+      "source_location": "L326"
     },
     {
       "id": "netlify_functions_lib_store_writelocal",
@@ -5464,7 +5464,7 @@
       "file_type": "code",
       "norm_label": "bybitp2pprovider",
       "source_file": "netlify/functions/providers/bybit-p2p.ts",
-      "source_location": "L69"
+      "source_location": "L72"
     },
     {
       "id": "shared_utils_p2p",
@@ -5486,7 +5486,7 @@
       "file_type": "code",
       "norm_label": "binance_bank_sri_lanka",
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L10"
+      "source_location": "L13"
     },
     {
       "id": "shared_utils_p2p_bybit_bank_transfer_payment_id",
@@ -5497,7 +5497,7 @@
       "file_type": "code",
       "norm_label": "bybit_bank_transfer_payment_id",
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L16"
+      "source_location": "L18"
     },
     {
       "id": "tests_p2p_test",
@@ -8929,7 +8929,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L871",
+      "source_location": "L896",
       "weight": 1.0
     },
     {
@@ -8941,7 +8941,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L883",
+      "source_location": "L908",
       "weight": 1.0
     },
     {
@@ -8953,7 +8953,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L888",
+      "source_location": "L913",
       "weight": 1.0
     },
     {
@@ -8965,7 +8965,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L762",
+      "source_location": "L787",
       "weight": 1.0
     },
     {
@@ -8977,7 +8977,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L764",
+      "source_location": "L789",
       "weight": 1.0
     },
     {
@@ -8989,7 +8989,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L765",
+      "source_location": "L790",
       "weight": 1.0
     },
     {
@@ -9001,7 +9001,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L776",
+      "source_location": "L801",
       "weight": 1.0
     },
     {
@@ -9013,7 +9013,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L777",
+      "source_location": "L802",
       "weight": 1.0
     },
     {
@@ -9025,7 +9025,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L786",
+      "source_location": "L811",
       "weight": 1.0
     },
     {
@@ -9037,7 +9037,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L787",
+      "source_location": "L812",
       "weight": 1.0
     },
     {
@@ -9049,7 +9049,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L682",
+      "source_location": "L707",
       "weight": 1.0
     },
     {
@@ -9061,7 +9061,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L703",
+      "source_location": "L728",
       "weight": 1.0
     },
     {
@@ -9073,7 +9073,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L709",
+      "source_location": "L734",
       "weight": 1.0
     },
     {
@@ -9085,7 +9085,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L721",
+      "source_location": "L746",
       "weight": 1.0
     },
     {
@@ -9097,7 +9097,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L738",
+      "source_location": "L763",
       "weight": 1.0
     },
     {
@@ -9109,7 +9109,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L634",
+      "source_location": "L659",
       "weight": 1.0
     },
     {
@@ -9121,7 +9121,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L635",
+      "source_location": "L660",
       "weight": 1.0
     },
     {
@@ -9133,7 +9133,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L559",
+      "source_location": "L584",
       "weight": 1.0
     },
     {
@@ -9145,7 +9145,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L593",
+      "source_location": "L618",
       "weight": 1.0
     },
     {
@@ -9157,7 +9157,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L615",
+      "source_location": "L640",
       "weight": 1.0
     },
     {
@@ -9169,7 +9169,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L540",
+      "source_location": "L565",
       "weight": 1.0
     },
     {
@@ -9181,7 +9181,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L541",
+      "source_location": "L566",
       "weight": 1.0
     },
     {
@@ -9193,7 +9193,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L542",
+      "source_location": "L567",
       "weight": 1.0
     },
     {
@@ -9205,7 +9205,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L930",
+      "source_location": "L955",
       "weight": 1.0
     },
     {
@@ -9217,7 +9217,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L906",
+      "source_location": "L931",
       "weight": 1.0
     },
     {
@@ -9229,7 +9229,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L801",
+      "source_location": "L826",
       "weight": 1.0
     },
     {
@@ -9241,7 +9241,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L805",
+      "source_location": "L830",
       "weight": 1.0
     },
     {
@@ -9253,7 +9253,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L806",
+      "source_location": "L831",
       "weight": 1.0
     },
     {
@@ -9265,7 +9265,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L807",
+      "source_location": "L832",
       "weight": 1.0
     },
     {
@@ -9277,7 +9277,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L842",
+      "source_location": "L867",
       "weight": 1.0
     },
     {
@@ -9289,7 +9289,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L864",
+      "source_location": "L889",
       "weight": 1.0
     },
     {
@@ -9337,7 +9337,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L398",
+      "source_location": "L423",
       "weight": 1.0
     },
     {
@@ -9349,7 +9349,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L407",
+      "source_location": "L432",
       "weight": 1.0
     },
     {
@@ -9361,7 +9361,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L423",
+      "source_location": "L448",
       "weight": 1.0
     },
     {
@@ -9373,7 +9373,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L434",
+      "source_location": "L459",
       "weight": 1.0
     },
     {
@@ -9385,7 +9385,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L439",
+      "source_location": "L464",
       "weight": 1.0
     },
     {
@@ -9397,7 +9397,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L489",
+      "source_location": "L514",
       "weight": 1.0
     },
     {
@@ -9409,7 +9409,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L518",
+      "source_location": "L543",
       "weight": 1.0
     },
     {
@@ -9433,7 +9433,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L215",
+      "source_location": "L217",
       "weight": 1.0
     },
     {
@@ -9445,7 +9445,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L230",
+      "source_location": "L235",
       "weight": 1.0
     },
     {
@@ -9457,7 +9457,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L241",
+      "source_location": "L246",
       "weight": 1.0
     },
     {
@@ -9469,7 +9469,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L244",
+      "source_location": "L249",
       "weight": 1.0
     },
     {
@@ -9481,7 +9481,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L261",
+      "source_location": "L266",
       "weight": 1.0
     },
     {
@@ -9493,7 +9493,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L273",
+      "source_location": "L283",
       "weight": 1.0
     },
     {
@@ -9517,7 +9517,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L529",
+      "source_location": "L554",
       "weight": 1.0
     },
     {
@@ -9529,7 +9529,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L530",
+      "source_location": "L555",
       "weight": 1.0
     },
     {
@@ -9541,7 +9541,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L531",
+      "source_location": "L556",
       "weight": 1.0
     },
     {
@@ -9553,7 +9553,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L533",
+      "source_location": "L558",
       "weight": 1.0
     },
     {
@@ -9565,7 +9565,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L534",
+      "source_location": "L559",
       "weight": 1.0
     },
     {
@@ -9577,7 +9577,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L308",
+      "source_location": "L333",
       "weight": 1.0
     },
     {
@@ -9589,7 +9589,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L319",
+      "source_location": "L344",
       "weight": 1.0
     },
     {
@@ -9601,7 +9601,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L320",
+      "source_location": "L345",
       "weight": 1.0
     },
     {
@@ -9613,7 +9613,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L343",
+      "source_location": "L368",
       "weight": 1.0
     },
     {
@@ -9625,7 +9625,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L361",
+      "source_location": "L386",
       "weight": 1.0
     },
     {
@@ -9637,7 +9637,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L363",
+      "source_location": "L388",
       "weight": 1.0
     },
     {
@@ -20525,18 +20525,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L294",
-      "weight": 1.0
-    },
-    {
-      "source": "netlify_functions_lib_store",
-      "target": "netlify_functions_lib_store_upsertdailysnapshot",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L301",
+      "source_location": "L319",
       "weight": 1.0
     },
     {
@@ -20552,13 +20541,24 @@
     },
     {
       "source": "netlify_functions_lib_store",
+      "target": "netlify_functions_lib_store_upsertdailysnapshot",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/lib/store.ts",
+      "source_location": "L326",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_lib_store",
       "target": "netlify_functions_lib_store_persistwithlocal",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L397",
+      "source_location": "L422",
       "weight": 1.0
     },
     {
@@ -20574,39 +20574,6 @@
     },
     {
       "source": "netlify_functions_lib_store",
-      "target": "netlify_functions_lib_store_latestratefilters",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L522",
-      "weight": 1.0
-    },
-    {
-      "source": "netlify_functions_lib_store",
-      "target": "netlify_functions_lib_store_sourcesforlatest",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L528",
-      "weight": 1.0
-    },
-    {
-      "source": "netlify_functions_lib_store",
-      "target": "netlify_functions_lib_store_getlatestrates",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L537",
-      "weight": 1.0
-    },
-    {
-      "source": "netlify_functions_lib_store",
       "target": "netlify_functions_lib_store_persistsummary",
       "relation": "contains",
       "_origin": "ast",
@@ -20618,24 +20585,46 @@
     },
     {
       "source": "netlify_functions_lib_store",
+      "target": "netlify_functions_lib_store_latestratefilters",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/lib/store.ts",
+      "source_location": "L547",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_lib_store",
+      "target": "netlify_functions_lib_store_sourcesforlatest",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/lib/store.ts",
+      "source_location": "L553",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_lib_store",
+      "target": "netlify_functions_lib_store_getlatestrates",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/lib/store.ts",
+      "source_location": "L562",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_lib_store",
       "target": "netlify_functions_lib_store_getlatestfromsupabase",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L545",
-      "weight": 1.0
-    },
-    {
-      "source": "netlify_functions_lib_store",
-      "target": "netlify_functions_lib_store_getlatestfromlocal",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L633",
+      "source_location": "L570",
       "weight": 1.0
     },
     {
@@ -20651,24 +20640,24 @@
     },
     {
       "source": "netlify_functions_lib_store",
+      "target": "netlify_functions_lib_store_getlatestfromlocal",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/lib/store.ts",
+      "source_location": "L658",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_lib_store",
       "target": "netlify_functions_lib_store_gethistory",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L677",
-      "weight": 1.0
-    },
-    {
-      "source": "netlify_functions_lib_store",
-      "target": "netlify_functions_lib_store_gethistoryrange",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L715",
+      "source_location": "L702",
       "weight": 1.0
     },
     {
@@ -20684,13 +20673,24 @@
     },
     {
       "source": "netlify_functions_lib_store",
+      "target": "netlify_functions_lib_store_gethistoryrange",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/lib/store.ts",
+      "source_location": "L740",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_lib_store",
       "target": "netlify_functions_lib_store_getdailyhistory",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L755",
+      "source_location": "L780",
       "weight": 1.0
     },
     {
@@ -20712,7 +20712,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L794",
+      "source_location": "L819",
       "weight": 1.0
     },
     {
@@ -20723,29 +20723,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L867",
-      "weight": 1.0
-    },
-    {
-      "source": "netlify_functions_lib_store",
-      "target": "netlify_functions_lib_store_mapobservationrow",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L901",
-      "weight": 1.0
-    },
-    {
-      "source": "netlify_functions_lib_store",
-      "target": "netlify_functions_lib_store_maplocalrow",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L914",
+      "source_location": "L892",
       "weight": 1.0
     },
     {
@@ -20761,24 +20739,35 @@
     },
     {
       "source": "netlify_functions_lib_store",
+      "target": "netlify_functions_lib_store_mapobservationrow",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/lib/store.ts",
+      "source_location": "L926",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_lib_store",
+      "target": "netlify_functions_lib_store_maplocalrow",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/lib/store.ts",
+      "source_location": "L939",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_lib_store",
       "target": "netlify_functions_lib_store_mapdailyrow",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L927",
-      "weight": 1.0
-    },
-    {
-      "source": "netlify_functions_lib_store",
-      "target": "netlify_functions_lib_store_numberornull",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L943",
+      "source_location": "L952",
       "weight": 1.0
     },
     {
@@ -20790,6 +20779,17 @@
       "confidence_score": 1.0,
       "source_file": "netlify/functions/lib/store.ts",
       "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "netlify_functions_lib_store",
+      "target": "netlify_functions_lib_store_numberornull",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "netlify/functions/lib/store.ts",
+      "source_location": "L968",
       "weight": 1.0
     },
     {
@@ -20932,7 +20932,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "netlify/functions/providers/bybit-p2p.ts",
-      "source_location": "L69",
+      "source_location": "L72",
       "weight": 1.0
     },
     {
@@ -23495,7 +23495,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L10",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -23506,7 +23506,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L16",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -23517,7 +23517,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L18",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -23528,7 +23528,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L29",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -25067,7 +25067,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L782",
+      "source_location": "L807",
       "weight": 1.0
     },
     {
@@ -25079,7 +25079,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L700",
+      "source_location": "L725",
       "weight": 1.0
     },
     {
@@ -25091,7 +25091,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L712",
+      "source_location": "L737",
       "weight": 1.0
     },
     {
@@ -25103,7 +25103,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L735",
+      "source_location": "L760",
       "weight": 1.0
     },
     {
@@ -25115,7 +25115,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L747",
+      "source_location": "L772",
       "weight": 1.0
     },
     {
@@ -25156,5 +25156,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "74524e87127966e0823c95955e81bbc2e546e867"
+  "built_at_commit": "b83004a28454af4bc8c43be65bf31f5f1b84fda1"
 }

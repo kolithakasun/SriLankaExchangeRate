@@ -45,6 +45,7 @@ export const googleProvider: BankExchangeRateProvider = {
             // Mid-market quote — stored on both sides so existing TT fields work.
             ttBuying: mid,
             ttSelling: mid,
+            sourceTimestamp: retrievedAt,
             retrievedAt,
             parserVersion: `google-finance@${PARSER_VERSION}`,
             rawReference: googleFinanceQuoteUrl(currency, "LKR"),

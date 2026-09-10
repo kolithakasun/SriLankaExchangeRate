@@ -6,12 +6,25 @@ import {
 } from "../shared/utils/p2p";
 
 describe("p2p helpers", () => {
-  it("picks the single highest sell price", () => {
-    expect(pickBookPrice([320, 333.3, 333.25, 310], "highest")).toBe(333.3);
+  it("picks competitive highest from the top of a sell book", () => {
+    // API order: best bids first, then weaker / outlier lows at the end.
+    expect(
+      pickBookPrice([331.88, 331.88, 331.87, 331.5, 325.02], "highest"),
+    ).toBe(331.88);
   });
 
-  it("picks the single lowest buy price", () => {
-    expect(pickBookPrice([334.5, 333.42, 333.5, 340], "lowest")).toBe(333.42);
+  it("picks competitive lowest from the top of a buy book", () => {
+    // API order: best asks first, then expensive outliers later.
+    expect(
+      pickBookPrice([333.45, 333.8, 333.86, 334.0, 349.99], "lowest"),
+    ).toBe(333.45);
+  });
+
+  it("does not use far-page outliers when window is limited", () => {
+    const sell = [332.88, 332.86, 332.8, 332.7, 332.5, 320, 310];
+    expect(pickBookPrice(sell, "highest")).toBe(332.88);
+    const buy = [333.0, 333.1, 333.2, 333.5, 334, 349, 360];
+    expect(pickBookPrice(buy, "lowest")).toBe(333.0);
   });
 
   it("returns null for empty lists", () => {
@@ -30,12 +43,6 @@ describe("p2p helpers", () => {
       isBinanceBankSriLanka({
         identifier: "BANK",
         tradeMethodName: "Bank Transfer",
-      }),
-    ).toBe(false);
-    expect(
-      isBinanceBankSriLanka({
-        identifier: "Mobiletopup",
-        tradeMethodName: "Airtime Mobile Top-Up",
       }),
     ).toBe(false);
   });

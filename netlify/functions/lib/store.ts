@@ -210,82 +210,107 @@ async function persistWithSupabase(
 
   await ensureSourceRows(client, results);
 
-  for (const result of results) {
-    checked += 1;
-    const checkedAt = result.retrievedAt || nowIso();
+  // Persist banks in parallel — sequential round-trips were blowing the local
+  // 30s function budget after P2P + Google USDT were added.
+  const outcomes = await Promise.all(
+    results.map(async (result) => {
+      const checkedAt = result.retrievedAt || nowIso();
+      let bankInserted = 0;
+      let bankDailyCreated = 0;
+      let bankDailyUpdated = 0;
 
-    if (!result.success || !result.rates.length) {
-      await client.from("bank_status").upsert({
-        bank_code: result.bankCode,
-        last_checked_at: checkedAt,
-        last_error: result.error ?? "Provider failed",
-        updated_at: nowIso(),
-      });
-      continue;
-    }
-
-    let changedAt: string | null = null;
-
-    for (const rate of result.rates) {
-      const dateKey = colomboDateKey(rate.retrievedAt);
-
-      const { data: latest } = await client
-        .from("exchange_rates")
-        .select("tt_buying, tt_selling, retrieved_at")
-        .eq("bank_code", rate.bankCode)
-        .eq("currency_code", rate.currency)
-        .order("retrieved_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      const decision = decideObservation({
-        previous: latest
-          ? {
-              ttBuying: numberOrNull(latest.tt_buying),
-              ttSelling: numberOrNull(latest.tt_selling),
-              dateKey: colomboDateKey(latest.retrieved_at as string),
-            }
-          : null,
-        current: { ttBuying: rate.ttBuying, ttSelling: rate.ttSelling },
-        dateKey,
-      });
-
-      if (decision.record) {
-        const { error } = await client.from("exchange_rates").insert({
-          bank_code: rate.bankCode,
-          currency_code: rate.currency,
-          tt_buying: rate.ttBuying,
-          tt_selling: rate.ttSelling,
-          source_timestamp: rate.sourceTimestamp ?? null,
-          retrieved_at: rate.retrievedAt,
-          source: getBankByCode(String(rate.bankCode))?.sourceUrl ?? null,
-          raw_reference: rate.rawReference ?? null,
-          parser_version: rate.parserVersion ?? null,
+      if (!result.success || !result.rates.length) {
+        await client.from("bank_status").upsert({
+          bank_code: result.bankCode,
+          last_checked_at: checkedAt,
+          last_error: result.error ?? "Provider failed",
+          updated_at: nowIso(),
         });
-        if (error) {
-          console.error("Insert failed", rate.bankCode, rate.currency, error.message);
-        } else {
-          inserted += 1;
-          if (decision.reason === "changed") changedAt = checkedAt;
+        return { bankInserted, bankDailyCreated, bankDailyUpdated };
+      }
+
+      let changedAt: string | null = null;
+
+      for (const rate of result.rates) {
+        const dateKey = colomboDateKey(rate.retrievedAt);
+
+        const { data: latest } = await client
+          .from("exchange_rates")
+          .select("tt_buying, tt_selling, retrieved_at")
+          .eq("bank_code", rate.bankCode)
+          .eq("currency_code", rate.currency)
+          .order("retrieved_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        const decision = decideObservation({
+          previous: latest
+            ? {
+                ttBuying: numberOrNull(latest.tt_buying),
+                ttSelling: numberOrNull(latest.tt_selling),
+                dateKey: colomboDateKey(latest.retrieved_at as string),
+              }
+            : null,
+          current: { ttBuying: rate.ttBuying, ttSelling: rate.ttSelling },
+          dateKey,
+        });
+
+        if (decision.record) {
+          const { error } = await client.from("exchange_rates").insert({
+            bank_code: rate.bankCode,
+            currency_code: rate.currency,
+            tt_buying: rate.ttBuying,
+            tt_selling: rate.ttSelling,
+            source_timestamp: rate.sourceTimestamp ?? null,
+            retrieved_at: rate.retrievedAt,
+            source: getBankByCode(String(rate.bankCode))?.sourceUrl ?? null,
+            raw_reference: rate.rawReference ?? null,
+            parser_version: rate.parserVersion ?? null,
+          });
+          if (error) {
+            console.error(
+              "Insert failed",
+              rate.bankCode,
+              rate.currency,
+              error.message,
+            );
+          } else {
+            bankInserted += 1;
+            if (decision.reason === "changed") changedAt = checkedAt;
+          }
+        }
+
+        const outcome = await upsertDailySnapshot(
+          client,
+          rate,
+          dateKey,
+          checkedAt,
+        );
+        if (outcome === "created") bankDailyCreated += 1;
+        if (outcome === "changed") {
+          bankDailyUpdated += 1;
+          changedAt = checkedAt;
         }
       }
 
-      const outcome = await upsertDailySnapshot(client, rate, dateKey, checkedAt);
-      if (outcome === "created") dailyCreated += 1;
-      if (outcome === "changed") {
-        dailyUpdated += 1;
-        changedAt = checkedAt;
-      }
-    }
+      await client.from("bank_status").upsert({
+        bank_code: result.bankCode,
+        last_checked_at: checkedAt,
+        last_success_at: checkedAt,
+        last_error: null,
+        ...(changedAt ? { last_changed_at: changedAt } : {}),
+        updated_at: nowIso(),
+      });
 
-    await client.from("bank_status").upsert({
-      bank_code: result.bankCode,
-      last_checked_at: checkedAt,
-      last_success_at: checkedAt,
-      last_error: null,
-      ...(changedAt ? { last_changed_at: changedAt } : {}),
-      updated_at: nowIso(),
-    });
+      return { bankInserted, bankDailyCreated, bankDailyUpdated };
+    }),
+  );
+
+  checked = results.length;
+  for (const outcome of outcomes) {
+    inserted += outcome.bankInserted;
+    dailyCreated += outcome.bankDailyCreated;
+    dailyUpdated += outcome.bankDailyUpdated;
   }
 
   return { inserted, checked, dailyCreated, dailyUpdated, results };

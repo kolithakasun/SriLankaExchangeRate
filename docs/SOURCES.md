@@ -14,7 +14,7 @@ Inspected August 2026. Each provider is isolated so a source change only require
 | CBSL (reference) | HTML form POST | https://www.cbsl.gov.lk/cbsl_custom/exratestt/exrates_resultstt.php | Official 9:30 a.m. TT buy/sell average. Fallback: chart widgets `/cbsl_custom/charts/{usd,aud}/indexsmall.php` |
 | Google (reference) | HTML quote page | https://www.google.com/finance/quote/USD-LKR (and AUD/EUR/JPY/SGD/USDT) | Single mid-market quote stored on both TT fields. USDT uses labeled `"Tether (USDT / LKR)"` blobs. |
 | Binance P2P | Public C2C search JSON | `POST …/adv/search` (`asset=USDT`, `fiat=LKR`, `payTypes=["BankSriLanka"]`) | Sell-USDT **max** → TT Buying; buy-USDT **min** → TT Selling. Page: [sell USDT](https://p2p.binance.com/trade/sell/USDT?fiat=LKR&payment=BankSriLanka) |
-| Bybit P2P | Public OTC online JSON | `POST …/item/online` (`tokenId=USDT`, `currencyId=LKR`, `payment=["14"]`) | Same max/min mapping. Payment `14` = Bank Transfer (LKR). Page: [sell USDT](https://www.bybit.com/en/p2p/sell/USDT/LKR) |
+| Bybit P2P | Public OTC online JSON | `POST …/item/online` (`tokenId=USDT`, `currencyId=LKR`, `payment=["14"]`) | side `0` = sell USDT (TT Buying); side `1` = buy USDT (TT Selling). Top-of-book max bid / min ask (not whole-page outliers). Page: [sell](https://www.bybit.com/en/p2p/sell/USDT/LKR) / [buy](https://www.bybit.com/en/p2p/buy/USDT/LKR) |
 
 ## Notes
 
