@@ -40,6 +40,13 @@ export const currencies: CurrencyConfig[] = [
     enabled: true,
     decimals: 2,
   },
+  {
+    code: "USDT",
+    name: "Tether",
+    symbol: "₮",
+    enabled: true,
+    decimals: 2,
+  },
 ];
 
 /** Default currency shown on the dashboard and API when none is specified. */

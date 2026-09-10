@@ -9,7 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { getEnabledBanks, getReferenceSources } from "@shared/config/banks";
+import { getComparisonSources, getReferenceSources } from "@shared/config/banks";
 import { getEnabledCurrencies } from "@shared/config/currencies";
 import { DEFAULT_RANGE, historyRanges } from "@shared/config/ranges";
 import { formatRate } from "@shared/utils/rates";
@@ -29,11 +29,15 @@ function changeClass(value: number | null): string {
 }
 
 export function HistorySection({ defaultCurrency }: { defaultCurrency: string }) {
-  const banks = getEnabledBanks();
-  const references = getReferenceSources();
   const currencies = getEnabledCurrencies();
-  const [bank, setBank] = useState<string>(banks[0]?.code ?? "SEYLAN");
   const [currency, setCurrency] = useState(defaultCurrency);
+  const banks = useMemo(
+    () => getComparisonSources(currency),
+    [currency],
+  );
+  const references = getReferenceSources();
+  const showReferenceOverlay = currency.toUpperCase() !== "USDT";
+  const [bank, setBank] = useState<string>(banks[0]?.code ?? "SEYLAN");
   const [range, setRange] = useState<HistoryRange>(DEFAULT_RANGE);
   const [date, setDate] = useState(colomboDateKey());
   const [dates, setDates] = useState<string[]>([colomboDateKey()]);
@@ -48,6 +52,12 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
   useEffect(() => {
     setCurrency(defaultCurrency);
   }, [defaultCurrency]);
+
+  useEffect(() => {
+    if (!banks.some((b) => b.code === bank)) {
+      setBank(banks[0]?.code ?? "SEYLAN");
+    }
+  }, [banks, bank]);
 
   useEffect(() => {
     let cancelled = false;
@@ -65,7 +75,7 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
         setData(res);
         if (res.availableDates.length) setDates(res.availableDates);
 
-        if (range !== "1d") {
+        if (range !== "1d" && showReferenceOverlay) {
           const extras = await Promise.allSettled([
             bank === "CBSL"
               ? Promise.resolve({ daily: [] as DailyRatePoint[] })
@@ -97,7 +107,7 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
     return () => {
       cancelled = true;
     };
-  }, [bank, currency, range, date]);
+  }, [bank, currency, range, date, showReferenceOverlay]);
 
   const isIntraday = range === "1d";
   const points = data?.points ?? [];
@@ -204,20 +214,22 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
             value={bank}
             onChange={(e) => setBank(e.target.value)}
           >
-            <optgroup label="Banks">
+            <optgroup label={currency.toUpperCase() === "USDT" ? "P2P markets" : "Banks"}>
               {banks.map((b) => (
                 <option key={b.code} value={b.code}>
                   {b.name}
                 </option>
               ))}
             </optgroup>
-            <optgroup label="References">
-              {references.map((b) => (
-                <option key={b.code} value={b.code}>
-                  {b.name}
-                </option>
-              ))}
-            </optgroup>
+            {showReferenceOverlay && (
+              <optgroup label="References">
+                {references.map((b) => (
+                  <option key={b.code} value={b.code}>
+                    {b.name}
+                  </option>
+                ))}
+              </optgroup>
+            )}
           </select>
         </label>
         <label className="text-sm">

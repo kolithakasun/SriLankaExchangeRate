@@ -10,6 +10,8 @@ import { peoplesProvider } from "./peoples.js";
 import { bocProvider } from "./boc.js";
 import { cbslProvider } from "./cbsl.js";
 import { googleProvider } from "./google.js";
+import { binanceP2pProvider } from "./binance-p2p.js";
+import { bybitP2pProvider } from "./bybit-p2p.js";
 
 const providers: Record<string, BankExchangeRateProvider> = {
   seylan: seylanProvider,
@@ -21,6 +23,8 @@ const providers: Record<string, BankExchangeRateProvider> = {
   boc: bocProvider,
   cbsl: cbslProvider,
   google: googleProvider,
+  "binance-p2p": binanceP2pProvider,
+  "bybit-p2p": bybitP2pProvider,
 };
 
 export function getProvider(providerKey: string): BankExchangeRateProvider | undefined {

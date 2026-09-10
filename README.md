@@ -7,8 +7,9 @@ Built for **Netlify** (static frontend + serverless functions) with **Supabase**
 ## Features
 
 - TT Buying / TT Selling for Seylan, HNB, Commercial Bank, Sampath, NDB, People's Bank, and BOC
-- Currencies: USD, AUD, EUR, JPY, SGD (config-driven)
-- Featured banks (Seylan · HNB · Commercial)
+- Currencies: USD, AUD, EUR, JPY, SGD, USDT (config-driven)
+- USDT/LKR P2P Bank Transfer quotes from Binance and Bybit (top-2 ad average), with history + forecast once collected
+- Featured banks (Seylan · HNB · Commercial) and featured P2P markets (Binance · Bybit)
 - Bank comparison + best buying / best selling highlights
 - Intraday historical observations **plus** a guaranteed one-row-per-day snapshot
 - History table + chart over 1D / 1W / 1M / 3M / 6M / 1Y / All
@@ -86,7 +87,8 @@ See [`docs/SOURCES.md`](docs/SOURCES.md) for details.
 5. Run [`supabase/migrations/003_reference_sources.sql`](supabase/migrations/003_reference_sources.sql) to seed CBSL and Google as forecast reference sources. Refresh also upserts those rows if this migration has not been applied yet.
 6. Run [`supabase/migrations/004_auth_cursor_quota.sql`](supabase/migrations/004_auth_cursor_quota.sql) for login profiles, admin roles, and the global Cursor 2/day quota tables.
 7. Run [`supabase/migrations/005_fix_cursor_quota_claim.sql`](supabase/migrations/005_fix_cursor_quota_claim.sql) so released quota slots can be reclaimed without hitting the unique constraint.
-7. Open **Project Settings → API** and copy:
+8. Run [`supabase/migrations/006_usdt_p2p_sources.sql`](supabase/migrations/006_usdt_p2p_sources.sql) to seed Binance/Bybit P2P sources and the USDT currency (also auto-upserted on refresh).
+9. Open **Project Settings → API** and copy:
    - **Project URL** → `SUPABASE_URL`
    - **Publishable / anon key** → `SUPABASE_ANON_KEY`
    - **Secret / service_role key** → `SUPABASE_SERVICE_ROLE_KEY`
@@ -148,7 +150,7 @@ Without Supabase credentials, the app falls back to a **local temp JSON store** 
 ### Auth bootstrap (first admin)
 
 1. In Supabase Auth settings, **disable public sign-up**.
-2. Run migrations `001`–`005`.
+2. Run migrations `001`–`006`.
 3. Create the first user in the Supabase Dashboard (Authentication → Users → Add user).
 4. Promote that account:
 

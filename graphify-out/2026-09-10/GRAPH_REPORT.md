@@ -1,16 +1,16 @@
-# Graph Report - SriLankaExchangeRate  (2026-09-10)
+# Graph Report - SriLankaExchangeRate  (2026-08-31)
 
 ## Corpus Check
-- 91 files · ~39,000 words
+- 86 files · ~37,210 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 611 nodes · 1531 edges · 22 communities (19 shown, 3 thin omitted)
+- 593 nodes · 1469 edges · 17 communities (14 shown, 3 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 8 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `56e2579b`
+- Built from commit: `a12779b6`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -19,7 +19,7 @@
 - shared/types.ts
 - api.ts
 - store.ts
-- cursor-quota.ts
+- forecast-payload.ts
 - scripts
 - compilerOptions
 - devDependencies
@@ -31,13 +31,9 @@
 - plugins
 - copilot-instructions.md
 - install-backup-cron.sh
-- forecast.test.ts
-- forecast-payload.ts
-- config/banks.ts
-- dayOfWeekAverages
 
 ## God Nodes (most connected - your core abstractions)
-1. `nowIso()` - 28 edges
+1. `nowIso()` - 26 edges
 2. `json()` - 23 edges
 3. `colomboDateKey()` - 23 edges
 4. `compilerOptions` - 19 edges
@@ -51,8 +47,8 @@
 ## Surprising Connections (you probably didn't know these)
 - `handler` --calls--> `getEnabledBanks()`  [EXTRACTED]
   netlify/functions/banks.ts → shared/config/banks.ts
-- `handler` --calls--> `isEnabledSource()`  [EXTRACTED]
-  netlify/functions/history.ts → shared/config/banks.ts
+- `buildPrompt()` --calls--> `weekdayName()`  [EXTRACTED]
+  netlify/functions/lib/ai.ts → shared/utils/forecast.ts
 - `nextColomboMidnightIso()` --calls--> `colomboDateKey()`  [EXTRACTED]
   netlify/functions/lib/cursor-quota.ts → shared/utils/time.ts
 - `claimCursorQuotaSlot()` --calls--> `colomboDateKey()`  [EXTRACTED]
@@ -63,27 +59,27 @@
 ## Import Cycles
 - None detected.
 
-## Communities (22 total, 3 thin omitted)
+## Communities (17 total, 3 thin omitted)
 
 ### Community 0 - "providers/cbsl.ts"
-Cohesion: 0.06
-Nodes (74): PersistSummary, fetchHtmlProvider(), BinanceAdv, binanceP2pProvider, BinanceSearchResponse, searchPrices(), bocProvider, BybitItem (+66 more)
+Cohesion: 0.07
+Nodes (66): overlayLiveReferenceRates(), PersistSummary, fetchHtmlProvider(), bocProvider, cbslProvider, chartFallback(), fetchCbslTtRows(), commercialProvider (+58 more)
 
 ### Community 1 - "shared/types.ts"
-Cohesion: 0.10
-Nodes (29): BankCode, BankConfig, BankStatus, BankVsReference, CurrencyCode, CurrencyConfig, DayOfWeekStat, ForecastAssumptions (+21 more)
+Cohesion: 0.05
+Nodes (62): ForecastRequest, fetchCbslHistoryBounded(), loadCbslDaily(), loadForecastReferences(), loadGoogleDaily(), loadStoredDaily(), mergeDaily(), sortDaily() (+54 more)
 
 ### Community 2 - "api.ts"
 Cohesion: 0.05
 Nodes (59): react, BankRateCard(), BankStatusLine(), StatusDot(), BestRatesPanel(), ComparisonTable(), CurrencySelector(), ForecastPanel() (+51 more)
 
 ### Community 3 - "store.ts"
-Cohesion: 0.10
-Nodes (54): handler, withLiveDailyHistory(), withLiveHistoryPoints(), overlayLiveReferenceRates(), DailyOutcome, DailySnapshot, dailyTableAvailable(), ensureSourceRows() (+46 more)
-
-### Community 4 - "cursor-quota.ts"
 Cohesion: 0.07
-Nodes (70): handler, parseBody(), handler, handler, handler, handler, config, handler (+62 more)
+Nodes (68): handler, withLiveDailyHistory(), withLiveHistoryPoints(), DailyOutcome, DailySnapshot, dailyTableAvailable(), ensureSourceRows(), getAvailableHistoryDates() (+60 more)
+
+### Community 4 - "forecast-payload.ts"
+Cohesion: 0.07
+Nodes (67): handler, parseBody(), handler, handler, handler, handler, config, handler (+59 more)
 
 ### Community 5 - "scripts"
 Cohesion: 0.06
@@ -117,41 +113,25 @@ Nodes (7): cleanup_incomplete_dirs(), log(), prune_old_archives(), run_backup(),
 Cohesion: 0.22
 Nodes (8): plugins, rules, react/only-export-components, react/rules-of-hooks, $schema, oxc, typescript, warn
 
-### Community 17 - "forecast.test.ts"
-Cohesion: 0.13
-Nodes (16): ForecastNumericPayload, ForecastRequest, DEFAULT_FORECAST_RANGE, DEFAULT_RANGE, ForecastRangeConfig, forecastRanges, getForecastRangeDays(), HistoryRangeConfig (+8 more)
-
-### Community 18 - "forecast-payload.ts"
-Cohesion: 0.28
-Nodes (15): buildForecastNumericPayload(), fetchCbslHistoryBounded(), loadCbslDaily(), loadForecastReferences(), loadGoogleDaily(), loadStoredDaily(), mergeDaily(), sortDaily() (+7 more)
-
-### Community 19 - "config/banks.ts"
-Cohesion: 0.30
-Nodes (13): sourcesForLatest(), getBankByCode(), getEnabledBanks(), getEnabledP2pSources(), getEnabledSources(), getFeaturedBanks(), getReferenceSources(), isEnabledSource() (+5 more)
-
-### Community 20 - "dayOfWeekAverages"
-Cohesion: 0.50
-Nodes (5): buildTrend(), dayOfWeekAverages(), linearTrend(), mean(), weekdayOf()
-
 ## Knowledge Gaps
-- **157 isolated node(s):** `$schema`, `typescript`, `oxc`, `react/rules-of-hooks`, `warn` (+152 more)
+- **153 isolated node(s):** `$schema`, `typescript`, `oxc`, `react/rules-of-hooks`, `warn` (+148 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `nowIso()` connect `store.ts` to `providers/cbsl.ts`, `forecast-payload.ts`, `cursor-quota.ts`?**
-  _High betweenness centrality (0.017) - this node is a cross-community bridge._
-- **Why does `json()` connect `cursor-quota.ts` to `store.ts`?**
+- **Why does `nowIso()` connect `store.ts` to `providers/cbsl.ts`, `forecast-payload.ts`?**
+  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+- **Why does `json()` connect `forecast-payload.ts` to `store.ts`?**
+  _High betweenness centrality (0.011) - this node is a cross-community bridge._
+- **Why does `colomboDateKey()` connect `store.ts` to `providers/cbsl.ts`, `shared/types.ts`, `forecast-payload.ts`?**
   _High betweenness centrality (0.010) - this node is a cross-community bridge._
-- **Why does `colomboDateKey()` connect `store.ts` to `providers/cbsl.ts`, `shared/types.ts`, `forecast-payload.ts`, `cursor-quota.ts`?**
-  _High betweenness centrality (0.009) - this node is a cross-community bridge._
 - **What connects `$schema`, `typescript`, `oxc` to the rest of the system?**
-  _157 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _153 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `providers/cbsl.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.05881188118811881 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06741573033707865 - nodes in this community are weakly interconnected._
 - **Should `shared/types.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.0967741935483871 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05369369369369369 - nodes in this community are weakly interconnected._
 - **Should `api.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.05462962962962963 - nodes in this community are weakly interconnected._

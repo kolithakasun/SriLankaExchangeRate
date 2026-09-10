@@ -31,8 +31,9 @@ export default function Dashboard() {
             Latest TT Exchange Rates
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-[var(--color-ink-muted)]">
-            Updated continuously from bank sources. Telegraphic Transfer buying and
-            selling rates for major Sri Lankan banks.
+            {currency === "USDT"
+              ? "USDT/LKR peer-to-peer Bank Transfer quotes from Binance and Bybit (top-2 ad average)."
+              : "Updated continuously from bank sources. Telegraphic Transfer buying and selling rates for major Sri Lankan banks."}
           </p>
           <p className="mt-2 text-sm text-[var(--color-ink-muted)]">
             {data?.lastCheckedAt
@@ -111,9 +112,13 @@ export default function Dashboard() {
 
           <section className="mb-10">
             <div className="mb-4">
-              <h2 className="text-2xl font-extrabold tracking-tight">Featured Banks</h2>
+              <h2 className="text-2xl font-extrabold tracking-tight">
+                {currency === "USDT" ? "Featured P2P markets" : "Featured Banks"}
+              </h2>
               <p className="text-sm text-[var(--color-ink-muted)]">
-                Seylan · HNB · Commercial Bank
+                {currency === "USDT"
+                  ? "Binance · Bybit"
+                  : "Seylan · HNB · Commercial Bank"}
               </p>
             </div>
             <div className="grid gap-4 md:grid-cols-3">

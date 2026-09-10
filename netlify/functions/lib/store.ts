@@ -2,6 +2,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import {
   getBankByCode,
   getEnabledBanks,
+  getEnabledP2pSources,
   getEnabledSources,
   getReferenceSources,
 } from "../../../shared/config/banks.js";
@@ -155,22 +156,44 @@ async function ensureSourceRows(
   client: SupabaseClient,
   results: ProviderResult[],
 ): Promise<void> {
+  const currencyCodes = new Set<string>();
   for (const result of results) {
     const bank = getBankByCode(result.bankCode);
-    if (!bank) continue;
-    const { error } = await client.from("banks").upsert(
+    if (bank) {
+      const { error } = await client.from("banks").upsert(
+        {
+          code: bank.code,
+          name: bank.name,
+          source_url: bank.sourceUrl,
+          priority: bank.priority,
+          enabled: bank.enabled,
+          featured: bank.featured,
+        },
+        { onConflict: "code" },
+      );
+      if (error) {
+        console.error("Bank upsert failed", bank.code, error.message);
+      }
+    }
+    for (const rate of result.rates) {
+      currencyCodes.add(rate.currency);
+    }
+  }
+
+  for (const code of currencyCodes) {
+    const cfg = currencies.find((c) => c.code === code);
+    if (!cfg) continue;
+    const { error } = await client.from("currencies").upsert(
       {
-        code: bank.code,
-        name: bank.name,
-        source_url: bank.sourceUrl,
-        priority: bank.priority,
-        enabled: bank.enabled,
-        featured: bank.featured,
+        code: cfg.code,
+        name: cfg.name,
+        symbol: cfg.symbol,
+        enabled: cfg.enabled,
       },
       { onConflict: "code" },
     );
     if (error) {
-      console.error("Bank upsert failed", bank.code, error.message);
+      console.error("Currency upsert failed", cfg.code, error.message);
     }
   }
 }
@@ -498,13 +521,15 @@ function persistWithLocal(results: ProviderResult[]): PersistSummary {
 export type LatestRateFilters = {
   bank?: string;
   currency?: string;
-  kind?: SourceKind | "all";
+  kind?: SourceKind | "all" | "p2p";
 };
 
 function sourcesForLatest(filters?: LatestRateFilters) {
   if (filters?.kind === "reference") return getReferenceSources();
+  if (filters?.kind === "p2p") return getEnabledP2pSources();
   if (filters?.kind === "all") return getEnabledSources();
-  return getEnabledBanks();
+  // Banks + P2P share the comparison surface; references stay separate.
+  return [...getEnabledBanks(), ...getEnabledP2pSources()];
 }
 
 export async function getLatestRates(

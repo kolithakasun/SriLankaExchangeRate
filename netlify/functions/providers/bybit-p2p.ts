@@ -1,0 +1,136 @@
+import { fetchJson } from "../../../shared/utils/html.js";
+import { averageTopPrices, P2P_TOP_N } from "../../../shared/utils/p2p.js";
+import { filterValidRates } from "../../../shared/utils/rates.js";
+import { nowIso } from "../../../shared/utils/time.js";
+import type { ExchangeRate, ProviderResult } from "../../../shared/types.js";
+import type { BankExchangeRateProvider } from "./types.js";
+import { PARSER_VERSION } from "./types.js";
+
+/**
+ * Public Bybit P2P order book used by the website (no API key).
+ * Payment type "14" is Bank Transfer on the LKR market.
+ */
+const ONLINE_URL = "https://api2.bybit.com/fiat/otc/item/online";
+const BYBIT_BANK_PAYMENT_ID = "14";
+
+const BROWSER_UA =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
+
+interface BybitItem {
+  price?: string;
+  payments?: string[];
+  side?: number | string;
+}
+
+interface BybitOnlineResponse {
+  ret_code?: number;
+  ret_msg?: string;
+  result?: { items?: BybitItem[]; count?: number };
+}
+
+async function searchPrices(side: "0" | "1"): Promise<number[]> {
+  // side 0 = buy USDT (taker buys), side 1 = sell USDT (taker sells).
+  const body = {
+    userId: "",
+    tokenId: "USDT",
+    currencyId: "LKR",
+    payment: [BYBIT_BANK_PAYMENT_ID],
+    side,
+    size: "20",
+    page: "1",
+    amount: "",
+    authMaker: false,
+    canTrade: false,
+  };
+
+  const data = await fetchJson<BybitOnlineResponse>(ONLINE_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "User-Agent": BROWSER_UA,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (data.ret_code !== 0) {
+    throw new Error(data.ret_msg || `Bybit P2P error ${data.ret_code}`);
+  }
+
+  const prices: number[] = [];
+  for (const item of data.result?.items ?? []) {
+    const payments = item.payments ?? [];
+    if (payments.length && !payments.includes(BYBIT_BANK_PAYMENT_ID)) continue;
+    const price = Number(item.price);
+    if (Number.isFinite(price) && price > 0) prices.push(price);
+  }
+  return prices;
+}
+
+export const bybitP2pProvider: BankExchangeRateProvider = {
+  code: "BYBIT_P2P",
+  async fetchRates(): Promise<ProviderResult> {
+    const retrievedAt = nowIso();
+    try {
+      const [sellPrices, buyPrices] = await Promise.all([
+        searchPrices("1"),
+        searchPrices("0"),
+      ]);
+
+      const ttBuying = averageTopPrices(sellPrices, {
+        take: P2P_TOP_N,
+        direction: "highest",
+      });
+      const ttSelling = averageTopPrices(buyPrices, {
+        take: P2P_TOP_N,
+        direction: "lowest",
+      });
+
+      if (ttBuying === null && ttSelling === null) {
+        return {
+          bankCode: "BYBIT_P2P",
+          success: false,
+          rates: [],
+          error: "Bybit P2P returned no Bank Transfer USDT/LKR ads",
+          retrievedAt,
+        };
+      }
+
+      const rate: ExchangeRate = {
+        bankCode: "BYBIT_P2P",
+        currency: "USDT",
+        ttBuying,
+        ttSelling,
+        retrievedAt,
+        parserVersion: `bybit-p2p@${PARSER_VERSION}`,
+        rawReference: `${ONLINE_URL}?token=USDT&fiat=LKR&payment=${BYBIT_BANK_PAYMENT_ID}&top=${P2P_TOP_N}`,
+      };
+
+      const valid = filterValidRates([rate]);
+      if (!valid.length) {
+        return {
+          bankCode: "BYBIT_P2P",
+          success: false,
+          rates: [],
+          error: "Bybit P2P rates failed validation",
+          retrievedAt,
+        };
+      }
+
+      return {
+        bankCode: "BYBIT_P2P",
+        success: true,
+        rates: valid,
+        retrievedAt,
+      };
+    } catch (err) {
+      return {
+        bankCode: "BYBIT_P2P",
+        success: false,
+        rates: [],
+        error: err instanceof Error ? err.message : String(err),
+        retrievedAt,
+      };
+    }
+  },
+};
