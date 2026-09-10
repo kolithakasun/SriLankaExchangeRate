@@ -1,7 +1,7 @@
 # Graph Report - SriLankaExchangeRate  (2026-09-10)
 
 ## Corpus Check
-- 91 files · ~39,436 words
+- 91 files · ~39,626 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary

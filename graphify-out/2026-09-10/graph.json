@@ -2414,7 +2414,7 @@
       "file_type": "code",
       "norm_label": "isbinancebanksrilanka()",
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L29"
+      "source_location": "L38"
     },
     {
       "id": "shared_utils_p2p_pickbookprice",
@@ -2426,7 +2426,7 @@
       "file_type": "code",
       "norm_label": "pickbookprice()",
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L18"
+      "source_location": "L25"
     },
     {
       "id": "netlify_functions_providers_types_bankexchangerateprovider_fetchrates",
@@ -5464,7 +5464,7 @@
       "file_type": "code",
       "norm_label": "bybitp2pprovider",
       "source_file": "netlify/functions/providers/bybit-p2p.ts",
-      "source_location": "L69"
+      "source_location": "L72"
     },
     {
       "id": "shared_utils_p2p",
@@ -5486,7 +5486,7 @@
       "file_type": "code",
       "norm_label": "binance_bank_sri_lanka",
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L10"
+      "source_location": "L13"
     },
     {
       "id": "shared_utils_p2p_bybit_bank_transfer_payment_id",
@@ -5497,7 +5497,7 @@
       "file_type": "code",
       "norm_label": "bybit_bank_transfer_payment_id",
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L16"
+      "source_location": "L18"
     },
     {
       "id": "tests_p2p_test",
@@ -20932,7 +20932,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "netlify/functions/providers/bybit-p2p.ts",
-      "source_location": "L69",
+      "source_location": "L72",
       "weight": 1.0
     },
     {
@@ -23495,7 +23495,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L10",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -23506,7 +23506,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L16",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -23517,7 +23517,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L18",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -23528,7 +23528,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "shared/utils/p2p.ts",
-      "source_location": "L29",
+      "source_location": "L38",
       "weight": 1.0
     },
     {

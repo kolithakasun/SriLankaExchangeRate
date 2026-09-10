@@ -1,4 +1,4 @@
-import type { BankCode, BankConfig, SourceKind } from "../types.js";
+import type { BankConfig, SourceKind } from "../types.js";
 
 export const banks: BankConfig[] = [
   {

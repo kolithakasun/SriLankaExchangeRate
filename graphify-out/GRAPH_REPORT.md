@@ -1,16 +1,16 @@
 # Graph Report - SriLankaExchangeRate  (2026-09-10)
 
 ## Corpus Check
-- 91 files · ~39,626 words
+- 91 files · ~39,625 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 613 nodes · 1535 edges · 24 communities (21 shown, 3 thin omitted)
+- 613 nodes · 1534 edges · 24 communities (21 shown, 3 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 8 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b83004a2`
+- Built from commit: `c0f22494`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -74,7 +74,7 @@ Nodes (12): fetchHtmlProvider(), bocProvider, cbslProvider, commercialProvider, 
 
 ### Community 1 - "shared/types.ts"
 Cohesion: 0.06
-Nodes (71): buildForecastNumericPayload(), ForecastNumericPayload, ForecastRequest, fetchCbslHistoryBounded(), loadCbslDaily(), loadForecastReferences(), loadGoogleDaily(), loadStoredDaily() (+63 more)
+Nodes (72): buildForecastNumericPayload(), ForecastNumericPayload, ForecastRequest, fetchCbslHistoryBounded(), loadCbslDaily(), loadForecastReferences(), loadGoogleDaily(), loadStoredDaily() (+64 more)
 
 ### Community 2 - "api.ts"
 Cohesion: 0.05
@@ -82,7 +82,7 @@ Nodes (59): react, BankRateCard(), BankStatusLine(), StatusDot(), BestRatesPanel
 
 ### Community 3 - "store.ts"
 Cohesion: 0.09
-Nodes (60): handler, withLiveDailyHistory(), withLiveHistoryPoints(), DailyOutcome, DailySnapshot, dailyTableAvailable(), ensureSourceRows(), getAvailableHistoryDates() (+52 more)
+Nodes (59): handler, withLiveDailyHistory(), withLiveHistoryPoints(), DailyOutcome, DailySnapshot, dailyTableAvailable(), ensureSourceRows(), getAvailableHistoryDates() (+51 more)
 
 ### Community 4 - "cursor-quota.ts"
 Cohesion: 0.08
@@ -149,7 +149,7 @@ Cohesion: 0.43
 Nodes (5): handler, currencies, DEFAULT_CURRENCY, getEnabledCurrencies(), CurrencyConfig
 
 ## Knowledge Gaps
-- **158 isolated node(s):** `$schema`, `typescript`, `oxc`, `react/rules-of-hooks`, `warn` (+153 more)
+- **159 isolated node(s):** `$schema`, `typescript`, `oxc`, `react/rules-of-hooks`, `warn` (+154 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -163,10 +163,10 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `colomboDateKey()` connect `store.ts` to `shared/types.ts`, `providers/cbsl.ts`, `time.ts`, `cursor-quota.ts`?**
   _High betweenness centrality (0.009) - this node is a cross-community bridge._
 - **What connects `$schema`, `typescript`, `oxc` to the rest of the system?**
-  _158 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _159 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `shared/types.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.05789009697325889 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05593803786574871 - nodes in this community are weakly interconnected._
 - **Should `api.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.05462962962962963 - nodes in this community are weakly interconnected._
 - **Should `store.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.0877431026684758 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09090909090909091 - nodes in this community are weakly interconnected._
