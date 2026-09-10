@@ -3,12 +3,20 @@ import type { CurrencyConfig } from "../types.js";
 /**
  * Add a currency by appending an entry here.
  * Providers will return the rate if the bank publishes it.
+ * Display order: USD, USDT, then other fiats.
  */
 export const currencies: CurrencyConfig[] = [
   {
     code: "USD",
     name: "United States Dollar",
     symbol: "$",
+    enabled: true,
+    decimals: 2,
+  },
+  {
+    code: "USDT",
+    name: "Tether",
+    symbol: "₮",
     enabled: true,
     decimals: 2,
   },
@@ -37,13 +45,6 @@ export const currencies: CurrencyConfig[] = [
     code: "SGD",
     name: "Singapore Dollar",
     symbol: "S$",
-    enabled: true,
-    decimals: 2,
-  },
-  {
-    code: "USDT",
-    name: "Tether",
-    symbol: "₮",
     enabled: true,
     decimals: 2,
   },

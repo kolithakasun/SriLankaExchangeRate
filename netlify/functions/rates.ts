@@ -100,10 +100,16 @@ const handler: Handler = wrap(async (event) => {
   ]);
 
   const forCurrency = rates.filter((r) => r.currency === currency);
-  const references = await overlayLiveReferenceRates(
-    storedReferences.filter((r) => r.currency === currency),
-    currency,
-  );
+  const references = (
+    await overlayLiveReferenceRates(
+      storedReferences.filter((r) => r.currency === currency),
+      currency,
+    )
+  ).filter((r) => {
+    // USDT has no CBSL series — keep Google mid only.
+    if (currency === "USDT") return r.bankCode === "GOOGLE";
+    return true;
+  });
   const best = computeBest(forCurrency, currency);
   const comparison = await dayComparison(currency, bank);
 

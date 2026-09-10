@@ -1,8 +1,8 @@
 import { fetchJson } from "../../../shared/utils/html.js";
 import {
-  averageTopPrices,
-  isBankTransferMethodName,
-  P2P_TOP_N,
+  BINANCE_BANK_SRI_LANKA,
+  isBinanceBankSriLanka,
+  pickBookPrice,
 } from "../../../shared/utils/p2p.js";
 import { filterValidRates } from "../../../shared/utils/rates.js";
 import { nowIso } from "../../../shared/utils/time.js";
@@ -19,7 +19,10 @@ const BROWSER_UA =
 interface BinanceAdv {
   adv?: {
     price?: string;
-    tradeMethods?: Array<{ tradeMethodName?: string }>;
+    tradeMethods?: Array<{
+      identifier?: string;
+      tradeMethodName?: string;
+    }>;
   };
 }
 
@@ -38,7 +41,7 @@ async function searchPrices(tradeType: "BUY" | "SELL"): Promise<number[]> {
     tradeType,
     page: 1,
     rows: 20,
-    payTypes: ["BANK"],
+    payTypes: [BINANCE_BANK_SRI_LANKA],
     publisherType: null,
     countries: [],
     proMerchantAds: false,
@@ -67,10 +70,8 @@ async function searchPrices(tradeType: "BUY" | "SELL"): Promise<number[]> {
   const prices: number[] = [];
   for (const row of data.data ?? []) {
     const methods = row.adv?.tradeMethods ?? [];
-    const bankOk =
-      methods.length === 0 ||
-      methods.some((m) => isBankTransferMethodName(m.tradeMethodName));
-    if (!bankOk) continue;
+    // Require BankSriLanka on the ad (exclude generic BANK-only / airtime).
+    if (!methods.some((m) => isBinanceBankSriLanka(m))) continue;
     const price = Number(row.adv?.price);
     if (Number.isFinite(price) && price > 0) prices.push(price);
   }
@@ -87,21 +88,16 @@ export const binanceP2pProvider: BankExchangeRateProvider = {
         searchPrices("BUY"),
       ]);
 
-      const ttBuying = averageTopPrices(sellPrices, {
-        take: P2P_TOP_N,
-        direction: "highest",
-      });
-      const ttSelling = averageTopPrices(buyPrices, {
-        take: P2P_TOP_N,
-        direction: "lowest",
-      });
+      // Sell USDT → max LKR; buy USDT → min LKR.
+      const ttBuying = pickBookPrice(sellPrices, "highest");
+      const ttSelling = pickBookPrice(buyPrices, "lowest");
 
       if (ttBuying === null && ttSelling === null) {
         return {
           bankCode: "BINANCE_P2P",
           success: false,
           rates: [],
-          error: "Binance P2P returned no Bank Transfer USDT/LKR ads",
+          error: "Binance P2P returned no BankSriLanka USDT/LKR ads",
           retrievedAt,
         };
       }
@@ -111,9 +107,11 @@ export const binanceP2pProvider: BankExchangeRateProvider = {
         currency: "USDT",
         ttBuying,
         ttSelling,
+        // Live order book — source time is the moment we observed it.
+        sourceTimestamp: retrievedAt,
         retrievedAt,
         parserVersion: `binance-p2p@${PARSER_VERSION}`,
-        rawReference: `${SEARCH_URL}?asset=USDT&fiat=LKR&payTypes=BANK&top=${P2P_TOP_N}`,
+        rawReference: `${SEARCH_URL}?asset=USDT&fiat=LKR&payTypes=${BINANCE_BANK_SRI_LANKA}`,
       };
 
       const valid = filterValidRates([rate]);
@@ -132,6 +130,7 @@ export const binanceP2pProvider: BankExchangeRateProvider = {
         success: true,
         rates: valid,
         retrievedAt,
+        sourceTimestamp: retrievedAt,
       };
     } catch (err) {
       return {

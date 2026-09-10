@@ -1,5 +1,5 @@
 {
-  "0": "providers/cbsl.ts",
+  "0": "index.ts",
   "1": "shared/types.ts",
   "2": "api.ts",
   "3": "store.ts",
@@ -16,9 +16,11 @@
   "14": "plugins",
   "15": "copilot-instructions.md",
   "16": "install-backup-cron.sh",
-  "17": "forecast.test.ts",
-  "18": "forecast-payload.ts",
-  "19": "config/banks.ts",
-  "20": "dayOfWeekAverages",
-  "21": "store-local.test.ts"
+  "17": "utils/rates.ts",
+  "18": "providers/cbsl.ts",
+  "19": "time.ts",
+  "20": "binance-p2p.ts",
+  "21": "hnb.ts",
+  "22": "html.ts",
+  "23": "config/currencies.ts"
 }

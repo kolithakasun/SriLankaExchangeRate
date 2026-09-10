@@ -1,38 +1,42 @@
 import { describe, expect, it } from "vitest";
 import {
-  averageTopPrices,
-  isBankTransferMethodName,
-  P2P_TOP_N,
+  BINANCE_BANK_SRI_LANKA,
+  isBinanceBankSriLanka,
+  pickBookPrice,
 } from "../shared/utils/p2p";
 
 describe("p2p helpers", () => {
-  it("averages the highest N prices", () => {
-    expect(
-      averageTopPrices([320, 333.3, 333.25, 310], {
-        take: P2P_TOP_N,
-        direction: "highest",
-      }),
-    ).toBe(333.275);
+  it("picks the single highest sell price", () => {
+    expect(pickBookPrice([320, 333.3, 333.25, 310], "highest")).toBe(333.3);
   });
 
-  it("averages the lowest N prices", () => {
-    expect(
-      averageTopPrices([334.5, 333.42, 333.5, 340], {
-        take: 2,
-        direction: "lowest",
-      }),
-    ).toBe(333.46);
+  it("picks the single lowest buy price", () => {
+    expect(pickBookPrice([334.5, 333.42, 333.5, 340], "lowest")).toBe(333.42);
   });
 
   it("returns null for empty lists", () => {
-    expect(
-      averageTopPrices([], { take: 2, direction: "highest" }),
-    ).toBeNull();
+    expect(pickBookPrice([], "highest")).toBeNull();
   });
 
-  it("detects bank transfer method names", () => {
-    expect(isBankTransferMethodName("Bank Transfer")).toBe(true);
-    expect(isBankTransferMethodName("Bank Transfer (Sri Lanka)")).toBe(true);
-    expect(isBankTransferMethodName("Airtime Mobile Top-Up")).toBe(false);
+  it("detects BankSriLanka methods only", () => {
+    expect(BINANCE_BANK_SRI_LANKA).toBe("BankSriLanka");
+    expect(
+      isBinanceBankSriLanka({
+        identifier: "BankSriLanka",
+        tradeMethodName: "Bank Transfer (Sri Lanka)",
+      }),
+    ).toBe(true);
+    expect(
+      isBinanceBankSriLanka({
+        identifier: "BANK",
+        tradeMethodName: "Bank Transfer",
+      }),
+    ).toBe(false);
+    expect(
+      isBinanceBankSriLanka({
+        identifier: "Mobiletopup",
+        tradeMethodName: "Airtime Mobile Top-Up",
+      }),
+    ).toBe(false);
   });
 });

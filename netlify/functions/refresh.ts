@@ -1,4 +1,4 @@
-import type { Handler } from "@netlify/functions";
+import type { Config, Handler } from "@netlify/functions";
 import { fetchAllBankRates } from "./providers/index.js";
 import { persistProviderResults, usingSupabase } from "./lib/store.js";
 import { checkRefreshAllowed, json, wrap } from "./lib/http.js";
@@ -45,3 +45,8 @@ const handler: Handler = wrap(async (event) => {
 });
 
 export { handler };
+
+/** Persist across many banks + P2P + references needs more than the 30s default. */
+export const config: Config = {
+  timeout: 60,
+};

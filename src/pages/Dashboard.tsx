@@ -19,6 +19,10 @@ export default function Dashboard() {
 
   const featured = data?.rates.filter((r) => r.featured) ?? [];
   const others = data?.rates.filter((r) => !r.featured) ?? [];
+  const isUsdt = currency === "USDT";
+  const references = (data?.references ?? []).filter((r) =>
+    isUsdt ? r.bankCode === "GOOGLE" : true,
+  );
 
   return (
     <div className="mx-auto min-h-screen max-w-6xl px-4 pb-16 pt-6 sm:px-6">
@@ -32,7 +36,7 @@ export default function Dashboard() {
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-[var(--color-ink-muted)]">
             {currency === "USDT"
-              ? "USDT/LKR peer-to-peer Bank Transfer quotes from Binance and Bybit (top-2 ad average)."
+              ? "USDT/LKR from Binance & Bybit P2P (Bank Sri Lanka — max sell / min buy) plus Google Finance mid."
               : "Updated continuously from bank sources. Telegraphic Transfer buying and selling rates for major Sri Lankan banks."}
           </p>
           <p className="mt-2 text-sm text-[var(--color-ink-muted)]">
@@ -113,15 +117,13 @@ export default function Dashboard() {
           <section className="mb-10">
             <div className="mb-4">
               <h2 className="text-2xl font-extrabold tracking-tight">
-                {currency === "USDT" ? "Featured P2P markets" : "Featured Banks"}
+                {isUsdt ? "Featured P2P markets" : "Featured Banks"}
               </h2>
               <p className="text-sm text-[var(--color-ink-muted)]">
-                {currency === "USDT"
-                  ? "Binance · Bybit"
-                  : "Seylan · HNB · Commercial Bank"}
+                {isUsdt ? "Binance · Bybit" : "Seylan · HNB · Commercial Bank"}
               </p>
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className={`grid gap-4 ${isUsdt ? "md:grid-cols-2" : "md:grid-cols-3"}`}>
               {featured.map((rate) => (
                 <BankRateCard
                   key={rate.bankCode}
@@ -138,6 +140,7 @@ export default function Dashboard() {
             </div>
           </section>
 
+          {!isUsdt && others.length > 0 && (
           <section className="mb-10">
             <div className="mb-4">
               <h2 className="text-2xl font-extrabold tracking-tight">Other Banks</h2>
@@ -148,20 +151,22 @@ export default function Dashboard() {
               ))}
             </div>
           </section>
+          )}
 
-          {data?.references && data.references.length > 0 && (
+          {references.length > 0 && (
             <section className="mb-10">
               <div className="mb-4">
                 <h2 className="text-2xl font-extrabold tracking-tight">
-                  CBSL & Google
+                  {isUsdt ? "Google Finance" : "CBSL & Google"}
                 </h2>
                 <p className="text-sm text-[var(--color-ink-muted)]">
-                  Official 9:30 a.m. TT average and Google Finance mid — not used for
-                  best-bank highlights
+                  {isUsdt
+                    ? "Google Finance USDT/LKR mid — not used for best-P2P highlights"
+                    : "Official 9:30 a.m. TT average and Google Finance mid — not used for best-bank highlights"}
                 </p>
               </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                {data.references.map((rate) => (
+              <div className={`grid gap-4 ${isUsdt ? "md:grid-cols-1 max-w-xl" : "md:grid-cols-2"}`}>
+                {references.map((rate) => (
                   <BankRateCard key={rate.bankCode} rate={rate} />
                 ))}
               </div>
@@ -181,14 +186,17 @@ export default function Dashboard() {
                 Compare · {currency} / LKR
               </h2>
               <p className="text-sm text-[var(--color-ink-muted)]">
-                Highest buying and lowest selling rates are highlighted
+                {isUsdt
+                  ? "P2P Bank Sri Lanka quotes — max sell / min buy highlighted"
+                  : "Highest buying and lowest selling rates are highlighted"}
               </p>
             </div>
             {data && (
               <ComparisonTable
                 rates={data.rates}
                 best={data.best}
-                references={data.references}
+                references={references}
+                sourceLabel={isUsdt ? "Market" : "Bank"}
               />
             )}
           </section>

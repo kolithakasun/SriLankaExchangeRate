@@ -8,7 +8,7 @@ Built for **Netlify** (static frontend + serverless functions) with **Supabase**
 
 - TT Buying / TT Selling for Seylan, HNB, Commercial Bank, Sampath, NDB, People's Bank, and BOC
 - Currencies: USD, AUD, EUR, JPY, SGD, USDT (config-driven)
-- USDT/LKR P2P Bank Transfer quotes from Binance and Bybit (top-2 ad average), with history + forecast once collected
+- USDT/LKR P2P Bank Sri Lanka quotes from Binance and Bybit (max sell / min buy), with history + forecast once collected
 - Featured banks (Seylan · HNB · Commercial) and featured P2P markets (Binance · Bybit)
 - Bank comparison + best buying / best selling highlights
 - Intraday historical observations **plus** a guaranteed one-row-per-day snapshot

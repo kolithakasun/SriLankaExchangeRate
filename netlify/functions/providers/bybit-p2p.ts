@@ -1,17 +1,16 @@
 import { fetchJson } from "../../../shared/utils/html.js";
-import { averageTopPrices, P2P_TOP_N } from "../../../shared/utils/p2p.js";
+import {
+  BYBIT_BANK_TRANSFER_PAYMENT_ID,
+  pickBookPrice,
+} from "../../../shared/utils/p2p.js";
 import { filterValidRates } from "../../../shared/utils/rates.js";
 import { nowIso } from "../../../shared/utils/time.js";
 import type { ExchangeRate, ProviderResult } from "../../../shared/types.js";
 import type { BankExchangeRateProvider } from "./types.js";
 import { PARSER_VERSION } from "./types.js";
 
-/**
- * Public Bybit P2P order book used by the website (no API key).
- * Payment type "14" is Bank Transfer on the LKR market.
- */
+/** Public Bybit P2P order book used by the website (no API key). */
 const ONLINE_URL = "https://api2.bybit.com/fiat/otc/item/online";
-const BYBIT_BANK_PAYMENT_ID = "14";
 
 const BROWSER_UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
@@ -34,7 +33,7 @@ async function searchPrices(side: "0" | "1"): Promise<number[]> {
     userId: "",
     tokenId: "USDT",
     currencyId: "LKR",
-    payment: [BYBIT_BANK_PAYMENT_ID],
+    payment: [BYBIT_BANK_TRANSFER_PAYMENT_ID],
     side,
     size: "20",
     page: "1",
@@ -60,7 +59,7 @@ async function searchPrices(side: "0" | "1"): Promise<number[]> {
   const prices: number[] = [];
   for (const item of data.result?.items ?? []) {
     const payments = item.payments ?? [];
-    if (payments.length && !payments.includes(BYBIT_BANK_PAYMENT_ID)) continue;
+    if (!payments.includes(BYBIT_BANK_TRANSFER_PAYMENT_ID)) continue;
     const price = Number(item.price);
     if (Number.isFinite(price) && price > 0) prices.push(price);
   }
@@ -77,14 +76,8 @@ export const bybitP2pProvider: BankExchangeRateProvider = {
         searchPrices("0"),
       ]);
 
-      const ttBuying = averageTopPrices(sellPrices, {
-        take: P2P_TOP_N,
-        direction: "highest",
-      });
-      const ttSelling = averageTopPrices(buyPrices, {
-        take: P2P_TOP_N,
-        direction: "lowest",
-      });
+      const ttBuying = pickBookPrice(sellPrices, "highest");
+      const ttSelling = pickBookPrice(buyPrices, "lowest");
 
       if (ttBuying === null && ttSelling === null) {
         return {
@@ -101,9 +94,11 @@ export const bybitP2pProvider: BankExchangeRateProvider = {
         currency: "USDT",
         ttBuying,
         ttSelling,
+        // Live order book — source time is the moment we observed it.
+        sourceTimestamp: retrievedAt,
         retrievedAt,
         parserVersion: `bybit-p2p@${PARSER_VERSION}`,
-        rawReference: `${ONLINE_URL}?token=USDT&fiat=LKR&payment=${BYBIT_BANK_PAYMENT_ID}&top=${P2P_TOP_N}`,
+        rawReference: `${ONLINE_URL}?token=USDT&fiat=LKR&payment=${BYBIT_BANK_TRANSFER_PAYMENT_ID}`,
       };
 
       const valid = filterValidRates([rate]);
@@ -122,6 +117,7 @@ export const bybitP2pProvider: BankExchangeRateProvider = {
         success: true,
         rates: valid,
         retrievedAt,
+        sourceTimestamp: retrievedAt,
       };
     } catch (err) {
       return {

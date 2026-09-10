@@ -73,8 +73,9 @@ export function ForecastPanel({
   }, [banks, bank]);
 
   useEffect(() => {
+    // USDT has Google mid as a reference signal; CBSL does not publish USDT.
     if (currency.toUpperCase() === "USDT") {
-      setIncludeReferences(false);
+      setIncludeReferences(true);
     }
   }, [currency]);
 
@@ -230,7 +231,7 @@ export function ForecastPanel({
           <h2 className="text-2xl font-extrabold tracking-tight">Forecast</h2>
           <p className="text-sm text-[var(--color-ink-muted)]">
             {currency.toUpperCase() === "USDT"
-              ? "Binance / Bybit P2P Bank Transfer history from the database"
+              ? "Binance / Bybit P2P + Google Finance history from the database"
               : "Bank, CBSL, and Google daily history from the database"}
             {activeRange ? ` · ${activeRange.description}` : ""}
           </p>
@@ -364,12 +365,12 @@ export function ForecastPanel({
               type="checkbox"
               className="size-4 accent-[var(--color-accent)]"
               checked={includeReferences}
-              disabled={currency.toUpperCase() === "USDT"}
+              disabled={false}
               onChange={(e) => setIncludeReferences(e.target.checked)}
             />
             <span>
               {currency.toUpperCase() === "USDT"
-                ? "CBSL + Google (n/a for USDT)"
+                ? "Google Finance signal"
                 : "CBSL + Google signal"}
             </span>
           </span>

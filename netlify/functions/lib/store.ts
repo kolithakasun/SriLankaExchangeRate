@@ -1,6 +1,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import {
   getBankByCode,
+  getComparisonSources,
   getEnabledBanks,
   getEnabledP2pSources,
   getEnabledSources,
@@ -528,7 +529,8 @@ function sourcesForLatest(filters?: LatestRateFilters) {
   if (filters?.kind === "reference") return getReferenceSources();
   if (filters?.kind === "p2p") return getEnabledP2pSources();
   if (filters?.kind === "all") return getEnabledSources();
-  // Banks + P2P share the comparison surface; references stay separate.
+  // Currency-aware: USDT → P2P only; fiat → licensed banks only.
+  if (filters?.currency) return getComparisonSources(filters.currency);
   return [...getEnabledBanks(), ...getEnabledP2pSources()];
 }
 

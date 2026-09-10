@@ -2,30 +2,36 @@
  * Shared helpers for USDT/LKR P2P order-book snapshots.
  *
  * Mapping onto existing TT fields:
- * - ttBuying  = USDT → LKR (you sell USDT): average of the highest N bank-transfer ads
- * - ttSelling = LKR → USDT (you buy USDT): average of the lowest N bank-transfer ads
+ * - ttBuying  = USDT → LKR (you sell USDT): maximum Bank Sri Lanka ad price
+ * - ttSelling = LKR → USDT (you buy USDT): minimum Bank Sri Lanka ad price
  */
 
-export const P2P_TOP_N = 2;
+/** Binance P2P payType / method identifier matching payment=BankSriLanka. */
+export const BINANCE_BANK_SRI_LANKA = "BankSriLanka";
 
-export function averageTopPrices(
+/**
+ * Bybit LKR "Bank Transfer" payment type id (same filter the P2P UI uses for
+ * local bank rails; Binance's named BankSriLanka equivalent on Bybit).
+ */
+export const BYBIT_BANK_TRANSFER_PAYMENT_ID = "14";
+
+export function pickBookPrice(
   prices: number[],
-  options: { take: number; direction: "highest" | "lowest" },
+  direction: "highest" | "lowest",
 ): number | null {
   const clean = prices.filter((p) => Number.isFinite(p) && p > 0);
   if (!clean.length) return null;
-  const sorted = [...clean].sort((a, b) => a - b);
-  const slice =
-    options.direction === "highest"
-      ? sorted.slice(-options.take)
-      : sorted.slice(0, options.take);
-  if (!slice.length) return null;
-  const avg = slice.reduce((sum, p) => sum + p, 0) / slice.length;
-  return Number(avg.toFixed(4));
+  const value =
+    direction === "highest" ? Math.max(...clean) : Math.min(...clean);
+  return Number(value.toFixed(4));
 }
 
-export function isBankTransferMethodName(name: string | null | undefined): boolean {
-  if (!name) return false;
-  const n = name.toLowerCase();
-  return n.includes("bank") && !n.includes("mobile") && !n.includes("airtime");
+export function isBinanceBankSriLanka(method: {
+  identifier?: string | null;
+  tradeMethodName?: string | null;
+}): boolean {
+  const id = (method.identifier ?? "").trim();
+  if (id === BINANCE_BANK_SRI_LANKA) return true;
+  const name = (method.tradeMethodName ?? "").toLowerCase();
+  return name.includes("bank transfer (sri lanka)");
 }

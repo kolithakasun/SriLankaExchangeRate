@@ -12,9 +12,9 @@ Inspected August 2026. Each provider is isolated so a source change only require
 | People's Bank | HTML table | https://www.peoplesbank.lk/exchange-rates/ | Telegraphic Transfers buy/sell (currency label in `<th>`) |
 | BOC | HTML table | https://www.boc.lk/rates-tariff | Telegraphic/PFCA/BFCA Transfers buy/sell |
 | CBSL (reference) | HTML form POST | https://www.cbsl.gov.lk/cbsl_custom/exratestt/exrates_resultstt.php | Official 9:30 a.m. TT buy/sell average. Fallback: chart widgets `/cbsl_custom/charts/{usd,aud}/indexsmall.php` |
-| Google (reference) | HTML quote page | https://www.google.com/finance/quote/USD-LKR (and AUD/EUR/JPY/SGD) | Single mid-market quote stored on both TT fields |
-| Binance P2P | Public C2C search JSON | `POST https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search` (`asset=USDT`, `fiat=LKR`, `payTypes=["BANK"]`) | Sell-USDT top-2 avg → TT Buying; buy-USDT bottom-2 avg → TT Selling. Pages: [sell USDT](https://p2p.binance.com/trade/sell/USDT?fiat=LKR&payment=BankSriLanka) |
-| Bybit P2P | Public OTC online JSON | `POST https://api2.bybit.com/fiat/otc/item/online` (`tokenId=USDT`, `currencyId=LKR`, `payment=["14"]`) | Same TT mapping. Payment `14` = Bank Transfer. Page: [sell USDT](https://www.bybit.com/en/p2p/sell/USDT/LKR) |
+| Google (reference) | HTML quote page | https://www.google.com/finance/quote/USD-LKR (and AUD/EUR/JPY/SGD/USDT) | Single mid-market quote stored on both TT fields. USDT uses labeled `"Tether (USDT / LKR)"` blobs. |
+| Binance P2P | Public C2C search JSON | `POST …/adv/search` (`asset=USDT`, `fiat=LKR`, `payTypes=["BankSriLanka"]`) | Sell-USDT **max** → TT Buying; buy-USDT **min** → TT Selling. Page: [sell USDT](https://p2p.binance.com/trade/sell/USDT?fiat=LKR&payment=BankSriLanka) |
+| Bybit P2P | Public OTC online JSON | `POST …/item/online` (`tokenId=USDT`, `currencyId=LKR`, `payment=["14"]`) | Same max/min mapping. Payment `14` = Bank Transfer (LKR). Page: [sell USDT](https://www.bybit.com/en/p2p/sell/USDT/LKR) |
 
 ## Notes
 
@@ -23,9 +23,9 @@ Inspected August 2026. Each provider is isolated so a source change only require
 - Commercial Bank and People's Bank HTML layouts are non-trivial (colspans / th+td rows). Providers use explicit TT column fallbacks.
 - CBSL and Google are **forecast reference sources**, not licensed banks. Forecasts read their stored daily trend for the selected window (1W–All). CBSL is live-fetched only when the DB is too thin for that window (capped at 1 year); Google uses stored days plus today's mid. They do not win best-rate highlights.
 - CBSL TT search has no weekend/holiday rows; the collector looks back 7 days and keeps the newest published date.
-- Google Finance has no official API. The parser reads the `"USD / LKR",<price>` blob. Treat the quote as mid-market, not bank TT.
+- Google Finance has no official API. The parser reads `"USD / LKR",…` (and labeled crypto `"Tether (USDT / LKR)",…`) blobs. Treat the quote as mid-market, not bank TT.
 - **Binance / Bybit do not publish a free 1-year P2P price archive.** History and forecasts for USDT are built from this app’s scheduled collection going forward (same `exchange_rates` + `daily_rates` path as banks). Third-party archives (e.g. P2P.Army) are paid and not integrated.
-- P2P quotes are order-book snapshots filtered to Bank Transfer only; they are not bank TT rates.
+- P2P quotes are order-book snapshots filtered to **BankSriLanka** (Binance) / Bank Transfer `14` (Bybit); they are not bank TT rates.
 - Do not scrape from the browser. Collection runs only in Netlify Functions.
 - Do not bypass CAPTCHAs, WAFs, or authentication.
 

@@ -36,7 +36,12 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
     [currency],
   );
   const references = getReferenceSources();
-  const showReferenceOverlay = currency.toUpperCase() !== "USDT";
+  const historyReferences = useMemo(() => {
+    if (currency.toUpperCase() === "USDT") {
+      return references.filter((r) => r.code === "GOOGLE");
+    }
+    return references;
+  }, [currency, references]);
   const [bank, setBank] = useState<string>(banks[0]?.code ?? "SEYLAN");
   const [range, setRange] = useState<HistoryRange>(DEFAULT_RANGE);
   const [date, setDate] = useState(colomboDateKey());
@@ -75,9 +80,10 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
         setData(res);
         if (res.availableDates.length) setDates(res.availableDates);
 
-        if (range !== "1d" && showReferenceOverlay) {
+        if (range !== "1d") {
+          const wantCbsl = currency.toUpperCase() !== "USDT";
           const extras = await Promise.allSettled([
-            bank === "CBSL"
+            !wantCbsl || bank === "CBSL"
               ? Promise.resolve({ daily: [] as DailyRatePoint[] })
               : fetchHistory({ bank: "CBSL", currency, range }),
             bank === "GOOGLE"
@@ -107,7 +113,7 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
     return () => {
       cancelled = true;
     };
-  }, [bank, currency, range, date, showReferenceOverlay]);
+  }, [bank, currency, range, date]);
 
   const isIntraday = range === "1d";
   const points = data?.points ?? [];
@@ -221,9 +227,9 @@ export function HistorySection({ defaultCurrency }: { defaultCurrency: string })
                 </option>
               ))}
             </optgroup>
-            {showReferenceOverlay && (
+            {historyReferences.length > 0 && (
               <optgroup label="References">
-                {references.map((b) => (
+                {historyReferences.map((b) => (
                   <option key={b.code} value={b.code}>
                     {b.name}
                   </option>
