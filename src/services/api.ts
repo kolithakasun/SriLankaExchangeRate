@@ -233,6 +233,21 @@ export function refreshRates(token?: string): Promise<RefreshResponse> {
   });
 }
 
+export function submitContact(body: {
+  name: string;
+  email: string;
+  phone?: string;
+  subject: string;
+  message: string;
+  website?: string;
+}): Promise<{ ok: boolean }> {
+  return api("/api/contact", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
 export function fetchAdminUsers(accessToken: string) {
   return api<{ users: AdminUser[] }>("/api/admin-users", { accessToken });
 }
