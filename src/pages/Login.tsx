@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { BrandLogo } from "../components/BrandLogo";
 
 export default function Login() {
   const { configured, loading, session, signIn } = useAuth();
@@ -39,11 +40,8 @@ export default function Login() {
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col px-4 py-10">
       <div className="mb-8 flex items-center justify-between">
-        <Link
-          to="/"
-          className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-accent)]"
-        >
-          Sri Lanka Exchange Rates
+        <Link to="/" aria-label="ExchangeRateLK home">
+          <BrandLogo variant="inline" />
         </Link>
         <ThemeToggle />
       </div>

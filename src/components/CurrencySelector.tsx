@@ -10,7 +10,11 @@ export function CurrencySelector({
   const currencies = getEnabledCurrencies();
 
   return (
-    <div className="flex flex-wrap gap-2" role="tablist" aria-label="Currency">
+    <div
+      className="flex flex-wrap justify-center gap-2"
+      role="tablist"
+      aria-label="Currency"
+    >
       {currencies.map((c) => {
         const active = c.code === value;
         return (

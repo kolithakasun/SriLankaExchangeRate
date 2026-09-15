@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { ContactFab } from "./components/ContactFab";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import AdminUsers from "./pages/AdminUsers";
@@ -24,6 +25,7 @@ createRoot(document.getElementById("root")!).render(
             }
           />
         </Routes>
+        <ContactFab />
       </BrowserRouter>
     </AuthProvider>
   </StrictMode>,

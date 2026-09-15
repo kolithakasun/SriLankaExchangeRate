@@ -252,10 +252,10 @@
     "semantic_hash": ""
   },
   "src/components/CurrencySelector.tsx": {
-    "mtime": 1789471851.8957233,
-    "seen": 1789471883.9776618,
-    "ast_hash": "ed2caf86aaf34e2a04e68685349b5d27",
-    "semantic_hash": ""
+    "mtime": 1786710622.2868085,
+    "seen": 1787473183.84972,
+    "ast_hash": "bfde09a014624f7197c4ed3a0319406b",
+    "semantic_hash": "bfde09a014624f7197c4ed3a0319406b"
   },
   "src/components/ForecastPanel.tsx": {
     "mtime": 1789023313.366213,
@@ -294,9 +294,9 @@
     "semantic_hash": ""
   },
   "src/pages/Dashboard.tsx": {
-    "mtime": 1789471879.2055578,
-    "seen": 1789471883.977828,
-    "ast_hash": "aea158e2ab939103e5b1da7613f8ea47",
+    "mtime": 1789471532.9658902,
+    "seen": 1789471580.1518872,
+    "ast_hash": "d0ad995a2f94978789c165ef87804e65",
     "semantic_hash": ""
   },
   "src/services/api.ts": {
@@ -450,9 +450,9 @@
     "semantic_hash": ""
   },
   "public/favicon.svg": {
-    "mtime": 1789471612.0186691,
-    "seen": 1789471883.978262,
-    "ast_hash": "6e82c3c89320735eeb1aa7799ba12586",
+    "mtime": 1789471576.4232047,
+    "seen": 1789471580.152371,
+    "ast_hash": "d5b799ab5f9ae756327dd803ede98538",
     "semantic_hash": ""
   },
   "netlify/functions/forecast-refresh.ts": {
@@ -588,9 +588,9 @@
     "semantic_hash": ""
   },
   "src/components/BrandLogo.tsx": {
-    "mtime": 1789471879.2056959,
-    "seen": 1789471883.9776242,
-    "ast_hash": "897df4e959da07cad9d930e3a79f34d9",
+    "mtime": 1789471575.7403302,
+    "seen": 1789471580.151636,
+    "ast_hash": "4c3a73f9b490d4f023e01c98c7319606",
     "semantic_hash": ""
   }
 }

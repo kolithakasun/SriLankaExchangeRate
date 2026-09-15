@@ -127,6 +127,11 @@ RATE_REFRESH_INTERVAL=30
 
 # Optional Cursor narration (signed-in only, 2/day global Colombo quota)
 # CURSOR_API_KEY=
+
+# Contact form inbox + free mail API (Web3Forms or Resend)
+CONTACT_EMAIL=you@example.com
+WEB3FORMS_ACCESS_KEY=
+# RESEND_API_KEY=
 ```
 
 | Variable | Required | Purpose |
@@ -144,6 +149,10 @@ RATE_REFRESH_INTERVAL=30
 | `AI_PROVIDER` | No | Force `gemini` or `groq` when both keys are set |
 | `CURSOR_API_KEY` | No | [Cursor Integrations](https://cursor.com/dashboard/integrations) key — signed-in Cursor summaries only |
 | `CURSOR_MODEL` | No | Cursor model id (default `auto`) |
+| `CONTACT_EMAIL` | Yes (contact form) | Inbox that receives Contact Us messages |
+| `WEB3FORMS_ACCESS_KEY` | Yes* (contact form) | Free key from [Web3Forms](https://web3forms.com) (*or use `RESEND_API_KEY`) |
+| `RESEND_API_KEY` | Yes* (contact form) | Free key from [Resend](https://resend.com/api-keys) (*or use Web3Forms) |
+| `CONTACT_FROM_EMAIL` | No | Resend From address (default `onboarding@resend.dev`) |
 
 Without Supabase credentials, the app falls back to a **local temp JSON store** (fine for quick UI work, not for production history). Login and Cursor quota require Supabase + migration `004_auth_cursor_quota.sql`.
 
@@ -195,6 +204,13 @@ If you set `REQUIRE_REFRESH_TOKEN=true`:
 curl -X POST http://localhost:8888/api/refresh \
   -H "x-refresh-token: YOUR_REFRESH_TOKEN"
 ```
+
+> **Note for production:** When triggering `/api/refresh` on a public domain behind Cloudflare/WAF, include a standard browser User-Agent (`-A`) to prevent automated client (curl) 403 blocks:
+>
+> ```bash
+> curl -X POST "https://exchangerates.dmkkgroup.com/api/refresh" \
+>   -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+> ```
 
 You should see bank TT values after a few seconds. Refresh the browser if needed.
 
@@ -248,6 +264,8 @@ Netlify → **Site configuration → Environment variables** → add at least:
 - `REQUIRE_REFRESH_TOKEN` = `false` (or `true` for stricter production)
 - `REFRESH_COOLDOWN_SECONDS` = `60`
 - `RATE_REFRESH_INTERVAL` = `30`
+- `CONTACT_EMAIL` (contact form inbox)
+- `WEB3FORMS_ACCESS_KEY` (or `RESEND_API_KEY`)
 
 Use the **same values** as your local `.env`.
 
@@ -260,7 +278,8 @@ Click **Deploy site**. When it finishes, open the site URL.
 Click **Refresh Rates** on the site, or:
 
 ```bash
-curl -X POST https://YOUR_SITE.netlify.app/api/refresh
+curl -X POST "https://YOUR_SITE.netlify.app/api/refresh" \
+  -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 ```
 
 ### F. Scheduled collection
@@ -287,6 +306,7 @@ Scheduled functions need a Netlify plan that supports them. If scheduling is una
 | `GET` | `/api/banks` | Bank config |
 | `GET` | `/api/currencies` | Currency config |
 | `POST` | `/api/refresh` | Fetch banks + store new observations |
+| `POST` | `/api/contact` | Contact form → email via Web3Forms or Resend (`CONTACT_EMAIL`) |
 
 ---
 

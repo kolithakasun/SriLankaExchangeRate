@@ -2129,7 +2129,7 @@
       "file_type": "code",
       "norm_label": "brandlogo()",
       "source_file": "src/components/BrandLogo.tsx",
-      "source_location": "L81"
+      "source_location": "L90"
     },
     {
       "id": "src_components_brandlogo_exchangemark",
@@ -2141,7 +2141,7 @@
       "file_type": "code",
       "norm_label": "exchangemark()",
       "source_file": "src/components/BrandLogo.tsx",
-      "source_location": "L11"
+      "source_location": "L9"
     },
     {
       "id": "src_components_contactfab_contactfab",
@@ -24466,17 +24466,6 @@
     },
     {
       "source": "src_components_brandlogo",
-      "target": "src_components_brandlogo_exchangemark",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/components/BrandLogo.tsx",
-      "source_location": "L11",
-      "weight": 1.0
-    },
-    {
-      "source": "src_components_brandlogo",
       "target": "src_components_brandlogo_brandlogoprops",
       "relation": "contains",
       "_origin": "ast",
@@ -24488,13 +24477,24 @@
     },
     {
       "source": "src_components_brandlogo",
+      "target": "src_components_brandlogo_exchangemark",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/BrandLogo.tsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_brandlogo",
       "target": "src_components_brandlogo_brandlogo",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/BrandLogo.tsx",
-      "source_location": "L81",
+      "source_location": "L90",
       "weight": 1.0
     },
     {
