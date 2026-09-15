@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { BrandLogo } from "../components/BrandLogo";
 import {
   createAdminUser,
   fetchAdminUsers,
@@ -84,7 +85,10 @@ export default function AdminUsers() {
     <div className="mx-auto min-h-screen max-w-4xl px-4 pb-16 pt-6 sm:px-6">
       <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-accent)]">
+          <Link to="/" aria-label="ExchangeRateLK home">
+            <BrandLogo variant="inline" />
+          </Link>
+          <p className="mt-3 text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-accent)]">
             Admin
           </p>
           <h1 className="mt-1 text-3xl font-extrabold tracking-tight">Users</h1>

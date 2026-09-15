@@ -11,6 +11,7 @@ import { BestRatesPanel } from "../components/BestRatesPanel";
 import { HistorySection } from "../components/HistorySection";
 import { ForecastPanel } from "../components/ForecastPanel";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { BrandLogo } from "../components/BrandLogo";
 
 export default function Dashboard() {
   const [currency, setCurrency] = useState(DEFAULT_CURRENCY);
@@ -25,29 +26,9 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="mx-auto min-h-screen max-w-6xl px-4 pb-16 pt-6 sm:px-6">
-      <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-accent)]">
-            Sri Lanka Exchange Rates
-          </p>
-          <h1 className="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">
-            Latest TT Exchange Rates
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm text-[var(--color-ink-muted)]">
-            {currency === "USDT"
-              ? "USDT/LKR from Binance & Bybit P2P (Bank Sri Lanka — max sell / min buy) plus Google Finance mid."
-              : "Updated continuously from bank sources. Telegraphic Transfer buying and selling rates for major Sri Lankan banks."}
-          </p>
-          <p className="mt-2 text-sm text-[var(--color-ink-muted)]">
-            {data?.lastCheckedAt
-              ? `Last checked ${relativeTime(data.lastCheckedAt)} · ${toColombo(data.lastCheckedAt)}`
-              : loading
-                ? "Loading…"
-                : "No rates stored yet — refresh to collect"}
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
+    <div className="mx-auto min-h-screen max-w-6xl px-4 pb-16 pt-6 text-center sm:px-6">
+      <header className="mb-8 flex flex-col items-center gap-5">
+        <div className="flex flex-wrap items-center justify-center gap-2">
           <ThemeToggle />
           {configured && session ? (
             <>
@@ -87,9 +68,32 @@ export default function Dashboard() {
             {refreshing ? "Refreshing…" : "Refresh Rates"}
           </button>
         </div>
+
+        <div className="flex flex-col items-center">
+          <BrandLogo
+            variant="inline"
+            markClassName="h-12 w-12 sm:h-14 sm:w-14"
+            textClassName="text-2xl sm:text-3xl"
+          />
+          <h1 className="mt-4 text-2xl font-extrabold tracking-tight text-[var(--color-ink-muted)] sm:text-3xl">
+            Latest TT Exchange Rates
+          </h1>
+          <p className="mx-auto mt-2 max-w-2xl text-sm text-[var(--color-ink-muted)]">
+            {currency === "USDT"
+              ? "USDT/LKR from Binance & Bybit P2P (Bank Sri Lanka — max sell / min buy) plus Google Finance mid."
+              : "Updated continuously from bank sources. Telegraphic Transfer buying and selling rates for major Sri Lankan banks."}
+          </p>
+          <p className="mt-2 text-sm text-[var(--color-ink-muted)]">
+            {data?.lastCheckedAt
+              ? `Last checked ${relativeTime(data.lastCheckedAt)} · ${toColombo(data.lastCheckedAt)}`
+              : loading
+                ? "Loading…"
+                : "No rates stored yet — refresh to collect"}
+          </p>
+        </div>
       </header>
 
-      <div className="mb-8">
+      <div className="mb-8 flex flex-col items-center">
         <p className="mb-2 text-sm font-medium text-[var(--color-ink-muted)]">Currency</p>
         <CurrencySelector value={currency} onChange={setCurrency} />
       </div>
@@ -165,7 +169,9 @@ export default function Dashboard() {
                     : "Official 9:30 a.m. TT average and Google Finance mid — not used for best-bank highlights"}
                 </p>
               </div>
-              <div className={`grid gap-4 ${isUsdt ? "md:grid-cols-1 max-w-xl" : "md:grid-cols-2"}`}>
+              <div
+                className={`mx-auto grid gap-4 ${isUsdt ? "max-w-xl md:grid-cols-1" : "md:grid-cols-2"}`}
+              >
                 {references.map((rate) => (
                   <BankRateCard key={rate.bankCode} rate={rate} />
                 ))}
@@ -204,7 +210,7 @@ export default function Dashboard() {
           <HistorySection defaultCurrency={currency} />
 
           <footer className="mt-12 border-t border-[var(--color-line)] pt-8 pb-4 text-sm text-[var(--color-ink-muted)]">
-            <p className="text-xs">
+            <p className="mx-auto max-w-2xl text-xs">
               Rates are collected from publicly published bank pages/APIs and may
               change during the day. Indicative only — confirm with your bank before
               transacting.
@@ -217,7 +223,7 @@ export default function Dashboard() {
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-ink)]">
                 Built with
               </p>
-              <ul className="mt-3 flex flex-wrap gap-x-3 gap-y-2 text-xs sm:text-sm">
+              <ul className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs sm:text-sm">
                 {[
                   "React",
                   "TypeScript",

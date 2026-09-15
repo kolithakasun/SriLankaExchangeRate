@@ -4,6 +4,19 @@
   "graph": {},
   "nodes": [
     {
+      "id": "netlify_functions_lib_store_persistsummary",
+      "label": "PersistSummary",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "providers/cbsl.ts",
+      "file_type": "code",
+      "norm_label": "persistsummary",
+      "source_file": "netlify/functions/lib/store.ts",
+      "source_location": "L54"
+    },
+    {
       "id": "netlify_functions_providers_binance_p2p_binanceadv",
       "label": "BinanceAdv",
       "_callable": true,
@@ -199,6 +212,32 @@
       "source_location": "L101"
     },
     {
+      "id": "netlify_functions_lib_ai_narrationsource",
+      "label": "NarrationSource",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "shared/types.ts",
+      "file_type": "code",
+      "norm_label": "narrationsource",
+      "source_file": "netlify/functions/lib/ai.ts",
+      "source_location": "L8"
+    },
+    {
+      "id": "netlify_functions_lib_ai_syncnarrationsource",
+      "label": "SyncNarrationSource",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "shared/types.ts",
+      "file_type": "code",
+      "norm_label": "syncnarrationsource",
+      "source_file": "netlify/functions/lib/ai.ts",
+      "source_location": "L9"
+    },
+    {
       "id": "netlify_functions_lib_forecast_payload_forecastnumericpayload",
       "label": "ForecastNumericPayload",
       "_callable": true,
@@ -264,19 +303,6 @@
       "source_location": "L1"
     },
     {
-      "id": "shared_types_bankconfig",
-      "label": "BankConfig",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "shared/types.ts",
-      "file_type": "code",
-      "norm_label": "bankconfig",
-      "source_file": "shared/types.ts",
-      "source_location": "L30"
-    },
-    {
       "id": "shared_types_bankstatus",
       "label": "BankStatus",
       "_callable": true,
@@ -314,6 +340,19 @@
       "norm_label": "currencycode",
       "source_file": "shared/types.ts",
       "source_location": "L19"
+    },
+    {
+      "id": "shared_types_currencyconfig",
+      "label": "CurrencyConfig",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "shared/types.ts",
+      "file_type": "code",
+      "norm_label": "currencyconfig",
+      "source_file": "shared/types.ts",
+      "source_location": "L21"
     },
     {
       "id": "shared_types_dailyaggregate",
@@ -498,19 +537,6 @@
       "source_location": "L17"
     },
     {
-      "id": "shared_types_sourcekind",
-      "label": "SourceKind",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "shared/types.ts",
-      "file_type": "code",
-      "norm_label": "sourcekind",
-      "source_file": "shared/types.ts",
-      "source_location": "L15"
-    },
-    {
       "id": "shared_types_storedrate",
       "label": "StoredRate",
       "_callable": true,
@@ -537,19 +563,6 @@
       "source_location": "L214"
     },
     {
-      "id": "src_services_api_adminuser",
-      "label": "AdminUser",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "adminuser",
-      "source_file": "src/services/api.ts",
-      "source_location": "L125"
-    },
-    {
       "id": "netlify_functions_contact_contactbody",
       "label": "ContactBody",
       "_callable": true,
@@ -574,6 +587,71 @@
       "norm_label": "contactsubject",
       "source_file": "netlify/functions/contact.ts",
       "source_location": "L13"
+    },
+    {
+      "id": "src_components_brandlogo_brandlogoprops",
+      "label": "BrandLogoProps",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "brandlogoprops",
+      "source_file": "src/components/BrandLogo.tsx",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_contexts_authcontext_approle",
+      "label": "AppRole",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "approle",
+      "source_file": "src/contexts/AuthContext.tsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_contexts_authcontext_authcontextvalue",
+      "label": "AuthContextValue",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "authcontextvalue",
+      "source_file": "src/contexts/AuthContext.tsx",
+      "source_location": "L22"
+    },
+    {
+      "id": "src_contexts_authcontext_authprofile",
+      "label": "AuthProfile",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "authprofile",
+      "source_file": "src/contexts/AuthContext.tsx",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_services_api_adminuser",
+      "label": "AdminUser",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "adminuser",
+      "source_file": "src/services/api.ts",
+      "source_location": "L125"
     },
     {
       "id": "src_services_api_aiprovideroption",
@@ -654,6 +732,19 @@
       "source_location": "L69"
     },
     {
+      "id": "src_services_api_historyresponse",
+      "label": "HistoryResponse",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "historyresponse",
+      "source_file": "src/services/api.ts",
+      "source_location": "L35"
+    },
+    {
       "id": "src_services_api_narrationsource",
       "label": "NarrationSource",
       "_callable": true,
@@ -667,6 +758,19 @@
       "source_location": "L13"
     },
     {
+      "id": "src_services_api_ratesresponse",
+      "label": "RatesResponse",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "ratesresponse",
+      "source_file": "src/services/api.ts",
+      "source_location": "L16"
+    },
+    {
       "id": "src_services_api_refreshresponse",
       "label": "RefreshResponse",
       "_callable": true,
@@ -678,84 +782,6 @@
       "norm_label": "refreshresponse",
       "source_file": "src/services/api.ts",
       "source_location": "L108"
-    },
-    {
-      "id": "src_services_api_ratesresponse",
-      "label": "RatesResponse",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "Dashboard.tsx",
-      "file_type": "code",
-      "norm_label": "ratesresponse",
-      "source_file": "src/services/api.ts",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_contexts_authcontext_approle",
-      "label": "AppRole",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "AuthContext.tsx",
-      "file_type": "code",
-      "norm_label": "approle",
-      "source_file": "src/contexts/AuthContext.tsx",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_contexts_authcontext_authcontextvalue",
-      "label": "AuthContextValue",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "AuthContext.tsx",
-      "file_type": "code",
-      "norm_label": "authcontextvalue",
-      "source_file": "src/contexts/AuthContext.tsx",
-      "source_location": "L22"
-    },
-    {
-      "id": "src_contexts_authcontext_authprofile",
-      "label": "AuthProfile",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "AuthContext.tsx",
-      "file_type": "code",
-      "norm_label": "authprofile",
-      "source_file": "src/contexts/AuthContext.tsx",
-      "source_location": "L15"
-    },
-    {
-      "id": "shared_types_currencyconfig",
-      "label": "CurrencyConfig",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "config/currencies.ts",
-      "file_type": "code",
-      "norm_label": "currencyconfig",
-      "source_file": "shared/types.ts",
-      "source_location": "L21"
-    },
-    {
-      "id": "src_services_api_historyresponse",
-      "label": "HistoryResponse",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "HistorySection.tsx",
-      "file_type": "code",
-      "norm_label": "historyresponse",
-      "source_file": "src/services/api.ts",
-      "source_location": "L35"
     },
     {
       "id": "netlify_functions_lib_store_dailyoutcome",
@@ -810,17 +836,17 @@
       "source_location": "L48"
     },
     {
-      "id": "netlify_functions_lib_store_persistsummary",
-      "label": "PersistSummary",
+      "id": "shared_types_bankconfig",
+      "label": "BankConfig",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 3,
       "community_name": "store.ts",
       "file_type": "code",
-      "norm_label": "persistsummary",
-      "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L54"
+      "norm_label": "bankconfig",
+      "source_file": "shared/types.ts",
+      "source_location": "L30"
     },
     {
       "id": "shared_types_bestrates",
@@ -875,6 +901,19 @@
       "source_location": "L78"
     },
     {
+      "id": "shared_types_sourcekind",
+      "label": "SourceKind",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "store.ts",
+      "file_type": "code",
+      "norm_label": "sourcekind",
+      "source_file": "shared/types.ts",
+      "source_location": "L15"
+    },
+    {
       "id": "shared_utils_history_dailyseriessummary",
       "label": "DailySeriesSummary",
       "_callable": true,
@@ -886,32 +925,6 @@
       "norm_label": "dailyseriessummary",
       "source_file": "shared/utils/history.ts",
       "source_location": "L57"
-    },
-    {
-      "id": "netlify_functions_lib_ai_narrationsource",
-      "label": "NarrationSource",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "cursor-quota.ts",
-      "file_type": "code",
-      "norm_label": "narrationsource",
-      "source_file": "netlify/functions/lib/ai.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "netlify_functions_lib_ai_syncnarrationsource",
-      "label": "SyncNarrationSource",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "cursor-quota.ts",
-      "file_type": "code",
-      "norm_label": "syncnarrationsource",
-      "source_file": "netlify/functions/lib/ai.ts",
-      "source_location": "L9"
     },
     {
       "id": "netlify_functions_lib_auth_approle",
@@ -979,28 +992,16 @@
       "source_location": "L8"
     },
     {
-      "id": "netlify_functions_lib_http_checkrefreshallowed",
-      "label": "checkRefreshAllowed()",
+      "id": "netlify_functions_lib_live_references_overlaylivereferencerates",
+      "label": "overlayLiveReferenceRates()",
       "_callable": true,
       "_origin": "ast",
       "community": 0,
       "community_name": "providers/cbsl.ts",
       "file_type": "code",
-      "norm_label": "checkrefreshallowed()",
-      "source_file": "netlify/functions/lib/http.ts",
-      "source_location": "L38"
-    },
-    {
-      "id": "netlify_functions_lib_store_persistproviderresults",
-      "label": "persistProviderResults()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "providers/cbsl.ts",
-      "file_type": "code",
-      "norm_label": "persistproviderresults()",
-      "source_file": "netlify/functions/lib/store.ts",
-      "source_location": "L146"
+      "norm_label": "overlaylivereferencerates()",
+      "source_file": "netlify/functions/lib/live-references.ts",
+      "source_location": "L8"
     },
     {
       "id": "netlify_functions_providers_base_fetchhtmlprovider",
@@ -1051,6 +1052,18 @@
       "source_location": "L71"
     },
     {
+      "id": "netlify_functions_providers_cbsl_fetchcbslttrows",
+      "label": "fetchCbslTtRows()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "providers/cbsl.ts",
+      "file_type": "code",
+      "norm_label": "fetchcbslttrows()",
+      "source_file": "netlify/functions/providers/cbsl.ts",
+      "source_location": "L27"
+    },
+    {
       "id": "netlify_functions_providers_google_fetchgooglemid",
       "label": "fetchGoogleMid()",
       "_callable": true,
@@ -1061,30 +1074,6 @@
       "norm_label": "fetchgooglemid()",
       "source_file": "netlify/functions/providers/google.ts",
       "source_location": "L16"
-    },
-    {
-      "id": "netlify_functions_providers_index_fetchallbankrates",
-      "label": "fetchAllBankRates()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "providers/cbsl.ts",
-      "file_type": "code",
-      "norm_label": "fetchallbankrates()",
-      "source_file": "netlify/functions/providers/index.ts",
-      "source_location": "L34"
-    },
-    {
-      "id": "netlify_functions_providers_index_getprovider",
-      "label": "getProvider()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "providers/cbsl.ts",
-      "file_type": "code",
-      "norm_label": "getprovider()",
-      "source_file": "netlify/functions/providers/index.ts",
-      "source_location": "L30"
     },
     {
       "id": "netlify_functions_providers_types_bankexchangerateprovider_fetchrates",
@@ -1099,16 +1088,16 @@
       "source_location": "L5"
     },
     {
-      "id": "netlify_functions_scheduled_refresh_handler",
-      "label": "handler()",
+      "id": "shared_config_currencies_getcurrency",
+      "label": "getCurrency()",
       "_callable": true,
       "_origin": "ast",
       "community": 0,
       "community_name": "providers/cbsl.ts",
       "file_type": "code",
-      "norm_label": "handler()",
-      "source_file": "netlify/functions/scheduled-refresh.ts",
-      "source_location": "L9"
+      "norm_label": "getcurrency()",
+      "source_file": "shared/config/currencies.ts",
+      "source_location": "L64"
     },
     {
       "id": "shared_utils_cbsl_cbslcharturl",
@@ -1205,6 +1194,18 @@
       "norm_label": "parsegooglefinancemid()",
       "source_file": "shared/utils/google-finance.ts",
       "source_location": "L19"
+    },
+    {
+      "id": "shared_utils_history_colombodatekeydaysago",
+      "label": "colomboDateKeyDaysAgo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "providers/cbsl.ts",
+      "file_type": "code",
+      "norm_label": "colombodatekeydaysago()",
+      "source_file": "shared/utils/history.ts",
+      "source_location": "L96"
     },
     {
       "id": "shared_utils_html_expandrowcells",
@@ -1339,6 +1340,18 @@
       "source_location": "L90"
     },
     {
+      "id": "shared_utils_rates_formatrate",
+      "label": "formatRate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "providers/cbsl.ts",
+      "file_type": "code",
+      "norm_label": "formatrate()",
+      "source_file": "shared/utils/rates.ts",
+      "source_location": "L123"
+    },
+    {
       "id": "shared_utils_rates_israteinreasonablerange",
       "label": "isRateInReasonableRange()",
       "_callable": true,
@@ -1469,6 +1482,102 @@
       "norm_label": "load()",
       "source_file": "tests/parsers.test.ts",
       "source_location": "L21"
+    },
+    {
+      "id": "netlify_functions_lib_ai_buildprompt",
+      "label": "buildPrompt()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "shared/types.ts",
+      "file_type": "code",
+      "norm_label": "buildprompt()",
+      "source_file": "netlify/functions/lib/ai.ts",
+      "source_location": "L48"
+    },
+    {
+      "id": "netlify_functions_lib_ai_gemininarration",
+      "label": "geminiNarration()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "shared/types.ts",
+      "file_type": "code",
+      "norm_label": "gemininarration()",
+      "source_file": "netlify/functions/lib/ai.ts",
+      "source_location": "L74"
+    },
+    {
+      "id": "netlify_functions_lib_ai_groqnarration",
+      "label": "groqNarration()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "shared/types.ts",
+      "file_type": "code",
+      "norm_label": "groqnarration()",
+      "source_file": "netlify/functions/lib/ai.ts",
+      "source_location": "L108"
+    },
+    {
+      "id": "netlify_functions_lib_ai_narrateforecast",
+      "label": "narrateForecast()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "shared/types.ts",
+      "file_type": "code",
+      "norm_label": "narrateforecast()",
+      "source_file": "netlify/functions/lib/ai.ts",
+      "source_location": "L168"
+    },
+    {
+      "id": "netlify_functions_lib_ai_referencepromptblock",
+      "label": "referencePromptBlock()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "shared/types.ts",
+      "file_type": "code",
+      "norm_label": "referencepromptblock()",
+      "source_file": "netlify/functions/lib/ai.ts",
+      "source_location": "L23"
+    },
+    {
+      "id": "netlify_functions_lib_ai_templateforecastnarration",
+      "label": "templateForecastNarration()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "shared/types.ts",
+      "file_type": "code",
+      "norm_label": "templateforecastnarration()",
+      "source_file": "netlify/functions/lib/ai.ts",
+      "source_location": "L197"
+    },
+    {
+      "id": "netlify_functions_lib_ai_templatenarration",
+      "label": "templateNarration()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "shared/types.ts",
+      "file_type": "code",
+      "norm_label": "templatenarration()",
+      "source_file": "netlify/functions/lib/ai.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "netlify_functions_lib_ai_withtimeout",
+      "label": "withTimeout()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "shared/types.ts",
+      "file_type": "code",
+      "norm_label": "withtimeout()",
+      "source_file": "netlify/functions/lib/ai.ts",
+      "source_location": "L62"
     },
     {
       "id": "netlify_functions_lib_forecast_payload_buildforecastnumericpayload",
@@ -1939,174 +2048,6 @@
       "source_location": "L27"
     },
     {
-      "id": "src_components_protectedroute_protectedroute",
-      "label": "ProtectedRoute()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "protectedroute()",
-      "source_file": "src/components/ProtectedRoute.tsx",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_components_themetoggle_themetoggle",
-      "label": "ThemeToggle()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "themetoggle()",
-      "source_file": "src/components/ThemeToggle.tsx",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_components_themetoggle_themetoggle_toggle",
-      "label": "toggle()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "toggle()",
-      "source_file": "src/components/ThemeToggle.tsx",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_contexts_authcontext_useauth",
-      "label": "useAuth()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "useauth()",
-      "source_file": "src/contexts/AuthContext.tsx",
-      "source_location": "L149"
-    },
-    {
-      "id": "src_pages_adminusers_adminusers",
-      "label": "AdminUsers()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "adminusers()",
-      "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_pages_adminusers_adminusers_oncreate",
-      "label": "onCreate()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "oncreate()",
-      "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L40"
-    },
-    {
-      "id": "src_pages_adminusers_adminusers_setuserrole",
-      "label": "setUserRole()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "setuserrole()",
-      "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L72"
-    },
-    {
-      "id": "src_pages_adminusers_adminusers_toggledisabled",
-      "label": "toggleDisabled()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "toggledisabled()",
-      "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L58"
-    },
-    {
-      "id": "src_pages_dashboard_dashboard",
-      "label": "Dashboard()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "dashboard()",
-      "source_file": "src/pages/Dashboard.tsx",
-      "source_location": "L15"
-    },
-    {
-      "id": "src_pages_login_login",
-      "label": "Login()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "login()",
-      "source_file": "src/pages/Login.tsx",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_pages_login_login_onsubmit",
-      "label": "onSubmit()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "onsubmit()",
-      "source_file": "src/pages/Login.tsx",
-      "source_location": "L25"
-    },
-    {
-      "id": "src_services_api_createadminuser",
-      "label": "createAdminUser()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "createadminuser()",
-      "source_file": "src/services/api.ts",
-      "source_location": "L255"
-    },
-    {
-      "id": "src_services_api_fetchadminusers",
-      "label": "fetchAdminUsers()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "fetchadminusers()",
-      "source_file": "src/services/api.ts",
-      "source_location": "L251"
-    },
-    {
-      "id": "src_services_api_updateadminuser",
-      "label": "updateAdminUser()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "updateadminuser()",
-      "source_file": "src/services/api.ts",
-      "source_location": "L267"
-    },
-    {
       "id": "netlify_functions_contact_isvalidemail",
       "label": "isValidEmail()",
       "_callable": true,
@@ -2165,6 +2106,102 @@
       "norm_label": "getclientip()",
       "source_file": "netlify/functions/lib/http.ts",
       "source_location": "L29"
+    },
+    {
+      "id": "src_components_bestratespanel_bestratespanel",
+      "label": "BestRatesPanel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "bestratespanel()",
+      "source_file": "src/components/BestRatesPanel.tsx",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_components_brandlogo_brandlogo",
+      "label": "BrandLogo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "brandlogo()",
+      "source_file": "src/components/BrandLogo.tsx",
+      "source_location": "L90"
+    },
+    {
+      "id": "src_components_brandlogo_exchangemark",
+      "label": "ExchangeMark()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "exchangemark()",
+      "source_file": "src/components/BrandLogo.tsx",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_components_contactfab_contactfab",
+      "label": "ContactFab()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "contactfab()",
+      "source_file": "src/components/ContactFab.tsx",
+      "source_location": "L22"
+    },
+    {
+      "id": "src_components_contactfab_contactfab_close",
+      "label": "close()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "close()",
+      "source_file": "src/components/ContactFab.tsx",
+      "source_location": "L49"
+    },
+    {
+      "id": "src_components_contactfab_contactfab_onkeydown",
+      "label": "onKeyDown()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "onkeydown()",
+      "source_file": "src/components/ContactFab.tsx",
+      "source_location": "L39"
+    },
+    {
+      "id": "src_components_contactfab_contactfab_onsubmit",
+      "label": "onSubmit()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "onsubmit()",
+      "source_file": "src/components/ContactFab.tsx",
+      "source_location": "L58"
+    },
+    {
+      "id": "src_components_currencyselector_currencyselector",
+      "label": "CurrencySelector()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "currencyselector()",
+      "source_file": "src/components/CurrencySelector.tsx",
+      "source_location": "L3"
     },
     {
       "id": "src_components_forecastpanel_forecastassumptionscard",
@@ -2227,6 +2264,246 @@
       "source_location": "L573"
     },
     {
+      "id": "src_components_historysection_changeclass",
+      "label": "changeClass()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "changeclass()",
+      "source_file": "src/components/HistorySection.tsx",
+      "source_location": "L26"
+    },
+    {
+      "id": "src_components_historysection_formatsigned",
+      "label": "formatSigned()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "formatsigned()",
+      "source_file": "src/components/HistorySection.tsx",
+      "source_location": "L20"
+    },
+    {
+      "id": "src_components_historysection_historysection",
+      "label": "HistorySection()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "historysection()",
+      "source_file": "src/components/HistorySection.tsx",
+      "source_location": "L31"
+    },
+    {
+      "id": "src_components_historysection_historysection_load",
+      "label": "load()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "load()",
+      "source_file": "src/components/HistorySection.tsx",
+      "source_location": "L69"
+    },
+    {
+      "id": "src_components_protectedroute_protectedroute",
+      "label": "ProtectedRoute()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "protectedroute()",
+      "source_file": "src/components/ProtectedRoute.tsx",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_components_themetoggle_themetoggle",
+      "label": "ThemeToggle()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "themetoggle()",
+      "source_file": "src/components/ThemeToggle.tsx",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_components_themetoggle_themetoggle_toggle",
+      "label": "toggle()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "toggle()",
+      "source_file": "src/components/ThemeToggle.tsx",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_contexts_authcontext_authprovider",
+      "label": "AuthProvider()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "authprovider()",
+      "source_file": "src/contexts/AuthContext.tsx",
+      "source_location": "L51"
+    },
+    {
+      "id": "src_contexts_authcontext_loadprofile",
+      "label": "loadProfile()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "loadprofile()",
+      "source_file": "src/contexts/AuthContext.tsx",
+      "source_location": "L37"
+    },
+    {
+      "id": "src_contexts_authcontext_useauth",
+      "label": "useAuth()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "useauth()",
+      "source_file": "src/contexts/AuthContext.tsx",
+      "source_location": "L149"
+    },
+    {
+      "id": "src_hooks_userates_userates",
+      "label": "useRates()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "userates()",
+      "source_file": "src/hooks/useRates.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_lib_supabase_getbrowsersupabase",
+      "label": "getBrowserSupabase()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "getbrowsersupabase()",
+      "source_file": "src/lib/supabase.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_lib_supabase_isauthconfigured",
+      "label": "isAuthConfigured()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "isauthconfigured()",
+      "source_file": "src/lib/supabase.ts",
+      "source_location": "L21"
+    },
+    {
+      "id": "src_pages_adminusers_adminusers",
+      "label": "AdminUsers()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "adminusers()",
+      "source_file": "src/pages/AdminUsers.tsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_pages_adminusers_adminusers_oncreate",
+      "label": "onCreate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "oncreate()",
+      "source_file": "src/pages/AdminUsers.tsx",
+      "source_location": "L41"
+    },
+    {
+      "id": "src_pages_adminusers_adminusers_setuserrole",
+      "label": "setUserRole()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "setuserrole()",
+      "source_file": "src/pages/AdminUsers.tsx",
+      "source_location": "L73"
+    },
+    {
+      "id": "src_pages_adminusers_adminusers_toggledisabled",
+      "label": "toggleDisabled()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "toggledisabled()",
+      "source_file": "src/pages/AdminUsers.tsx",
+      "source_location": "L59"
+    },
+    {
+      "id": "src_pages_dashboard_dashboard",
+      "label": "Dashboard()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "dashboard()",
+      "source_file": "src/pages/Dashboard.tsx",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_pages_login_login",
+      "label": "Login()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "login()",
+      "source_file": "src/pages/Login.tsx",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_pages_login_login_onsubmit",
+      "label": "onSubmit()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "onsubmit()",
+      "source_file": "src/pages/Login.tsx",
+      "source_location": "L26"
+    },
+    {
       "id": "src_services_api_api",
       "label": "api()",
       "_callable": true,
@@ -2237,6 +2514,30 @@
       "norm_label": "api()",
       "source_file": "src/services/api.ts",
       "source_location": "L134"
+    },
+    {
+      "id": "src_services_api_createadminuser",
+      "label": "createAdminUser()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "createadminuser()",
+      "source_file": "src/services/api.ts",
+      "source_location": "L255"
+    },
+    {
+      "id": "src_services_api_fetchadminusers",
+      "label": "fetchAdminUsers()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "fetchadminusers()",
+      "source_file": "src/services/api.ts",
+      "source_location": "L251"
     },
     {
       "id": "src_services_api_fetchbanks",
@@ -2287,6 +2588,30 @@
       "source_location": "L173"
     },
     {
+      "id": "src_services_api_fetchhistory",
+      "label": "fetchHistory()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "fetchhistory()",
+      "source_file": "src/services/api.ts",
+      "source_location": "L158"
+    },
+    {
+      "id": "src_services_api_fetchrates",
+      "label": "fetchRates()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "fetchrates()",
+      "source_file": "src/services/api.ts",
+      "source_location": "L154"
+    },
+    {
       "id": "src_services_api_refreshforecast",
       "label": "refreshForecast()",
       "_callable": true,
@@ -2297,6 +2622,42 @@
       "norm_label": "refreshforecast()",
       "source_file": "src/services/api.ts",
       "source_location": "L193"
+    },
+    {
+      "id": "src_services_api_refreshrates",
+      "label": "refreshRates()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "refreshrates()",
+      "source_file": "src/services/api.ts",
+      "source_location": "L229"
+    },
+    {
+      "id": "src_services_api_submitcontact",
+      "label": "submitContact()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "submitcontact()",
+      "source_file": "src/services/api.ts",
+      "source_location": "L236"
+    },
+    {
+      "id": "src_services_api_updateadminuser",
+      "label": "updateAdminUser()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "updateadminuser()",
+      "source_file": "src/services/api.ts",
+      "source_location": "L267"
     },
     {
       "id": "src_components_bankratecard_bankratecard",
@@ -2383,156 +2744,12 @@
       "source_location": "L13"
     },
     {
-      "id": "src_components_bestratespanel_bestratespanel",
-      "label": "BestRatesPanel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "Dashboard.tsx",
-      "file_type": "code",
-      "norm_label": "bestratespanel()",
-      "source_file": "src/components/BestRatesPanel.tsx",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_components_currencyselector_currencyselector",
-      "label": "CurrencySelector()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "Dashboard.tsx",
-      "file_type": "code",
-      "norm_label": "currencyselector()",
-      "source_file": "src/components/CurrencySelector.tsx",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_hooks_userates_userates",
-      "label": "useRates()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "Dashboard.tsx",
-      "file_type": "code",
-      "norm_label": "userates()",
-      "source_file": "src/hooks/useRates.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "src_services_api_fetchrates",
-      "label": "fetchRates()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "Dashboard.tsx",
-      "file_type": "code",
-      "norm_label": "fetchrates()",
-      "source_file": "src/services/api.ts",
-      "source_location": "L154"
-    },
-    {
-      "id": "src_services_api_refreshrates",
-      "label": "refreshRates()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "Dashboard.tsx",
-      "file_type": "code",
-      "norm_label": "refreshrates()",
-      "source_file": "src/services/api.ts",
-      "source_location": "L229"
-    },
-    {
-      "id": "src_contexts_authcontext_authprovider",
-      "label": "AuthProvider()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "AuthContext.tsx",
-      "file_type": "code",
-      "norm_label": "authprovider()",
-      "source_file": "src/contexts/AuthContext.tsx",
-      "source_location": "L51"
-    },
-    {
-      "id": "src_contexts_authcontext_loadprofile",
-      "label": "loadProfile()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "AuthContext.tsx",
-      "file_type": "code",
-      "norm_label": "loadprofile()",
-      "source_file": "src/contexts/AuthContext.tsx",
-      "source_location": "L37"
-    },
-    {
-      "id": "src_lib_supabase_getbrowsersupabase",
-      "label": "getBrowserSupabase()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "AuthContext.tsx",
-      "file_type": "code",
-      "norm_label": "getbrowsersupabase()",
-      "source_file": "src/lib/supabase.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_lib_supabase_isauthconfigured",
-      "label": "isAuthConfigured()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "AuthContext.tsx",
-      "file_type": "code",
-      "norm_label": "isauthconfigured()",
-      "source_file": "src/lib/supabase.ts",
-      "source_location": "L21"
-    },
-    {
-      "id": "shared_config_currencies_getcurrency",
-      "label": "getCurrency()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "config/currencies.ts",
-      "file_type": "code",
-      "norm_label": "getcurrency()",
-      "source_file": "shared/config/currencies.ts",
-      "source_location": "L64"
-    },
-    {
-      "id": "shared_config_currencies_getenabledcurrencies",
-      "label": "getEnabledCurrencies()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "config/currencies.ts",
-      "file_type": "code",
-      "norm_label": "getenabledcurrencies()",
-      "source_file": "shared/config/currencies.ts",
-      "source_location": "L60"
-    },
-    {
-      "id": "shared_utils_rates_formatrate",
-      "label": "formatRate()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "config/currencies.ts",
-      "file_type": "code",
-      "norm_label": "formatrate()",
-      "source_file": "shared/utils/rates.ts",
-      "source_location": "L123"
-    },
-    {
       "id": "tests_store_local_test_colomboiso",
       "label": "colomboIso()",
       "_callable": true,
       "_origin": "ast",
       "community": 23,
-      "community_name": "config/currencies.ts",
+      "community_name": "store-local.test.ts",
       "file_type": "code",
       "norm_label": "colomboiso()",
       "source_file": "tests/store-local.test.ts",
@@ -2544,7 +2761,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 23,
-      "community_name": "config/currencies.ts",
+      "community_name": "store-local.test.ts",
       "file_type": "code",
       "norm_label": "daykeyago()",
       "source_file": "tests/store-local.test.ts",
@@ -2556,131 +2773,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 23,
-      "community_name": "config/currencies.ts",
+      "community_name": "store-local.test.ts",
       "file_type": "code",
       "norm_label": "result()",
       "source_file": "tests/store-local.test.ts",
       "source_location": "L17"
-    },
-    {
-      "id": "src_components_contactfab_contactfab",
-      "label": "ContactFab()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "ContactFab.tsx",
-      "file_type": "code",
-      "norm_label": "contactfab()",
-      "source_file": "src/components/ContactFab.tsx",
-      "source_location": "L22"
-    },
-    {
-      "id": "src_components_contactfab_contactfab_close",
-      "label": "close()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "ContactFab.tsx",
-      "file_type": "code",
-      "norm_label": "close()",
-      "source_file": "src/components/ContactFab.tsx",
-      "source_location": "L49"
-    },
-    {
-      "id": "src_components_contactfab_contactfab_onkeydown",
-      "label": "onKeyDown()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "ContactFab.tsx",
-      "file_type": "code",
-      "norm_label": "onkeydown()",
-      "source_file": "src/components/ContactFab.tsx",
-      "source_location": "L39"
-    },
-    {
-      "id": "src_components_contactfab_contactfab_onsubmit",
-      "label": "onSubmit()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "ContactFab.tsx",
-      "file_type": "code",
-      "norm_label": "onsubmit()",
-      "source_file": "src/components/ContactFab.tsx",
-      "source_location": "L58"
-    },
-    {
-      "id": "src_services_api_submitcontact",
-      "label": "submitContact()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "ContactFab.tsx",
-      "file_type": "code",
-      "norm_label": "submitcontact()",
-      "source_file": "src/services/api.ts",
-      "source_location": "L236"
-    },
-    {
-      "id": "src_components_historysection_changeclass",
-      "label": "changeClass()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "HistorySection.tsx",
-      "file_type": "code",
-      "norm_label": "changeclass()",
-      "source_file": "src/components/HistorySection.tsx",
-      "source_location": "L26"
-    },
-    {
-      "id": "src_components_historysection_formatsigned",
-      "label": "formatSigned()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "HistorySection.tsx",
-      "file_type": "code",
-      "norm_label": "formatsigned()",
-      "source_file": "src/components/HistorySection.tsx",
-      "source_location": "L20"
-    },
-    {
-      "id": "src_components_historysection_historysection",
-      "label": "HistorySection()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "HistorySection.tsx",
-      "file_type": "code",
-      "norm_label": "historysection()",
-      "source_file": "src/components/HistorySection.tsx",
-      "source_location": "L31"
-    },
-    {
-      "id": "src_components_historysection_historysection_load",
-      "label": "load()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "HistorySection.tsx",
-      "file_type": "code",
-      "norm_label": "load()",
-      "source_file": "src/components/HistorySection.tsx",
-      "source_location": "L69"
-    },
-    {
-      "id": "src_services_api_fetchhistory",
-      "label": "fetchHistory()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "HistorySection.tsx",
-      "file_type": "code",
-      "norm_label": "fetchhistory()",
-      "source_file": "src/services/api.ts",
-      "source_location": "L158"
     },
     {
       "id": "netlify_functions_history_withlivedailyhistory",
@@ -2705,18 +2802,6 @@
       "norm_label": "withlivehistorypoints()",
       "source_file": "netlify/functions/history.ts",
       "source_location": "L105"
-    },
-    {
-      "id": "netlify_functions_lib_live_references_overlaylivereferencerates",
-      "label": "overlayLiveReferenceRates()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "store.ts",
-      "file_type": "code",
-      "norm_label": "overlaylivereferencerates()",
-      "source_file": "netlify/functions/lib/live-references.ts",
-      "source_location": "L8"
     },
     {
       "id": "netlify_functions_lib_store_dailytableavailable",
@@ -3043,18 +3128,6 @@
       "source_location": "L63"
     },
     {
-      "id": "netlify_functions_providers_cbsl_fetchcbslttrows",
-      "label": "fetchCbslTtRows()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "store.ts",
-      "file_type": "code",
-      "norm_label": "fetchcbslttrows()",
-      "source_file": "netlify/functions/providers/cbsl.ts",
-      "source_location": "L27"
-    },
-    {
       "id": "netlify_functions_rates_computebest",
       "label": "computeBest()",
       "_callable": true,
@@ -3259,18 +3332,6 @@
       "source_location": "L26"
     },
     {
-      "id": "shared_utils_history_colombodatekeydaysago",
-      "label": "colomboDateKeyDaysAgo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "store.ts",
-      "file_type": "code",
-      "norm_label": "colombodatekeydaysago()",
-      "source_file": "shared/utils/history.ts",
-      "source_location": "L96"
-    },
-    {
       "id": "shared_utils_history_summarizedailyseries",
       "label": "summarizeDailySeries()",
       "_callable": true,
@@ -3367,30 +3428,6 @@
       "source_location": "L6"
     },
     {
-      "id": "netlify_functions_lib_ai_buildprompt",
-      "label": "buildPrompt()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "cursor-quota.ts",
-      "file_type": "code",
-      "norm_label": "buildprompt()",
-      "source_file": "netlify/functions/lib/ai.ts",
-      "source_location": "L48"
-    },
-    {
-      "id": "netlify_functions_lib_ai_gemininarration",
-      "label": "geminiNarration()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "cursor-quota.ts",
-      "file_type": "code",
-      "norm_label": "gemininarration()",
-      "source_file": "netlify/functions/lib/ai.ts",
-      "source_location": "L74"
-    },
-    {
       "id": "netlify_functions_lib_ai_getavailableproviders",
       "label": "getAvailableProviders()",
       "_callable": true,
@@ -3401,78 +3438,6 @@
       "norm_label": "getavailableproviders()",
       "source_file": "netlify/functions/lib/ai.ts",
       "source_location": "L156"
-    },
-    {
-      "id": "netlify_functions_lib_ai_groqnarration",
-      "label": "groqNarration()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "cursor-quota.ts",
-      "file_type": "code",
-      "norm_label": "groqnarration()",
-      "source_file": "netlify/functions/lib/ai.ts",
-      "source_location": "L108"
-    },
-    {
-      "id": "netlify_functions_lib_ai_narrateforecast",
-      "label": "narrateForecast()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "cursor-quota.ts",
-      "file_type": "code",
-      "norm_label": "narrateforecast()",
-      "source_file": "netlify/functions/lib/ai.ts",
-      "source_location": "L168"
-    },
-    {
-      "id": "netlify_functions_lib_ai_referencepromptblock",
-      "label": "referencePromptBlock()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "cursor-quota.ts",
-      "file_type": "code",
-      "norm_label": "referencepromptblock()",
-      "source_file": "netlify/functions/lib/ai.ts",
-      "source_location": "L23"
-    },
-    {
-      "id": "netlify_functions_lib_ai_templateforecastnarration",
-      "label": "templateForecastNarration()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "cursor-quota.ts",
-      "file_type": "code",
-      "norm_label": "templateforecastnarration()",
-      "source_file": "netlify/functions/lib/ai.ts",
-      "source_location": "L197"
-    },
-    {
-      "id": "netlify_functions_lib_ai_templatenarration",
-      "label": "templateNarration()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "cursor-quota.ts",
-      "file_type": "code",
-      "norm_label": "templatenarration()",
-      "source_file": "netlify/functions/lib/ai.ts",
-      "source_location": "L11"
-    },
-    {
-      "id": "netlify_functions_lib_ai_withtimeout",
-      "label": "withTimeout()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "cursor-quota.ts",
-      "file_type": "code",
-      "norm_label": "withtimeout()",
-      "source_file": "netlify/functions/lib/ai.ts",
-      "source_location": "L62"
     },
     {
       "id": "netlify_functions_lib_auth_bearertoken",
@@ -3751,6 +3716,18 @@
       "source_location": "L54"
     },
     {
+      "id": "netlify_functions_lib_http_checkrefreshallowed",
+      "label": "checkRefreshAllowed()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "cursor-quota.ts",
+      "file_type": "code",
+      "norm_label": "checkrefreshallowed()",
+      "source_file": "netlify/functions/lib/http.ts",
+      "source_location": "L38"
+    },
+    {
       "id": "netlify_functions_lib_http_handleoptions",
       "label": "handleOptions()",
       "_callable": true,
@@ -3787,6 +3764,18 @@
       "source_location": "L81"
     },
     {
+      "id": "netlify_functions_lib_store_persistproviderresults",
+      "label": "persistProviderResults()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "cursor-quota.ts",
+      "file_type": "code",
+      "norm_label": "persistproviderresults()",
+      "source_file": "netlify/functions/lib/store.ts",
+      "source_location": "L146"
+    },
+    {
       "id": "netlify_functions_lib_supabase_clients_getanonclient",
       "label": "getAnonClient()",
       "_callable": true,
@@ -3809,6 +3798,54 @@
       "norm_label": "getserviceclient()",
       "source_file": "netlify/functions/lib/supabase-clients.ts",
       "source_location": "L3"
+    },
+    {
+      "id": "netlify_functions_providers_index_fetchallbankrates",
+      "label": "fetchAllBankRates()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "cursor-quota.ts",
+      "file_type": "code",
+      "norm_label": "fetchallbankrates()",
+      "source_file": "netlify/functions/providers/index.ts",
+      "source_location": "L34"
+    },
+    {
+      "id": "netlify_functions_providers_index_getprovider",
+      "label": "getProvider()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "cursor-quota.ts",
+      "file_type": "code",
+      "norm_label": "getprovider()",
+      "source_file": "netlify/functions/providers/index.ts",
+      "source_location": "L30"
+    },
+    {
+      "id": "netlify_functions_scheduled_refresh_handler",
+      "label": "handler()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "cursor-quota.ts",
+      "file_type": "code",
+      "norm_label": "handler()",
+      "source_file": "netlify/functions/scheduled-refresh.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "shared_config_currencies_getenabledcurrencies",
+      "label": "getEnabledCurrencies()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "cursor-quota.ts",
+      "file_type": "code",
+      "norm_label": "getenabledcurrencies()",
+      "source_file": "shared/config/currencies.ts",
+      "source_location": "L60"
     },
     {
       "id": "tests_cursor_quota_test_sampleforecast",
@@ -3929,6 +3966,17 @@
       "norm_label": "writejson()",
       "source_file": "scripts/backup-db.mjs",
       "source_location": "L120"
+    },
+    {
+      "id": "netlify_functions_lib_live_references",
+      "label": "live-references.ts",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "providers/cbsl.ts",
+      "file_type": "code",
+      "norm_label": "live-references.ts",
+      "source_file": "netlify/functions/lib/live-references.ts",
+      "source_location": "L1"
     },
     {
       "id": "netlify_functions_providers_base",
@@ -4228,59 +4276,15 @@
       "source_location": "L8"
     },
     {
-      "id": "netlify_functions_refresh",
-      "label": "refresh.ts",
+      "id": "shared_config_currencies",
+      "label": "config/currencies.ts",
       "_origin": "ast",
       "community": 0,
       "community_name": "providers/cbsl.ts",
       "file_type": "code",
-      "norm_label": "refresh.ts",
-      "source_file": "netlify/functions/refresh.ts",
+      "norm_label": "config/currencies.ts",
+      "source_file": "shared/config/currencies.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "netlify_functions_refresh_config",
-      "label": "config",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "providers/cbsl.ts",
-      "file_type": "code",
-      "norm_label": "config",
-      "source_file": "netlify/functions/refresh.ts",
-      "source_location": "L50"
-    },
-    {
-      "id": "netlify_functions_refresh_handler",
-      "label": "handler",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "providers/cbsl.ts",
-      "file_type": "code",
-      "norm_label": "handler",
-      "source_file": "netlify/functions/refresh.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "netlify_functions_scheduled_refresh",
-      "label": "scheduled-refresh.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "providers/cbsl.ts",
-      "file_type": "code",
-      "norm_label": "scheduled-refresh.ts",
-      "source_file": "netlify/functions/scheduled-refresh.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "netlify_functions_scheduled_refresh_config",
-      "label": "config",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "providers/cbsl.ts",
-      "file_type": "code",
-      "norm_label": "config",
-      "source_file": "netlify/functions/scheduled-refresh.ts",
-      "source_location": "L33"
     },
     {
       "id": "shared_config_currencies_supportedcurrencycodes",
@@ -4501,6 +4505,28 @@
       "norm_label": "fixtures",
       "source_file": "tests/parsers.test.ts",
       "source_location": "L19"
+    },
+    {
+      "id": "netlify_functions_lib_ai",
+      "label": "ai.ts",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "shared/types.ts",
+      "file_type": "code",
+      "norm_label": "ai.ts",
+      "source_file": "netlify/functions/lib/ai.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "netlify_functions_lib_ai_providers",
+      "label": "PROVIDERS",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "shared/types.ts",
+      "file_type": "code",
+      "norm_label": "providers",
+      "source_file": "netlify/functions/lib/ai.ts",
+      "source_location": "L143"
     },
     {
       "id": "netlify_functions_lib_forecast_payload",
@@ -4808,7 +4834,7 @@
       "node_kind": "heading",
       "norm_label": "adding a bank",
       "source_file": "README.md",
-      "source_location": "L402"
+      "source_location": "L404"
     },
     {
       "id": "readme_adding_a_currency",
@@ -4820,7 +4846,7 @@
       "node_kind": "heading",
       "norm_label": "adding a currency",
       "source_file": "README.md",
-      "source_location": "L410"
+      "source_location": "L412"
     },
     {
       "id": "readme_api",
@@ -4832,7 +4858,7 @@
       "node_kind": "heading",
       "norm_label": "api",
       "source_file": "README.md",
-      "source_location": "L291"
+      "source_location": "L293"
     },
     {
       "id": "readme_architecture",
@@ -4904,7 +4930,7 @@
       "node_kind": "heading",
       "norm_label": "d. deploy",
       "source_file": "README.md",
-      "source_location": "L270"
+      "source_location": "L272"
     },
     {
       "id": "readme_database_backup",
@@ -4916,7 +4942,7 @@
       "node_kind": "heading",
       "norm_label": "database backup",
       "source_file": "README.md",
-      "source_location": "L330"
+      "source_location": "L332"
     },
     {
       "id": "readme_e_first_data_load",
@@ -4928,7 +4954,7 @@
       "node_kind": "heading",
       "norm_label": "e. first data load",
       "source_file": "README.md",
-      "source_location": "L274"
+      "source_location": "L276"
     },
     {
       "id": "readme_f_scheduled_collection",
@@ -4940,7 +4966,7 @@
       "node_kind": "heading",
       "norm_label": "f. scheduled collection",
       "source_file": "README.md",
-      "source_location": "L283"
+      "source_location": "L285"
     },
     {
       "id": "readme_features",
@@ -4964,7 +4990,7 @@
       "node_kind": "heading",
       "norm_label": "forecast methodology",
       "source_file": "README.md",
-      "source_location": "L369"
+      "source_location": "L371"
     },
     {
       "id": "readme_frontend_only_not_enough_for_rates",
@@ -4988,7 +5014,7 @@
       "node_kind": "heading",
       "norm_label": "how history is stored",
       "source_file": "README.md",
-      "source_location": "L311"
+      "source_location": "L313"
     },
     {
       "id": "readme_keeping_the_forecast_fresh",
@@ -5000,7 +5026,7 @@
       "node_kind": "heading",
       "norm_label": "keeping the forecast fresh",
       "source_file": "README.md",
-      "source_location": "L377"
+      "source_location": "L379"
     },
     {
       "id": "readme_load_rates_the_first_time",
@@ -5024,7 +5050,7 @@
       "node_kind": "heading",
       "norm_label": "longer-term assumptions (2 weeks / 1 month / 2 months)",
       "source_file": "README.md",
-      "source_location": "L373"
+      "source_location": "L375"
     },
     {
       "id": "readme_notes_limitations",
@@ -5036,7 +5062,7 @@
       "node_kind": "heading",
       "norm_label": "notes / limitations",
       "source_file": "README.md",
-      "source_location": "L491"
+      "source_location": "L493"
     },
     {
       "id": "readme_prerequisites",
@@ -5060,7 +5086,7 @@
       "node_kind": "heading",
       "norm_label": "project structure",
       "source_file": "README.md",
-      "source_location": "L452"
+      "source_location": "L454"
     },
     {
       "id": "readme_recommended_frontend_api_together",
@@ -5084,7 +5110,7 @@
       "node_kind": "heading",
       "norm_label": "scheduled backups (4x / day)",
       "source_file": "README.md",
-      "source_location": "L342"
+      "source_location": "L344"
     },
     {
       "id": "readme_sri_lanka_bank_exchange_rates",
@@ -5108,7 +5134,7 @@
       "node_kind": "heading",
       "norm_label": "testing",
       "source_file": "README.md",
-      "source_location": "L428"
+      "source_location": "L430"
     },
     {
       "id": "readme_troubleshooting",
@@ -5120,7 +5146,7 @@
       "node_kind": "heading",
       "norm_label": "troubleshooting",
       "source_file": "README.md",
-      "source_location": "L476"
+      "source_location": "L478"
     },
     {
       "id": "readme_useful_scripts",
@@ -5480,72 +5506,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_components_protectedroute",
-      "label": "ProtectedRoute.tsx",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "protectedroute.tsx",
-      "source_file": "src/components/ProtectedRoute.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_themetoggle",
-      "label": "ThemeToggle.tsx",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "themetoggle.tsx",
-      "source_file": "src/components/ThemeToggle.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_main",
-      "label": "main.tsx",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "main.tsx",
-      "source_file": "src/main.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_adminusers",
-      "label": "AdminUsers.tsx",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "adminusers.tsx",
-      "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_login",
-      "label": "Login.tsx",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "code",
-      "norm_label": "login.tsx",
-      "source_file": "src/pages/Login.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "ref_react",
-      "label": "react",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "main.tsx",
-      "file_type": "concept",
-      "norm_label": "react",
-      "source_file": ".oxlintrc.json",
-      "source_location": "L3"
-    },
-    {
       "id": "netlify_functions_contact",
       "label": "contact.ts",
       "_origin": "ast",
@@ -5722,6 +5682,72 @@
       "source_location": "L12"
     },
     {
+      "id": "src_components_bestratespanel",
+      "label": "BestRatesPanel.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "bestratespanel.tsx",
+      "source_file": "src/components/BestRatesPanel.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_brandlogo",
+      "label": "BrandLogo.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "brandlogo.tsx",
+      "source_file": "src/components/BrandLogo.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_contactfab",
+      "label": "ContactFab.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "contactfab.tsx",
+      "source_file": "src/components/ContactFab.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_contactfab_emptyform",
+      "label": "emptyForm",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "emptyform",
+      "source_file": "src/components/ContactFab.tsx",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_components_contactfab_subjects",
+      "label": "SUBJECTS",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "subjects",
+      "source_file": "src/components/ContactFab.tsx",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_components_currencyselector",
+      "label": "CurrencySelector.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "currencyselector.tsx",
+      "source_file": "src/components/CurrencySelector.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "src_components_forecastpanel",
       "label": "ForecastPanel.tsx",
       "_origin": "ast",
@@ -5744,6 +5770,127 @@
       "source_location": "L32"
     },
     {
+      "id": "src_components_historysection",
+      "label": "HistorySection.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "historysection.tsx",
+      "source_file": "src/components/HistorySection.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_protectedroute",
+      "label": "ProtectedRoute.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "protectedroute.tsx",
+      "source_file": "src/components/ProtectedRoute.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_components_themetoggle",
+      "label": "ThemeToggle.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "themetoggle.tsx",
+      "source_file": "src/components/ThemeToggle.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_contexts_authcontext",
+      "label": "AuthContext.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "authcontext.tsx",
+      "source_file": "src/contexts/AuthContext.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_contexts_authcontext_authcontext",
+      "label": "AuthContext",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "authcontext",
+      "source_file": "src/contexts/AuthContext.tsx",
+      "source_location": "L35"
+    },
+    {
+      "id": "src_hooks_userates",
+      "label": "useRates.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "userates.ts",
+      "source_file": "src/hooks/useRates.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_lib_supabase",
+      "label": "supabase.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "supabase.ts",
+      "source_file": "src/lib/supabase.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_main",
+      "label": "main.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "main.tsx",
+      "source_file": "src/main.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pages_adminusers",
+      "label": "AdminUsers.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "adminusers.tsx",
+      "source_file": "src/pages/AdminUsers.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pages_dashboard",
+      "label": "Dashboard.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "dashboard.tsx",
+      "source_file": "src/pages/Dashboard.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_pages_login",
+      "label": "Login.tsx",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "code",
+      "norm_label": "login.tsx",
+      "source_file": "src/pages/Login.tsx",
+      "source_location": "L1"
+    },
+    {
       "id": "src_services_api",
       "label": "api.ts",
       "_origin": "ast",
@@ -5753,6 +5900,17 @@
       "norm_label": "api.ts",
       "source_file": "src/services/api.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "ref_react",
+      "label": "react",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "api.ts",
+      "file_type": "concept",
+      "norm_label": "react",
+      "source_file": ".oxlintrc.json",
+      "source_location": "L3"
     },
     {
       "id": "src_components_bankratecard",
@@ -5799,190 +5957,14 @@
       "source_location": "L1"
     },
     {
-      "id": "src_components_bestratespanel",
-      "label": "BestRatesPanel.tsx",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "Dashboard.tsx",
-      "file_type": "code",
-      "norm_label": "bestratespanel.tsx",
-      "source_file": "src/components/BestRatesPanel.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_currencyselector",
-      "label": "CurrencySelector.tsx",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "Dashboard.tsx",
-      "file_type": "code",
-      "norm_label": "currencyselector.tsx",
-      "source_file": "src/components/CurrencySelector.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_hooks_userates",
-      "label": "useRates.ts",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "Dashboard.tsx",
-      "file_type": "code",
-      "norm_label": "userates.ts",
-      "source_file": "src/hooks/useRates.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_pages_dashboard",
-      "label": "Dashboard.tsx",
-      "_origin": "ast",
-      "community": 21,
-      "community_name": "Dashboard.tsx",
-      "file_type": "code",
-      "norm_label": "dashboard.tsx",
-      "source_file": "src/pages/Dashboard.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_contexts_authcontext",
-      "label": "AuthContext.tsx",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "AuthContext.tsx",
-      "file_type": "code",
-      "norm_label": "authcontext.tsx",
-      "source_file": "src/contexts/AuthContext.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_contexts_authcontext_authcontext",
-      "label": "AuthContext",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "AuthContext.tsx",
-      "file_type": "code",
-      "norm_label": "authcontext",
-      "source_file": "src/contexts/AuthContext.tsx",
-      "source_location": "L35"
-    },
-    {
-      "id": "src_lib_supabase",
-      "label": "supabase.ts",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "AuthContext.tsx",
-      "file_type": "code",
-      "norm_label": "supabase.ts",
-      "source_file": "src/lib/supabase.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "netlify_functions_currencies",
-      "label": "functions/currencies.ts",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "config/currencies.ts",
-      "file_type": "code",
-      "norm_label": "functions/currencies.ts",
-      "source_file": "netlify/functions/currencies.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "netlify_functions_currencies_handler",
-      "label": "handler",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "config/currencies.ts",
-      "file_type": "code",
-      "norm_label": "handler",
-      "source_file": "netlify/functions/currencies.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "shared_config_currencies",
-      "label": "config/currencies.ts",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "config/currencies.ts",
-      "file_type": "code",
-      "norm_label": "config/currencies.ts",
-      "source_file": "shared/config/currencies.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "shared_config_currencies_currencies",
-      "label": "currencies",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "config/currencies.ts",
-      "file_type": "code",
-      "norm_label": "currencies",
-      "source_file": "shared/config/currencies.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "shared_config_currencies_default_currency",
-      "label": "DEFAULT_CURRENCY",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "config/currencies.ts",
-      "file_type": "code",
-      "norm_label": "default_currency",
-      "source_file": "shared/config/currencies.ts",
-      "source_location": "L54"
-    },
-    {
       "id": "tests_store_local_test",
       "label": "store-local.test.ts",
       "_origin": "ast",
       "community": 23,
-      "community_name": "config/currencies.ts",
+      "community_name": "store-local.test.ts",
       "file_type": "code",
       "norm_label": "store-local.test.ts",
       "source_file": "tests/store-local.test.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_contactfab",
-      "label": "ContactFab.tsx",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "ContactFab.tsx",
-      "file_type": "code",
-      "norm_label": "contactfab.tsx",
-      "source_file": "src/components/ContactFab.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_components_contactfab_emptyform",
-      "label": "emptyForm",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "ContactFab.tsx",
-      "file_type": "code",
-      "norm_label": "emptyform",
-      "source_file": "src/components/ContactFab.tsx",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_components_contactfab_subjects",
-      "label": "SUBJECTS",
-      "_origin": "ast",
-      "community": 24,
-      "community_name": "ContactFab.tsx",
-      "file_type": "code",
-      "norm_label": "subjects",
-      "source_file": "src/components/ContactFab.tsx",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_components_historysection",
-      "label": "HistorySection.tsx",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "HistorySection.tsx",
-      "file_type": "code",
-      "norm_label": "historysection.tsx",
-      "source_file": "src/components/HistorySection.tsx",
       "source_location": "L1"
     },
     {
@@ -6107,17 +6089,6 @@
       "source_location": "L25"
     },
     {
-      "id": "netlify_functions_lib_live_references",
-      "label": "live-references.ts",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "store.ts",
-      "file_type": "code",
-      "norm_label": "live-references.ts",
-      "source_file": "netlify/functions/lib/live-references.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "netlify_functions_lib_store",
       "label": "store.ts",
       "_origin": "ast",
@@ -6160,6 +6131,28 @@
       "norm_label": "config/banks.ts",
       "source_file": "shared/config/banks.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "shared_config_banks_banks",
+      "label": "banks",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "store.ts",
+      "file_type": "code",
+      "norm_label": "banks",
+      "source_file": "shared/config/banks.ts",
+      "source_location": "L3"
+    },
+    {
+      "id": "shared_config_currencies_default_currency",
+      "label": "DEFAULT_CURRENCY",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "store.ts",
+      "file_type": "code",
+      "norm_label": "default_currency",
+      "source_file": "shared/config/currencies.ts",
+      "source_location": "L54"
     },
     {
       "id": "shared_utils_history",
@@ -6239,6 +6232,28 @@
       "source_location": "L5"
     },
     {
+      "id": "netlify_functions_currencies",
+      "label": "functions/currencies.ts",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "cursor-quota.ts",
+      "file_type": "code",
+      "norm_label": "functions/currencies.ts",
+      "source_file": "netlify/functions/currencies.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "netlify_functions_currencies_handler",
+      "label": "handler",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "cursor-quota.ts",
+      "file_type": "code",
+      "norm_label": "handler",
+      "source_file": "netlify/functions/currencies.ts",
+      "source_location": "L5"
+    },
+    {
       "id": "netlify_functions_cursor_forecast",
       "label": "cursor-forecast.ts",
       "_origin": "ast",
@@ -6314,28 +6329,6 @@
       "norm_label": "handler",
       "source_file": "netlify/functions/forecast-refresh.ts",
       "source_location": "L29"
-    },
-    {
-      "id": "netlify_functions_lib_ai",
-      "label": "ai.ts",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "cursor-quota.ts",
-      "file_type": "code",
-      "norm_label": "ai.ts",
-      "source_file": "netlify/functions/lib/ai.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "netlify_functions_lib_ai_providers",
-      "label": "PROVIDERS",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "cursor-quota.ts",
-      "file_type": "code",
-      "norm_label": "providers",
-      "source_file": "netlify/functions/lib/ai.ts",
-      "source_location": "L143"
     },
     {
       "id": "netlify_functions_lib_auth",
@@ -6437,15 +6430,70 @@
       "source_location": "L7"
     },
     {
-      "id": "shared_config_banks_banks",
-      "label": "banks",
+      "id": "netlify_functions_refresh",
+      "label": "refresh.ts",
       "_origin": "ast",
       "community": 4,
       "community_name": "cursor-quota.ts",
       "file_type": "code",
-      "norm_label": "banks",
-      "source_file": "shared/config/banks.ts",
-      "source_location": "L3"
+      "norm_label": "refresh.ts",
+      "source_file": "netlify/functions/refresh.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "netlify_functions_refresh_config",
+      "label": "config",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "cursor-quota.ts",
+      "file_type": "code",
+      "norm_label": "config",
+      "source_file": "netlify/functions/refresh.ts",
+      "source_location": "L50"
+    },
+    {
+      "id": "netlify_functions_refresh_handler",
+      "label": "handler",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "cursor-quota.ts",
+      "file_type": "code",
+      "norm_label": "handler",
+      "source_file": "netlify/functions/refresh.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "netlify_functions_scheduled_refresh",
+      "label": "scheduled-refresh.ts",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "cursor-quota.ts",
+      "file_type": "code",
+      "norm_label": "scheduled-refresh.ts",
+      "source_file": "netlify/functions/scheduled-refresh.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "netlify_functions_scheduled_refresh_config",
+      "label": "config",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "cursor-quota.ts",
+      "file_type": "code",
+      "norm_label": "config",
+      "source_file": "netlify/functions/scheduled-refresh.ts",
+      "source_location": "L33"
+    },
+    {
+      "id": "shared_config_currencies_currencies",
+      "label": "currencies",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "cursor-quota.ts",
+      "file_type": "code",
+      "norm_label": "currencies",
+      "source_file": "shared/config/currencies.ts",
+      "source_location": "L8"
     },
     {
       "id": "tests_cursor_quota_test",
@@ -11683,7 +11731,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -11695,7 +11743,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -11707,7 +11755,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L46",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -11719,7 +11767,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L76",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
@@ -11731,7 +11779,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L62",
+      "source_location": "L63",
       "weight": 1.0
     },
     {
@@ -11743,7 +11791,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/Dashboard.tsx",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -11755,7 +11803,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/Dashboard.tsx",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -11767,7 +11815,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/Login.tsx",
-      "source_location": "L7",
+      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -11971,7 +12019,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L58",
+      "source_location": "L59",
       "weight": 1.0
     },
     {
@@ -11983,7 +12031,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L72",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -16512,7 +16560,7 @@
     },
     {
       "source": "src_pages_adminusers",
-      "target": "src_services_api_adminuser",
+      "target": "src_components_brandlogo_brandlogo",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16520,6 +16568,18 @@
       "context": "import",
       "source_file": "src/pages/AdminUsers.tsx",
       "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_adminusers",
+      "target": "src_services_api_adminuser",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/pages/AdminUsers.tsx",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -16531,7 +16591,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -16543,7 +16603,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -16555,7 +16615,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L5",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -16604,6 +16664,18 @@
       "context": "import",
       "source_file": "src/pages/Dashboard.tsx",
       "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard",
+      "target": "src_components_brandlogo_brandlogo",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/pages/Dashboard.tsx",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -16688,6 +16760,18 @@
       "context": "import",
       "source_file": "src/pages/Login.tsx",
       "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_login",
+      "target": "src_components_brandlogo_brandlogo",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/pages/Login.tsx",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -19367,6 +19451,18 @@
       "weight": 1.0
     },
     {
+      "source": "src_components_brandlogo",
+      "target": "ref_react",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/components/BrandLogo.tsx",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
       "source": "src_components_comparisontable",
       "target": "src_components_ratevalue",
       "relation": "imports_from",
@@ -19668,7 +19764,7 @@
     },
     {
       "source": "src_pages_adminusers",
-      "target": "src_services_api",
+      "target": "src_components_brandlogo",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19676,6 +19772,18 @@
       "context": "import",
       "source_file": "src/pages/AdminUsers.tsx",
       "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_adminusers",
+      "target": "src_services_api",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/pages/AdminUsers.tsx",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -19736,6 +19844,18 @@
       "context": "import",
       "source_file": "src/pages/Dashboard.tsx",
       "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_dashboard",
+      "target": "src_components_brandlogo",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/pages/Dashboard.tsx",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -19832,6 +19952,18 @@
       "context": "import",
       "source_file": "src/pages/Login.tsx",
       "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_login",
+      "target": "src_components_brandlogo",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/pages/Login.tsx",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -22371,7 +22503,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L270",
+      "source_location": "L272",
       "weight": 1.0
     },
     {
@@ -22382,7 +22514,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L274",
+      "source_location": "L276",
       "weight": 1.0
     },
     {
@@ -22393,7 +22525,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L283",
+      "source_location": "L285",
       "weight": 1.0
     },
     {
@@ -22415,7 +22547,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L373",
+      "source_location": "L375",
       "weight": 1.0
     },
     {
@@ -22426,7 +22558,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L377",
+      "source_location": "L379",
       "weight": 1.0
     },
     {
@@ -22437,7 +22569,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L330",
+      "source_location": "L332",
       "weight": 1.0
     },
     {
@@ -22448,7 +22580,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L342",
+      "source_location": "L344",
       "weight": 1.0
     },
     {
@@ -22503,7 +22635,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L291",
+      "source_location": "L293",
       "weight": 1.0
     },
     {
@@ -22514,7 +22646,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L311",
+      "source_location": "L313",
       "weight": 1.0
     },
     {
@@ -22525,7 +22657,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L369",
+      "source_location": "L371",
       "weight": 1.0
     },
     {
@@ -22536,7 +22668,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L402",
+      "source_location": "L404",
       "weight": 1.0
     },
     {
@@ -22558,7 +22690,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L410",
+      "source_location": "L412",
       "weight": 1.0
     },
     {
@@ -22569,7 +22701,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L428",
+      "source_location": "L430",
       "weight": 1.0
     },
     {
@@ -22580,7 +22712,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L452",
+      "source_location": "L454",
       "weight": 1.0
     },
     {
@@ -22591,7 +22723,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L476",
+      "source_location": "L478",
       "weight": 1.0
     },
     {
@@ -22602,7 +22734,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L491",
+      "source_location": "L493",
       "weight": 1.0
     },
     {
@@ -24333,6 +24465,39 @@
       "weight": 1.0
     },
     {
+      "source": "src_components_brandlogo",
+      "target": "src_components_brandlogo_brandlogoprops",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/BrandLogo.tsx",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_brandlogo",
+      "target": "src_components_brandlogo_exchangemark",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/BrandLogo.tsx",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_brandlogo",
+      "target": "src_components_brandlogo_brandlogo",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/BrandLogo.tsx",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
       "source": "src_components_comparisontable",
       "target": "src_components_comparisontable_comparisontable",
       "relation": "contains",
@@ -24659,7 +24824,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -24670,7 +24835,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/AdminUsers.tsx",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -24681,7 +24846,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/Dashboard.tsx",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -24692,7 +24857,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/Login.tsx",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
@@ -24703,7 +24868,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/Login.tsx",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -25760,5 +25925,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "7abbded42988ec519320d68c2e9faac46ec54645"
+  "built_at_commit": "1f8fdadada67d72bdf9e2aa795acac71dd086911"
 }

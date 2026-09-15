@@ -294,9 +294,9 @@
     "semantic_hash": ""
   },
   "src/pages/Dashboard.tsx": {
-    "mtime": 1789023883.3840785,
-    "seen": 1789024148.712069,
-    "ast_hash": "6064ed79c4c7d659217e3baf517513bf",
+    "mtime": 1789471532.9658902,
+    "seen": 1789471580.1518872,
+    "ast_hash": "d0ad995a2f94978789c165ef87804e65",
     "semantic_hash": ""
   },
   "src/services/api.ts": {
@@ -384,9 +384,9 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1789469657.7764075,
-    "seen": 1789469695.517398,
-    "ast_hash": "a7432b60b510f3d7f0789caa4926672a",
+    "mtime": 1789469705.1762724,
+    "seen": 1789471186.318112,
+    "ast_hash": "a27608e44afa6847db2282d9066671e2",
     "semantic_hash": ""
   },
   "docs/SOURCES.md": {
@@ -396,9 +396,9 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1786710597.2521005,
-    "seen": 1787474557.3406148,
-    "ast_hash": "4fd1d41018d88aeecad5d3c61fb369c6",
+    "mtime": 1789471552.5185406,
+    "seen": 1789471580.152189,
+    "ast_hash": "e57f452442db5a05fc8f5dc4ff0420f6",
     "semantic_hash": ""
   },
   "tests/fixtures/cbsl-chart.html": {
@@ -450,9 +450,9 @@
     "semantic_hash": ""
   },
   "public/favicon.svg": {
-    "mtime": 1786710748.2329838,
-    "seen": 1787474557.340619,
-    "ast_hash": "b53db74121b87613bbc762f6c85768be",
+    "mtime": 1789471576.4232047,
+    "seen": 1789471580.152371,
+    "ast_hash": "d5b799ab5f9ae756327dd803ede98538",
     "semantic_hash": ""
   },
   "netlify/functions/forecast-refresh.ts": {
@@ -528,15 +528,15 @@
     "semantic_hash": ""
   },
   "src/pages/AdminUsers.tsx": {
-    "mtime": 1789020959.8401406,
-    "seen": 1789022464.871338,
-    "ast_hash": "a4bc20691cd713a42aefffd502e80cc1",
+    "mtime": 1789471552.3515358,
+    "seen": 1789471580.151886,
+    "ast_hash": "d8f8b56a5ce275d039d293ebb10650b3",
     "semantic_hash": ""
   },
   "src/pages/Login.tsx": {
-    "mtime": 1789020959.846522,
-    "seen": 1789022464.871339,
-    "ast_hash": "d72c6da156fb6644b5e91e6e17f7296f",
+    "mtime": 1789471549.4533434,
+    "seen": 1789471580.151888,
+    "ast_hash": "08993141a4614e573741a3d0bc6f74d8",
     "semantic_hash": ""
   },
   "tests/cursor-quota.test.ts": {
@@ -576,15 +576,21 @@
     "semantic_hash": ""
   },
   "netlify/functions/contact.ts": {
-    "mtime": 1789469605.1174905,
-    "seen": 1789469695.515757,
-    "ast_hash": "9e74887102dfc9cdb2430b16d79ccd6b",
+    "mtime": 1789470444.3822238,
+    "seen": 1789471186.3160288,
+    "ast_hash": "a01c692199f21edad8f164690f670981",
     "semantic_hash": ""
   },
   "src/components/ContactFab.tsx": {
     "mtime": 1789469634.6584854,
     "seen": 1789469695.516833,
     "ast_hash": "1699a2731ea27a7b08582f7f9374ed38",
+    "semantic_hash": ""
+  },
+  "src/components/BrandLogo.tsx": {
+    "mtime": 1789471575.7403302,
+    "seen": 1789471580.151636,
+    "ast_hash": "4c3a73f9b490d4f023e01c98c7319606",
     "semantic_hash": ""
   }
 }

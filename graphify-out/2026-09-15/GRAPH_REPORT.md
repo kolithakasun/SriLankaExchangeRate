@@ -1,16 +1,16 @@
 # Graph Report - SriLankaExchangeRate  (2026-09-15)
 
 ## Corpus Check
-- 93 files · ~41,161 words
+- 94 files · ~41,636 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 632 nodes · 1568 edges · 29 communities (24 shown, 5 thin omitted)
+- 636 nodes · 1578 edges · 24 communities (19 shown, 5 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7abbded4`
+- Built from commit: `1f8fdada`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -31,15 +31,9 @@
 - plugins
 - copilot-instructions.md
 - install-backup-cron.sh
-- main.tsx
 - contact.ts
 - scripts
 - ComparisonTable.tsx
-- Dashboard.tsx
-- AuthContext.tsx
-- config/currencies.ts
-- ContactFab.tsx
-- HistorySection.tsx
 - package.json
 - @types/react
 - typescript
@@ -57,41 +51,41 @@
 10. `buildForecastNumericPayload()` - 14 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `PersistSummary` --references--> `ProviderResult`  [EXTRACTED]
-  netlify/functions/lib/store.ts → shared/types.ts
 - `handler` --calls--> `getEnabledBanks()`  [EXTRACTED]
   netlify/functions/banks.ts → shared/config/banks.ts
-- `buildPrompt()` --calls--> `weekdayName()`  [EXTRACTED]
-  netlify/functions/lib/ai.ts → shared/utils/forecast.ts
 - `nextColomboMidnightIso()` --calls--> `colomboDateKey()`  [EXTRACTED]
   netlify/functions/lib/cursor-quota.ts → shared/utils/time.ts
 - `claimCursorQuotaSlot()` --calls--> `colomboDateKey()`  [EXTRACTED]
+  netlify/functions/lib/cursor-quota.ts → shared/utils/time.ts
+- `markCursorRunPending()` --calls--> `nowIso()`  [EXTRACTED]
+  netlify/functions/lib/cursor-quota.ts → shared/utils/time.ts
+- `completeCursorRun()` --calls--> `nowIso()`  [EXTRACTED]
   netlify/functions/lib/cursor-quota.ts → shared/utils/time.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (29 total, 5 thin omitted)
+## Communities (24 total, 5 thin omitted)
 
 ### Community 0 - "providers/cbsl.ts"
-Cohesion: 0.05
-Nodes (80): checkRefreshAllowed(), persistProviderResults(), fetchHtmlProvider(), BinanceAdv, binanceP2pProvider, BinanceSearchResponse, searchPrices(), bocProvider (+72 more)
+Cohesion: 0.06
+Nodes (78): overlayLiveReferenceRates(), PersistSummary, fetchHtmlProvider(), BinanceAdv, binanceP2pProvider, BinanceSearchResponse, searchPrices(), bocProvider (+70 more)
 
 ### Community 1 - "shared/types.ts"
-Cohesion: 0.06
-Nodes (67): buildForecastNumericPayload(), ForecastNumericPayload, ForecastRequest, fetchCbslHistoryBounded(), loadCbslDaily(), loadForecastReferences(), loadGoogleDaily(), loadStoredDaily() (+59 more)
+Cohesion: 0.05
+Nodes (77): buildPrompt(), geminiNarration(), groqNarration(), narrateForecast(), NarrationSource, PROVIDERS, referencePromptBlock(), SyncNarrationSource (+69 more)
 
 ### Community 2 - "api.ts"
-Cohesion: 0.16
-Nodes (19): ForecastPanel(), PROVIDER_LABELS, ReferenceSignalsCard(), signed(), trendLabel(), AiProviderOption, api(), CursorForecastStatusResponse (+11 more)
+Cohesion: 0.05
+Nodes (60): react, BestRatesPanel(), BrandLogo(), BrandLogoProps, ContactFab(), onSubmit(), emptyForm, SUBJECTS (+52 more)
 
 ### Community 3 - "store.ts"
 Cohesion: 0.08
-Nodes (67): handler, withLiveDailyHistory(), withLiveHistoryPoints(), overlayLiveReferenceRates(), DailyOutcome, DailySnapshot, dailyTableAvailable(), ensureSourceRows() (+59 more)
+Nodes (67): handler, withLiveDailyHistory(), withLiveHistoryPoints(), DailyOutcome, DailySnapshot, dailyTableAvailable(), ensureSourceRows(), getAvailableHistoryDates() (+59 more)
 
 ### Community 4 - "cursor-quota.ts"
 Cohesion: 0.09
-Nodes (56): handler, parseBody(), handler, handler, handler, config, handler, buildPrompt() (+48 more)
+Nodes (55): handler, parseBody(), handler, handler, handler, handler, config, handler (+47 more)
 
 ### Community 5 - "dependencies"
 Cohesion: 0.11
@@ -125,10 +119,6 @@ Nodes (7): cleanup_incomplete_dirs(), log(), prune_old_archives(), run_backup(),
 Cohesion: 0.22
 Nodes (8): plugins, rules, react/only-export-components, react/rules-of-hooks, $schema, oxc, typescript, warn
 
-### Community 17 - "main.tsx"
-Cohesion: 0.19
-Nodes (14): react, ProtectedRoute(), ThemeToggle(), useAuth(), AdminUsers(), onCreate(), setUserRole(), toggleDisabled() (+6 more)
-
 ### Community 18 - "contact.ts"
 Cohesion: 0.24
 Nodes (11): CONTACT_SUBJECTS, ContactBody, contactHits, ContactSubject, handler, isValidEmail(), sendWithResend(), sendWithWeb3Forms() (+3 more)
@@ -141,49 +131,29 @@ Nodes (11): scripts, build, db:backup, db:backup:cron, dev, lint, netlify:dev, p
 Cohesion: 0.29
 Nodes (6): BankRateCard(), BankStatusLine(), StatusDot(), ComparisonTable(), rateChange(), RateValue()
 
-### Community 21 - "Dashboard.tsx"
-Cohesion: 0.31
-Nodes (6): BestRatesPanel(), CurrencySelector(), useRates(), fetchRates(), RatesResponse, refreshRates()
-
-### Community 22 - "AuthContext.tsx"
-Cohesion: 0.31
-Nodes (8): AppRole, AuthContext, AuthContextValue, AuthProfile, AuthProvider(), loadProfile(), getBrowserSupabase(), isAuthConfigured()
-
-### Community 23 - "config/currencies.ts"
-Cohesion: 0.18
-Nodes (7): handler, currencies, DEFAULT_CURRENCY, getCurrency(), getEnabledCurrencies(), CurrencyConfig, formatRate()
-
-### Community 24 - "ContactFab.tsx"
-Cohesion: 0.29
-Nodes (5): ContactFab(), onSubmit(), emptyForm, SUBJECTS, submitContact()
-
-### Community 25 - "HistorySection.tsx"
-Cohesion: 0.43
-Nodes (6): changeClass(), formatSigned(), HistorySection(), load(), fetchHistory(), HistoryResponse
-
 ### Community 26 - "package.json"
 Cohesion: 0.40
 Nodes (4): name, private, type, version
 
 ## Knowledge Gaps
-- **166 isolated node(s):** `$schema`, `typescript`, `oxc`, `react/rules-of-hooks`, `warn` (+161 more)
+- **167 isolated node(s):** `$schema`, `typescript`, `oxc`, `react/rules-of-hooks`, `warn` (+162 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `json()` connect `cursor-quota.ts` to `providers/cbsl.ts`, `contact.ts`, `store.ts`, `config/currencies.ts`?**
+- **Why does `json()` connect `cursor-quota.ts` to `contact.ts`, `store.ts`?**
   _High betweenness centrality (0.019) - this node is a cross-community bridge._
 - **Why does `nowIso()` connect `store.ts` to `providers/cbsl.ts`, `shared/types.ts`, `cursor-quota.ts`?**
   _High betweenness centrality (0.016) - this node is a cross-community bridge._
 - **Why does `colomboDateKey()` connect `store.ts` to `providers/cbsl.ts`, `shared/types.ts`, `cursor-quota.ts`?**
   _High betweenness centrality (0.009) - this node is a cross-community bridge._
 - **What connects `$schema`, `typescript`, `oxc` to the rest of the system?**
-  _166 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _167 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `providers/cbsl.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.05261336102457598 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.0564240790655885 - nodes in this community are weakly interconnected._
 - **Should `shared/types.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.061175666438824335 - nodes in this community are weakly interconnected._
-- **Should `store.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.08035087719298245 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05303030303030303 - nodes in this community are weakly interconnected._
+- **Should `api.ts` be split into smaller, more focused modules?**
+  _Cohesion score 0.05450165612767239 - nodes in this community are weakly interconnected._
