@@ -203,14 +203,55 @@ export default function Dashboard() {
 
           <HistorySection defaultCurrency={currency} />
 
-          <footer className="mt-12 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-ink-muted)]">
-            <p>
+          <footer className="mt-12 border-t border-[var(--color-line)] pt-8 pb-4 text-sm text-[var(--color-ink-muted)]">
+            <p className="text-xs">
               Rates are collected from publicly published bank pages/APIs and may
               change during the day. Indicative only — confirm with your bank before
               transacting.
             </p>
-            <p className="mt-2">
+            <p className="mt-2 text-xs">
               Storage: {data?.storage ?? "—"} · TT = Telegraphic Transfer
+            </p>
+
+            <div className="mt-8">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-ink)]">
+                Built with
+              </p>
+              <ul className="mt-3 flex flex-wrap gap-x-3 gap-y-2 text-xs sm:text-sm">
+                {[
+                  "React",
+                  "TypeScript",
+                  "Vite",
+                  "Tailwind CSS",
+                  "Netlify Functions",
+                  "Supabase",
+                  "Recharts",
+                ].map((tech, i, list) => (
+                  <li key={tech} className="flex items-center gap-3">
+                    <span>{tech}</span>
+                    {i < list.length - 1 && (
+                      <span
+                        aria-hidden
+                        className="text-[var(--color-line)]"
+                      >
+                        ·
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <p className="mt-6 text-xs sm:text-sm">
+              Developed by{" "}
+              <a
+                href="https://cuttingedgesl.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-[var(--color-accent)] underline-offset-2 hover:underline"
+              >
+                cuttingedgesl.com
+              </a>
             </p>
           </footer>
         </>
