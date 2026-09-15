@@ -196,6 +196,13 @@ curl -X POST http://localhost:8888/api/refresh \
   -H "x-refresh-token: YOUR_REFRESH_TOKEN"
 ```
 
+> **Note for production:** When triggering `/api/refresh` on a public domain behind Cloudflare/WAF, include a standard browser User-Agent (`-A`) to prevent automated client (curl) 403 blocks:
+>
+> ```bash
+> curl -X POST "https://exchangerates.dmkkgroup.com/api/refresh" \
+>   -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+> ```
+
 You should see bank TT values after a few seconds. Refresh the browser if needed.
 
 ### Frontend only (not enough for rates)
@@ -260,7 +267,8 @@ Click **Deploy site**. When it finishes, open the site URL.
 Click **Refresh Rates** on the site, or:
 
 ```bash
-curl -X POST https://YOUR_SITE.netlify.app/api/refresh
+curl -X POST "https://YOUR_SITE.netlify.app/api/refresh" \
+  -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 ```
 
 ### F. Scheduled collection
